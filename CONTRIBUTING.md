@@ -150,45 +150,81 @@ If 3 people are working:
 
 ---
 
-## 3. Git Workflow & Branching Strategy
+## 3. The Simple "Pull — Work — Push" Workflow
 
-Follow this workflow to keep the `main` branch stable:
+For fast and straightforward collaboration, you don't need complex branch rituals or PR reviews. The team can work directly using the classic collaborative loop:
 
-1. **Always pull latest changes before starting**:
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Person1 as You (Person 1)
+    actor GitHub as GitHub Repository (main)
+    actor Person2 as Teammate (Person 2)
 
-2. **Branch Naming**:
-   - For 2-Person setup:
-     ```bash
-     git checkout -b feature/career-cv-opportunities    # Person 1
-     git checkout -b feature/academy-tutor-platform      # Person 2
-     ```
-   - For 4-Person setup:
-     ```bash
-     git checkout -b feature/cv-studio-export           # Member 1
-     git checkout -b feature/opportunity-live-search    # Member 2
-     git checkout -b feature/w3schools-curricula        # Member 3
-     git checkout -b feature/tutor-rag-platform         # Member 4
-     ```
+    Note over Person1, Person2: Continuous Direct Push & Pull Cycle
+    Person1->>GitHub: 1. git push (Uploads changes)
+    Person2->>GitHub: 2. git pull (Gets your latest changes)
+    Note over Person2: Person 2 does their work & tests
+    Person2->>GitHub: 3. git push (Uploads their changes)
+    Person1->>GitHub: 4. git pull (Gets their latest changes)
+    Note over Person1: Person 1 continues working seamlessly!
+```
 
-3. **Verify Locally Before Pushing**:
-   ```bash
-   npm test
-   npm run build
-   ```
+### The 4 Daily Commands (All You Need)
 
-4. **Push and Create PR**:
-   ```bash
-   git push origin feature/your-branch-name
-   ```
-   Open a Pull Request on GitHub at [https://github.com/rajeelahmad-main/CampusOS/pulls](https://github.com/rajeelahmad-main/CampusOS/pulls).
+Whenever you start working:
+```bash
+# 1. Always pull before you begin
+git pull origin main
+
+# 2. Do your coding / bug fixes...
+# Verify tests pass:
+npm test
+
+# 3. Save your changes
+git add .
+git commit -m "feat: description of what was fixed or added"
+
+# 4. Push directly to GitHub
+git push origin main
+```
 
 ---
 
-## 4. Key Reference Documents in Repository
+## 4. How to Invite Teammates for Direct Push Access
+
+The repository is **Public**, so anyone can view and clone it. To let your teammates push directly (`git push origin main`), invite them as a Collaborator with Write Access:
+
+### Method A: Via Web Browser (10 Seconds)
+1. Go to: **[https://github.com/rajeelahmad-main/CampusOS/settings/access](https://github.com/rajeelahmad-main/CampusOS/settings/access)**
+2. Click the green button: **"Add people"**
+3. Type your teammate's **GitHub username** or **email**.
+4. Click **"Add [username] to this repository"**.
+5. Your teammate will receive an email invitation or can accept it directly at `https://github.com/rajeelahmad-main/CampusOS/invitations`.
+6. Once accepted, they can run `git push origin main` directly!
+
+### Method B: Via Terminal / GitHub CLI
+If you know their GitHub username, you can invite them immediately:
+```bash
+gh api --method PUT /repos/rajeelahmad-main/CampusOS/collaborators/<THEIR_GITHUB_USERNAME>
+```
+
+---
+
+## 5. What If Both People Push at the Same Time? (Quick Fix)
+
+If your teammate pushed changes while you were editing:
+1. `git push` will say: *"fetch first (remote contains work you do not have)"*.
+2. Simply run:
+   ```bash
+   git pull --rebase origin main
+   git push origin main
+   ```
+3. That's it! Git automatically places your changes on top of their latest work.
+
+---
+
+## 6. Key Reference Documents in Repository
 
 - **[CAMPUSOS_PLATFORM_PROBLEMS_AUDIT.md](./CAMPUSOS_PLATFORM_PROBLEMS_AUDIT.md)**: Master problems audit with exact line-by-line root causes and bug locations.
 - **[README.md](./README.md)**: Complete system architecture and feature reference.
