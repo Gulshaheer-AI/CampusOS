@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #1E194B;
+  --clay-purple: #6653E6;
+  --clay-mint: #38D39F;
+  --clay-pink: #FF7675;
+  --clay-aqua: #74B9FF;
+  --clay-lavender: #9B88F7;
+  --clay-coral: #FF7675;
+  --clay-surface: #FFFFFF;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+}
+
+/* 3D Claymorphism Core Utility Classes (Exact Purple & White Theme from Photo) */
+.clay-card {
+  background: #FFFFFF;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(108, 92, 231, 0.12);
+  box-shadow:
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95),
+    inset -2px -2px 6px rgba(108, 92, 231, 0.04),
+    0 12px 28px -6px rgba(102, 83, 230, 0.1);
+}
+
+.clay-card-purple {
+  background: linear-gradient(145deg, #9584FA 0%, #8270F5 45%, #6653E6 100%);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 2px 3px 6px rgba(255, 255, 255, 0.45),
+    inset -3px -4px 8px rgba(70, 50, 160, 0.22),
+    0 14px 32px -6px rgba(102, 83, 230, 0.32);
+  color: #FFFFFF;
+}
+
+.clay-card-purple p,
+.clay-card-purple h1,
+.clay-card-purple h2,
+.clay-card-purple h3,
+.clay-card-purple h4,
+.clay-card-purple h5,
+.clay-card-purple h6 {
+  color: #FFFFFF;
+}
+
+.clay-card-pink {
+  background: linear-gradient(145deg, #FFF7F8 0%, #FFF0F2 100%);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 118, 117, 0.28);
+  box-shadow: 0 10px 24px -6px rgba(255, 118, 117, 0.12);
+}
+
+.clay-pill {
+  background: #FFFFFF;
+  border: 1px solid rgba(108, 92, 231, 0.16);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.06);
+}
+
+.clay-button-primary {
+  background: linear-gradient(145deg, #7A69EE 0%, #6653E6 60%, #5643D2 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.42),
+    inset -2px -3px 6px rgba(30, 15, 90, 0.35),
+    0 8px 20px -3px rgba(102, 83, 230, 0.45);
+  color: #FFFFFF;
+}
+
+.clay-button-mint {
+  background: linear-gradient(145deg, #4DE3AE 0%, #38D39F 60%, #28B986 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
+    inset -2px -3px 6px rgba(10, 75, 40, 0.3),
+    0 8px 18px -3px rgba(56, 211, 159, 0.42);
+  color: #FFFFFF;
+}
+
+.clay-button-pink {
+  background: linear-gradient(145deg, #FFA0A0 0%, #FF7675 60%, #E85D5C 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
+    inset -2px -3px 6px rgba(110, 25, 45, 0.3),
+    0 8px 18px -3px rgba(255, 118, 117, 0.42);
+  color: #FFFFFF;
+}
+
+.clay-button-aqua {
+  background: linear-gradient(145deg, #8CD0FF 0%, #6EC6FF 60%, #4FAEE6 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
+    inset -2px -3px 6px rgba(15, 70, 85, 0.3),
+    0 8px 18px -3px rgba(110, 198, 255, 0.42);
+  color: #FFFFFF;
+}
+
+/* 4 Squircle Action Tiles from Photo (Transfer, Pay Bill, Shop, Saving) */
+.clay-tile-mint {
+  background: linear-gradient(145deg, #4DE3AE 0%, #38D39F 60%, #28B986 100%);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 18px -3px rgba(56, 211, 159, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
+
+.clay-tile-pink {
+  background: linear-gradient(145deg, #FFA0A0 0%, #FF7675 60%, #E85D5C 100%);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 18px -3px rgba(255, 118, 117, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
+
+.clay-tile-purple {
+  background: linear-gradient(145deg, #AD9DFF 0%, #8C77F5 60%, #745FE0 100%);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 18px -3px rgba(140, 119, 245, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
+
+.clay-tile-aqua {
+  background: linear-gradient(145deg, #8CD0FF 0%, #6EC6FF 60%, #4FAEE6 100%);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 18px -3px rgba(110, 198, 255, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
+
+.clay-input {
+  background: #FFFFFF;
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  color: #1E194B;
+  box-shadow:
+    inset 1px 2px 4px rgba(108, 92, 231, 0.05),
+    0 2px 4px rgba(108, 92, 231, 0.03);
+}
+
+/* Custom polished scrollbar in Royal Purple & Lilac Clay tones */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F3FE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C8BDF4;
+  border-radius: 9999px;
+  border: 2px solid #F5F3FE;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6653E6;
+}
+
+/* Selection: Clay Royal Purple with pure white text */
+::selection {
+  background: rgba(102, 83, 230, 0.35);
+  color: #1E194B;
+}
+
+/* Accessible focus ring: Clay Mint */
+:focus-visible {
+  outline: 2px solid #6653E6;
+  outline-offset: 2px;
+}
+
+/* Ambient glow utilities for Claymorphism Theme */
+.bg-odoo-gradient {
+  background: linear-gradient(135deg, #6C5CE7 0%, #FF8FA3 55%, #4CD97B 100%);
+}
+
+.bg-radial-odoo {
+  background: radial-gradient(circle at 50% 0%, rgba(108, 92, 231, 0.38) 0%, rgba(255, 143, 163, 0.18) 38%, transparent 72%);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   PRINT STYLESHEET — 100% CLEAN, CLUTTER-FREE CV / DOCUMENT EXPORT
+   Hides navigation, sidebar, hero banners, ribbons, buttons, and edit icons.
+   ========================================================================= */
+@media print {
+  /* Hide all app chrome, sidebars, navbars, footers, toolbars, buttons, alerts */
+  header,
+  nav,
+  aside,
+  footer,
+  button,
+  input,
+  [role="toolbar"],
+  [role="dialog"],
+  [data-no-print="true"],
+  .no-print,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset document root to clean white canvas */
+  html,
+  body {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Clean full-width printable container */
+  main,
+  #cv-printable-area,
+  .cv-printable-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* Remove all borders, shadows, and interactive outlines */
+  .clay-card,
+  .clay-card-purple,
+  [contenteditable="true"] {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+  }
+
+  /* Prevent page breaks inside critical sections */
+  tr,
+  li,
+  .break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  @page {
+    margin: 10mm 12mm 10mm 12mm;
+    size: A4 portrait;
+  }
+}
+
