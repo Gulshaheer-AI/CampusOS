@@ -1,8 +1,8 @@
-/** Hollow, non-planar light curves. All motion deforms the curves; no rigid spin. */
+/** Hollow light loops with smooth, slowly changing orbital planes. */
 type Point = { x: number; y: number; z: number };
 const TAU = Math.PI * 2;
 const SAMPLES = 180;
-// Independent, gently warped orbital planes keep the loops distributed rather
+// Independent orbital planes keep the loops distributed rather
 // than pinching every curve into a single knot. [angle, tilt, scale, x, y]
 const LOOPS = [
   [0.08, 0.28, 1, 0, 0],
@@ -31,43 +31,19 @@ export function ribbonPoints(
     sa = Math.sin(rotation);
   return Array.from({ length: SAMPLES + 1 }, (_, i) => {
     const a = (i / SAMPLES) * TAU;
-    const r =
-      radius *
-      scale *
-      (1 +
-        0.06 * Math.sin(a * 3 - time * 0.8 + phase) +
-        0.025 * Math.sin(a * 5 + time * 0.55));
+    // Project a true circle onto its moving plane: no radial harmonics or
+    // perspective bulges that turn the outline into a lumpy polygon.
+    const r = radius * scale;
     const x = Math.cos(a) * r;
     const y = Math.sin(a) * r;
-    const z =
-      y * Math.sin(bend) +
-      radius * 0.055 * Math.sin(a * 2 - time * 0.65 + phase);
+    const z = y * Math.sin(bend);
     const flatY = y * Math.cos(bend);
-    const perspective = 1 + z / (radius * 7);
     return {
-      x: (x * ca - flatY * sa) * perspective + dx * radius,
-      y: (x * sa + flatY * ca) * perspective + dy * radius,
+      x: x * ca - flatY * sa + dx * radius,
+      y: x * sa + flatY * ca + dy * radius,
       z: z / radius,
     };
   });
-}
-
-function crossing(a: Point[], b: Point[], left: boolean): Point {
-  let best = a[0],
-    distance = Infinity;
-  // A sparse search is sufficient for a soft optical caustic; no fixed knot.
-  for (let i = 0; i < a.length; i += 3) {
-    if (left && (a[i].x > 0 || a[i].y < 0)) continue;
-    if (!left && a[i].y > 0) continue;
-    for (let j = 0; j < b.length; j += 3) {
-      const d = (a[i].x - b[j].x) ** 2 + (a[i].y - b[j].y) ** 2;
-      if (d < distance) {
-        distance = d;
-        best = { x: (a[i].x + b[j].x) / 2, y: (a[i].y + b[j].y) / 2, z: 0 };
-      }
-    }
-  }
-  return best;
 }
 
 function path(
@@ -215,8 +191,8 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
         emission.stroke();
         // Close, faint companion filaments produce refractive detail without a skin.
         const wisp = points.map((p, i) => ({
-          x: p.x + Math.sin(i * 0.045 + k) * 2.1,
-          y: p.y + Math.cos(i * 0.035 - k) * 1.7,
+          x: p.x + Math.sin((i / SAMPLES) * TAU * 2 + k) * 2.1,
+          y: p.y + Math.cos((i / SAMPLES) * TAU * 2 - k) * 1.7,
           z: p.z,
         }));
         path(emission, wisp);
@@ -225,8 +201,13 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
         emission.stroke();
         for (const offset of [-1, 1]) {
           const reflection = points.map((p, i) => ({
-            x: p.x + offset * (4 + 3 * Math.sin(i * 0.025 - time * 0.12 + k)),
-            y: p.y + offset * (3 + 2 * Math.cos(i * 0.035 + time * 0.1 - k)),
+            x:
+              p.x +
+              offset *
+                (4 + 3 * Math.sin((i / SAMPLES) * TAU - time * 0.12 + k)),
+            y:
+              p.y +
+              offset * (3 + 2 * Math.cos((i / SAMPLES) * TAU + time * 0.1 - k)),
             z: p.z,
           }));
           path(emission, reflection);
@@ -234,11 +215,6 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
           emission.lineWidth = 0.6;
           emission.stroke();
         }
-        const glint = Math.floor(((k * 0.137 + time * 0.014) % 1) * SAMPLES);
-        path(emission, points, glint, Math.min(SAMPLES + 1, glint + 13));
-        emission.strokeStyle = "rgba(205,255,222,.80)";
-        emission.lineWidth = 1.05;
-        emission.stroke();
       }
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
@@ -261,23 +237,6 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
         ctx.drawImage(light, 0, 0, width, height);
       }
       ctx.restore();
-      // Tiny optical caustics follow real curves instead of filling the center.
-      const focus = crossing(curves[1], curves[4], true);
-      const upper = crossing(curves[0], curves[3], false);
-      for (const [px, py, size] of [
-        [focus.x, focus.y, 11],
-        [upper.x, upper.y, 7],
-      ]) {
-        const x = cx + px,
-          y = cy + py;
-        const shine = ctx.createRadialGradient(x, y, 0, x, y, size);
-        shine.addColorStop(0, "rgba(225,255,231,.95)");
-        shine.addColorStop(0.15, "rgba(115,255,158,.7)");
-        shine.addColorStop(1, "rgba(0,255,65,0)");
-        ctx.globalCompositeOperation = "lighter";
-        ctx.fillStyle = shine;
-        ctx.fillRect(x - size, y - size, size * 2, size * 2);
-      }
       ctx.globalCompositeOperation = "source-over";
     },
   };
