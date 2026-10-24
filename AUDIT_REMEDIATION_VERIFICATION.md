@@ -43,3 +43,11 @@ For a custom Chromium installation, set `CAMPUSOS_CHROMIUM_PATH`. The Playwright
 - The 41 new lessons are original CampusOS material covering the requested topics, not a wholesale copy of W3Schools. MySQL requires a real server; numerical/plotting examples require their runtime packages. Python's initial runtime and optional packages require network access in normal deployment.
 - IndexedDB remains browser/origin-local storage, consistent with the existing local-first architecture; it is not cross-device cloud file storage.
 - Preview, PDF and Word share facts and styling; pagination can vary with each renderer. DOCX package/XML integrity was checked, but Microsoft Word/LibreOffice visual rendering was not available here. The small built-in PDF exporter retains its existing WinAnsi font coverage; browser Print or DOCX preserves broader Unicode scripts.
+
+## Follow-up verification — 24 October 2026
+
+- Confirmed that the full remediation was already present on remote `main` at `85e8a2c97f0d103dae3d9581cfcc3239a6038832`. The earlier local working copy contained the same changes, so they were not reapplied.
+- Found and fixed two remaining AI-02 indexing defects. Oversized prose containing decimals or URLs could silently lose its prefix because sentence matching skipped unmatched text. Sentence-boundary splitting now retains every word. Raw source files now remain atomic across blank lines, consistent with fenced code, so a function body cannot be separated from its declaration by paragraph chunking. Large source files can therefore exceed the target chunk size, as fenced code already could.
+- Added regressions for both defects and confirmed that both fail before the fix.
+- Fresh checks: `npm test` **212 passed across 13 files**; `npx tsc --noEmit` passed; `npm run build` passed with the same non-fatal `unpdf` warning; `git diff --check` passed.
+- Browser checks were **not rerun** in this follow-up: no local Chromium executable was available and `npx playwright install chromium` failed because the downloaded browser archive was empty/truncated. The 15 browser passes above describe the earlier remediation run, not this follow-up. Live Gemini and recruitment-site limitations remain as documented above.

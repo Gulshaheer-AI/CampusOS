@@ -168,6 +168,18 @@ describe("Audit CV fidelity and flowing exports", () => {
   });
 });
 describe("Semantic indexing", () => {
+  it("retains decimal values, URLs and punctuation in oversized prose", () => {
+    const source = "Use version 3.14 from https://example.org/docs before proceeding with the calculation. Then check every result carefully.";
+    const indexed = chunkTextContent(source, "doc", "notes.md", 8, 0)
+      .map((chunk) => chunk.content).join(" ").replace(/\s+/g, " ");
+    expect(indexed).toBe(source);
+  });
+  it("keeps source files intact across blank lines inside functions", () => {
+    const source = "def calculate():\n    value = 3\n\n    return value * value\n\nprint(calculate())";
+    const chunks = chunkTextContent(source, "code", "example.py", 4, 0);
+    expect(chunks).toHaveLength(1);
+    expect(chunks[0].content).toBe(source);
+  });
   it("preserves code fences, indentation, formulas and every sentence", () => {
     const code =
       '```python\ndef greet(name):\n    return "hello " + name\nprint(greet("A"))\n```';

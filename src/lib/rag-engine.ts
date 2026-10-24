@@ -54,12 +54,16 @@ export function chunkTextContent(
   const overlap = Number.isFinite(chunkOverlap) ? Math.min(Math.max(0, chunkOverlap), target - 1) : 0;
   const count = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
   // Fences, display equations and paragraphs are atomic. Newlines/indentation survive.
-  const blocks = text.match(/```[^\n]*\n[\s\S]*?(?:```|$)|~~~[^\n]*\n[\s\S]*?(?:~~~|$)|\$\$[\s\S]*?\$\$|(?:(?!```|~~~|\$\$)[^\n]+(?:\n(?!\s*\n|```|~~~|\$\$)[^\n]+)*)/g) || [];
   const codeFile = /\.(py|js|ts|tsx|jsx|java|cpp|c|sql)$/i.test(fileName);
+  // Blank lines are legal inside source constructs. Treat source files like fenced
+  // code instead of guessing where functions/classes end from paragraph spacing.
+  const blocks = codeFile ? [text] : text.match(/```[^\n]*\n[\s\S]*?(?:```|$)|~~~[^\n]*\n[\s\S]*?(?:~~~|$)|\$\$[\s\S]*?\$\$|(?:(?!```|~~~|\$\$)[^\n]+(?:\n(?!\s*\n|```|~~~|\$\$)[^\n]+)*)/g) || [];
   const atoms = blocks.flatMap(block => {
     if (codeFile || /^(?:```|~~~|\$\$)/.test(block) || count(block) <= target) return [block];
     // Prefer complete sentences; only a single oversized prose sentence uses a word fallback.
-    return (block.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [block]).flatMap(sentence => {
+    // Split at boundaries rather than matching sentence bodies: unmatched prefixes
+    // in decimals, URLs and abbreviations must never disappear from the index.
+    return block.split(/(?<=[.!?])\s+/).flatMap(sentence => {
       const words = sentence.trim().split(/\s+/);
       if (words.length <= target) return [sentence.trim()];
       const pieces: string[] = [];
