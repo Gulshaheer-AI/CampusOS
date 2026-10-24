@@ -1433,3 +1433,28 @@ input[type="radio"] {
     overflow: hidden;
   }
 }
+
+.orb-playback {
+  position: absolute;
+  right: 28px;
+  bottom: 104px;
+  pointer-events: auto;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #31583d;
+  border-radius: 50%;
+  background: #071a10cc;
+  color: #b8eac5;
+  font-size: 11px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.orb-playback:hover {
+  background: #193c26;
+}
+@media (max-width: 767px) {
+  .orb-playback {
+    display: none;
+  }
+}

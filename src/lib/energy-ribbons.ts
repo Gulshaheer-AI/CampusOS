@@ -10,9 +10,9 @@ const LOOPS = [
   [-0.55, 1, 0.88, -0.15, 0.03],
   [0.8, 0.65, 0.78, 0.12, -0.02],
   [-0.22, 0.75, 0.95, -0.03, -0.1],
-  [1.2, 0.88, 0.75, -0.05, 0.12],
-  [-0.8, 0.5, 1.02, 0, 0.03],
-  [0.1, 1.18, 0.88, 0.01, -0.05],
+  [1.2, 0.88, 0.48, -0.05, 0.06],
+  [-0.6, 1.46, 0.85, -0.04, 0.02],
+  [0.65, 1.4, 0.72, 0.03, -0.05],
 ];
 const CURVES = LOOPS.length;
 export function ribbonPoints(
@@ -22,8 +22,11 @@ export function ribbonPoints(
 ): Point[] {
   const [angle, tilt, scale, dx, dy] = LOOPS[index % CURVES];
   const phase = index * 0.71;
-  const bend = tilt + 0.035 * Math.sin(time * 0.12 + phase);
-  const rotation = angle + 0.025 * Math.sin(time * 0.1 - phase);
+  const bend = tilt + 0.24 * Math.sin(time * 0.32 + phase);
+  const rotation =
+    angle +
+    0.38 * Math.sin(time * 0.28 - phase) +
+    time * 0.035 * (index % 2 ? -1 : 1);
   const ca = Math.cos(rotation),
     sa = Math.sin(rotation);
   return Array.from({ length: SAMPLES + 1 }, (_, i) => {
@@ -32,13 +35,13 @@ export function ribbonPoints(
       radius *
       scale *
       (1 +
-        0.026 * Math.sin(a * 3 - time * 0.22 + phase) +
-        0.012 * Math.sin(a * 5 + time * 0.14));
+        0.06 * Math.sin(a * 3 - time * 0.8 + phase) +
+        0.025 * Math.sin(a * 5 + time * 0.55));
     const x = Math.cos(a) * r;
     const y = Math.sin(a) * r;
     const z =
       y * Math.sin(bend) +
-      radius * 0.035 * Math.sin(a * 2 - time * 0.18 + phase);
+      radius * 0.055 * Math.sin(a * 2 - time * 0.65 + phase);
     const flatY = y * Math.cos(bend);
     const perspective = 1 + z / (radius * 7);
     return {
@@ -196,7 +199,7 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
         }
         // A transparent glass fringe, saturated edge, and a narrow reflected core.
         path(emission, points);
-        emission.globalAlpha = [0.72, 0.95, 0.7, 0.48, 0.95, 0.85, 0.25, 0.3][
+        emission.globalAlpha = [0.72, 0.95, 0.7, 0.48, 0.95, 0.65, 0.58, 0.65][
           k
         ];
         emission.strokeStyle = "rgba(17,230,76,.13)";

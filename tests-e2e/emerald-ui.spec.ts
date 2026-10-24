@@ -73,6 +73,27 @@ test("hollow energy curves flow and respect reduced motion", async ({
   // A filled luminous ball exceeds this budget; thin cores with smoky fringes do not.
   expect(luminousFraction).toBeGreaterThan(0.001);
   expect(luminousFraction).toBeLessThan(0.25);
+  const sample = () =>
+    canvas.evaluate((el) => {
+      const target = el as HTMLCanvasElement;
+      const { data } = target
+        .getContext("2d")!
+        .getImageData(0, 0, target.width, target.height);
+      const values: number[] = [];
+      for (let y = 0; y < target.height; y += 8)
+        for (let x = 0; x < target.width; x += 8) {
+          const i = (y * target.width + x) * 4;
+          values.push((data[i + 1] * data[i + 3]) / 255);
+        }
+      return values;
+    });
+  const before = await sample();
+  await page.waitForTimeout(1000); // Measure clearly visible movement over one second.
+  const after = await sample();
+  const changed =
+    after.filter((value, i) => Math.abs(value - before[i]) > 15).length /
+    after.length;
+  expect(changed).toBeGreaterThan(0.02);
   const initial = await snapshot();
   await expect.poll(snapshot).not.toBe(initial);
   await page.screenshot({ path: info.outputPath("dashboard-viewport.png") });
@@ -84,6 +105,18 @@ test("hollow energy curves flow and respect reduced motion", async ({
   const still = await snapshot();
   await page.waitForTimeout(150); // Verify actual pixels stay static while reduced motion is active.
   expect(await snapshot()).toBe(still);
+  await page
+    .getByRole("button", { name: "Play animation", exact: true })
+    .click();
+  await expect(canvas).toHaveAttribute("data-motion", "flowing");
+  await expect.poll(snapshot).not.toBe(still);
+  await page
+    .getByRole("button", { name: "Pause animation", exact: true })
+    .click();
+  await expect(canvas).toHaveAttribute("data-motion", "still");
+  await page
+    .getByRole("button", { name: "Play animation", exact: true })
+    .click();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(canvas).toHaveAttribute("data-motion", "flowing");
   await expect.poll(snapshot).not.toBe(still);
