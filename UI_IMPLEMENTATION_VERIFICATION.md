@@ -8,7 +8,7 @@ The visual reference is the approved CampusOS concept image in the conversation.
 
 - Dashboard: greeting, learning companion banner, four metric cards, continuing courses, opportunity panel, recommended challenge and CV toolkit. Existing private notes, roadmap tasks and revision diagnostics remain below the overview. Values and links come from the existing store; the mockup's illustrative streak, completion counts and internship were not fabricated in application data.
 - Shared shell and components: the same theme applies to student/faculty workspaces, Academy, tutor, quizzes, challenges, opportunities, settings, portfolio and public pages. Existing route handlers and stores are retained. Compatibility colors translate older module utility classes while excluding CV document paper.
-- Hero artwork: hollow, asymmetric Bézier loops with shared bright caustics, translucent reflected filaments, layered emerald bloom and sparse particles. The background remains visible between the curves: there is no filled sphere, skin or bitmap texture. Slow counter-propagating waves deform individual curves rather than rotating an ellipse cage. Canvas playback is capped at 30 FPS, limited to 1.5× pixel density, and paused outside the viewport or when the tab is hidden. Reduced motion renders a still frame and stops the animation loop. The decorative canvas cannot intercept clicks and has no runtime package dependency.
+- Hero artwork: hollow, independently distributed wave-deformed loops with intersection caustics, translucent reflected filaments, outward-curling vapor, layered emerald bloom and sparse particles. The background remains visible between the curves: there is no filled sphere, skin or bitmap texture. Slow counter-propagating waves deform individual curves rather than rotating an ellipse cage. Canvas playback is capped at 30 FPS, limited to 1.5× pixel density, and paused outside the viewport or when the tab is hidden. Reduced motion renders a still frame and stops the animation loop. The decorative canvas cannot intercept clicks and has no runtime package dependency.
 
 - Typography: Inter is served locally from `public/fonts`, including its license. There is no runtime dependency on a font CDN.
 - Navigation: retained every workspace route and role guard; added working workspace search with Ctrl/Cmd+K, course/challenge results, Escape handling, and a mobile drawer with focus restoration, focus containment and scroll locking. Existing persona/profile controls remain available.
@@ -21,7 +21,7 @@ The commands and results below are the final checks for this implementation. Bro
 
 | Check | Final result |
 | --- | --- |
-| `npm test` | **204 passed**, 14 files after the hollow-curve correction. |
+| `npm test` | **205 passed**, 14 files after the smoke/placement refinement. |
 | `npx tsc --noEmit` | Passed. |
 | `npm run build` | Passed; 27 routes generated. Existing non-fatal `unpdf` import.meta warning remains. |
 | `npx playwright test` — original shared-theme baseline | **75 passed**: 25 journeys at desktop, mobile and tablet sizes, before the hollow-curve correction. |
@@ -59,3 +59,9 @@ The original SVG ellipse cage was replaced after comparison with the user's enla
 Correction base: `91c4b88dd77733c5d8be6eec09f73180bbe05016`.
 
 Fresh verification: **204 unit/integration tests passed** across 14 files; **18 workspace UI browser checks passed** across desktop/mobile/tablet with the canvas replacement; after final reflection/caustic tuning, all **3 focused motion/open-space/reduced-motion checks passed** again. TypeScript, production build and diff whitespace checks passed. The existing non-fatal `unpdf` build warning is unchanged. Rendered banner screenshots were inspected at all three viewport sizes. No generated bitmap asset or additional runtime package is shipped.
+
+## Smoke, loop distribution and placement refinement
+
+Base: `4c893f0aa0ef976da7725621238318a8904cf255`. Preserved the approved green palette. Removed the fixed shared knot: independently offset, warped orbital planes now spread the curves around the hollow center. Three staggered, broken vapor trails follow each curve, curl outward and receive separate diffuse bloom passes. The artwork container grew from 40% to 52% of the banner width, bringing its center from approximately 80% to 74% of the banner width while retaining the mobile override. No workflow handlers changed.
+
+Fresh checks: **205 unit/integration tests passed**, **18 responsive workspace checks passed**, TypeScript and whitespace checks passed. Production build passed with the existing non-fatal `unpdf` warning. Browser pixel checks distinguish bright opaque cores from the deliberately broader translucent vapor, and still verify open space, changing pixels, reduced-motion stability and resumption. Geometry regressions check distributed loop origins, closed finite curves and non-rigid deformation.

@@ -22,8 +22,25 @@ describe("Hollow energy-curve geometry", () => {
   it("deforms internal distances instead of rigidly rotating an ellipse", () => {
     const start = ribbonPoints(2, 0, 130),
       next = ribbonPoints(2, 9, 130);
-    const distance = (p: typeof start) =>
-      Math.hypot(p[40].x - p[115].x, p[40].y - p[115].y);
-    expect(Math.abs(distance(next) - distance(start))).toBeGreaterThan(0.1);
+    const differences = [
+      [10, 90],
+      [40, 115],
+      [70, 150],
+    ].map(([a, b]) => {
+      const distance = (p: typeof start) =>
+        Math.hypot(p[a].x - p[b].x, p[a].y - p[b].y);
+      return Math.abs(distance(next) - distance(start));
+    });
+    expect(Math.max(...differences)).toBeGreaterThan(0.5);
+  });
+  it("distributes independent loop origins instead of forcing a shared knot", () => {
+    const origins = Array.from(
+      { length: 8 },
+      (_, i) => ribbonPoints(i, 0, 130)[0],
+    );
+    const cells = new Set(
+      origins.map((p) => `${Math.round(p.x / 10)},${Math.round(p.y / 10)}`),
+    );
+    expect(cells.size).toBeGreaterThan(4);
   });
 });

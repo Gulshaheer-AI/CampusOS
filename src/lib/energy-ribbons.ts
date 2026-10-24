@@ -2,49 +2,17 @@
 type Point = { x: number; y: number; z: number };
 const TAU = Math.PI * 2;
 const SAMPLES = 180;
-// Bezier loops follow the reference's shared caustics and asymmetric open arcs.
-// Each segment is [control 1, control 2, end], relative to the graphic radius.
-const F: [number, number] = [-0.28, 0.38];
-const B: [number, number] = [-0.03, -0.47];
-const LOOPS: number[][][] = [
-  [
-    [-0.96, 0.2, -1.02, -0.7, -0.18, -0.94],
-    [0.64, -1.12, 0.62, -0.08, ...F],
-  ],
-  [
-    [-0.84, 0.86, 0.65, 1.12, 0.9, 0.02],
-    [1.02, -0.86, 0.43, -1.07, ...B],
-    [-0.25, -0.12, -0.37, 0.12, ...F],
-  ],
-  [
-    [-1.03, 0.45, -1.04, -0.3, -0.64, -0.56],
-    [-0.1, -1.02, 0.64, -0.91, 0.79, -0.4],
-    [0.94, 0.05, 0.35, 0.45, ...F],
-  ],
-  [
-    [-0.44, 0.08, -0.15, -0.31, ...B],
-    [0.39, -0.81, 0.91, -0.03, 0.6, 0.43],
-    [0.24, 0.81, -0.6, 0.63, ...F],
-  ],
-  [
-    [-0.83, 0.43, -0.8, -0.91, -0.09, -0.79],
-    [0.56, -0.69, 0.44, 0.85, ...F],
-  ],
-  [
-    [-0.75, 0.88, 0.33, 1.12, 0.71, 0.55],
-    [1.11, -0.12, 0.55, -0.92, -0.1, -0.95],
-    [-0.83, -1.01, -1.13, 0.17, ...F],
-  ],
-  [
-    [-0.94, 0.08, -0.66, -0.49, 0.14, -0.38],
-    [0.98, -0.29, 0.88, 0.41, 0.24, 0.67],
-    [-0.23, 0.86, -0.77, 0.7, ...F],
-  ],
-  [
-    [-0.65, 0.62, -0.28, -0.12, 0.29, -0.74],
-    [0.76, -1.21, 0.91, -0.26, 0.47, 0.24],
-    [0.08, 0.71, -0.63, 0.81, ...F],
-  ],
+// Independent, gently warped orbital planes keep the loops distributed rather
+// than pinching every curve into a single knot. [angle, tilt, scale, x, y]
+const LOOPS = [
+  [0.08, 0.28, 1, 0, 0],
+  [0.55, 1.05, 0.98, -0.05, -0.04],
+  [-0.55, 1, 0.88, -0.15, 0.03],
+  [0.8, 0.65, 0.78, 0.12, -0.02],
+  [-0.22, 0.75, 0.95, -0.03, -0.1],
+  [1.2, 0.88, 0.75, -0.05, 0.12],
+  [-0.8, 0.5, 1.02, 0, 0.03],
+  [0.1, 1.18, 0.88, 0.01, -0.05],
 ];
 const CURVES = LOOPS.length;
 export function ribbonPoints(
@@ -52,45 +20,51 @@ export function ribbonPoints(
   time: number,
   radius: number,
 ): Point[] {
-  const segments = LOOPS[index % CURVES];
-  const points: Point[] = [];
-  let start = F;
-  segments.forEach((segment, part) => {
-    const [ax, ay, bx, by, ex, ey] = segment;
-    const steps = SAMPLES / segments.length;
-    for (let j = 0; j < steps; j++) {
-      const t = j / steps,
-        u = 1 - t;
-      const x =
-        u * u * u * start[0] +
-        3 * u * u * t * ax +
-        3 * u * t * t * bx +
-        t * t * t * ex;
-      const y =
-        u * u * u * start[1] +
-        3 * u * u * t * ay +
-        3 * u * t * t * by +
-        t * t * t * ey;
-      const a = ((part + t) / segments.length) * TAU;
-      const envelope = Math.sin(a * 0.5) ** 2;
-      const waveX =
-        envelope *
-        (0.04 * Math.sin(a * 2 - time * 0.24 + index) +
-          0.012 * Math.sin(a * 5 + time * 0.15));
-      const waveY =
-        envelope *
-        (0.042 * Math.sin(a * 3 - time * 0.19 - index) +
-          0.009 * Math.sin(a * 7 + time * 0.13));
-      points.push({
-        x: (x + waveX) * radius,
-        y: (y + waveY) * radius,
-        z: Math.sin(a + index) * 0.6,
-      });
-    }
-    start = [ex, ey];
+  const [angle, tilt, scale, dx, dy] = LOOPS[index % CURVES];
+  const phase = index * 0.71;
+  const bend = tilt + 0.035 * Math.sin(time * 0.12 + phase);
+  const rotation = angle + 0.025 * Math.sin(time * 0.1 - phase);
+  const ca = Math.cos(rotation),
+    sa = Math.sin(rotation);
+  return Array.from({ length: SAMPLES + 1 }, (_, i) => {
+    const a = (i / SAMPLES) * TAU;
+    const r =
+      radius *
+      scale *
+      (1 +
+        0.026 * Math.sin(a * 3 - time * 0.22 + phase) +
+        0.012 * Math.sin(a * 5 + time * 0.14));
+    const x = Math.cos(a) * r;
+    const y = Math.sin(a) * r;
+    const z =
+      y * Math.sin(bend) +
+      radius * 0.035 * Math.sin(a * 2 - time * 0.18 + phase);
+    const flatY = y * Math.cos(bend);
+    const perspective = 1 + z / (radius * 7);
+    return {
+      x: (x * ca - flatY * sa) * perspective + dx * radius,
+      y: (x * sa + flatY * ca) * perspective + dy * radius,
+      z: z / radius,
+    };
   });
-  points.push({ x: F[0] * radius, y: F[1] * radius, z: 0 });
-  return points;
+}
+
+function crossing(a: Point[], b: Point[], left: boolean): Point {
+  let best = a[0],
+    distance = Infinity;
+  // A sparse search is sufficient for a soft optical caustic; no fixed knot.
+  for (let i = 0; i < a.length; i += 3) {
+    if (left && (a[i].x > 0 || a[i].y < 0)) continue;
+    if (!left && a[i].y > 0) continue;
+    for (let j = 0; j < b.length; j += 3) {
+      const d = (a[i].x - b[j].x) ** 2 + (a[i].y - b[j].y) ** 2;
+      if (d < distance) {
+        distance = d;
+        best = { x: (a[i].x + b[j].x) / 2, y: (a[i].y + b[j].y) / 2, z: 0 };
+      }
+    }
+  }
+  return best;
 }
 
 function path(
@@ -112,7 +86,9 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext("2d", { alpha: true });
   const light = document.createElement("canvas");
   const emission = light.getContext("2d", { alpha: true });
-  if (!ctx || !emission) return null;
+  const vapor = document.createElement("canvas");
+  const mist = vapor.getContext("2d", { alpha: true });
+  if (!ctx || !emission || !mist) return null;
   let width = 0,
     height = 0,
     pixelRatio = 1;
@@ -133,7 +109,7 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
       width = w;
       height = h;
       pixelRatio = Math.min(dpr, 1.5);
-      for (const target of [canvas, light]) {
+      for (const target of [canvas, light, vapor]) {
         target.width = Math.round(w * pixelRatio);
         target.height = Math.round(h * pixelRatio);
       }
@@ -182,8 +158,42 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
       emission.globalCompositeOperation = "lighter";
       emission.lineCap = "round";
       emission.lineJoin = "round";
+      mist.setTransform(
+        pixelRatio,
+        0,
+        0,
+        pixelRatio,
+        cx * pixelRatio,
+        cy * pixelRatio,
+      );
+      mist.clearRect(-cx, -cy, width, height);
+      mist.globalCompositeOperation = "lighter";
+      mist.lineCap = "round";
+      const curves = LOOPS.map((_, k) => ribbonPoints(k, time, r));
       for (let k = 0; k < CURVES; k++) {
-        const points = ribbonPoints(k, time, r);
+        const points = curves[k];
+        // Broken, outward-curling vapor trails: diffuse emission, never a filled skin.
+        for (let layer = 0; layer < 3; layer++) {
+          const age = layer + 1;
+          const plume = points.map((p, i) => {
+            const a = (i / SAMPLES) * TAU;
+            const length = Math.hypot(p.x, p.y) || 1;
+            const drift =
+              age * 4 + 6 * Math.sin(a * 3 - time * 0.2 + k + layer);
+            const curl = 5 * Math.sin(a * 4 + time * 0.15 + layer * 1.3);
+            return {
+              x: p.x + (p.x / length) * drift - (p.y / length) * curl,
+              y: p.y + (p.y / length) * drift + (p.x / length) * curl,
+              z: p.z,
+            };
+          });
+          path(mist, plume);
+          mist.setLineDash([r * (0.22 + layer * 0.07), r * 0.25]);
+          mist.lineDashOffset = -time * 3 + k * 17 + layer * 31;
+          mist.lineWidth = 16 + age * 7;
+          mist.strokeStyle = `rgba(100,241,119,${0.05 - age * 0.008})`;
+          mist.stroke();
+        }
         // A transparent glass fringe, saturated edge, and a narrow reflected core.
         path(emission, points);
         emission.globalAlpha = [0.72, 0.95, 0.7, 0.48, 0.95, 0.85, 0.25, 0.3][
@@ -229,10 +239,19 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
       }
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
+      ctx.filter = "blur(7px)";
+      ctx.globalAlpha = 0.8;
+      ctx.drawImage(vapor, 0, 0, width, height);
+      ctx.filter = "blur(20px)";
+      ctx.globalAlpha = 0.45;
+      ctx.drawImage(vapor, 0, 0, width, height);
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
       for (const [blur, alpha] of [
         [17, 0.5],
-        [6, 0.85],
-        [0, 1],
+        [6, 0.8],
+        [0, 0.9],
       ]) {
         ctx.filter = blur ? `blur(${blur}px)` : "none";
         ctx.globalAlpha = alpha;
@@ -240,10 +259,11 @@ export function createRibbonRenderer(canvas: HTMLCanvasElement) {
       }
       ctx.restore();
       // Tiny optical caustics follow real curves instead of filling the center.
-      const crossing = ribbonPoints(1, time, r)[120];
+      const focus = crossing(curves[1], curves[4], true);
+      const upper = crossing(curves[0], curves[3], false);
       for (const [px, py, size] of [
-        [F[0] * r, F[1] * r, 11],
-        [crossing.x, crossing.y, 7],
+        [focus.x, focus.y, 11],
+        [upper.x, upper.y, 7],
       ]) {
         const x = cx + px,
           y = cy + py;

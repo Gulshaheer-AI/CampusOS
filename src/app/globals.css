@@ -297,7 +297,7 @@ input[type="radio"] {
   position: absolute;
   right: 0;
   top: 50%;
-  width: 40%;
+  width: 52%;
   height: 340px;
   transform: translateY(-50%);
   pointer-events: none;

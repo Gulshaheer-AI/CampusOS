@@ -65,10 +65,12 @@ test("hollow energy curves flow and respect reduced motion", async ({
       .getImageData(0, 0, target.width, target.height).data;
     let bright = 0;
     for (let i = 0; i < pixels.length; i += 4)
-      if (pixels[i + 1] * (pixels[i + 3] / 255) > 90) bright++;
+      if (pixels[i + 3] > 180 && pixels[i + 1] * (pixels[i + 3] / 255) > 165)
+        bright++;
     return bright / (pixels.length / 4);
   });
-  // The graphic contains bright curves and predominantly open space, never a filled ball.
+  // Count bright opaque material, excluding the deliberately broad translucent vapor.
+  // A filled luminous ball exceeds this budget; thin cores with smoky fringes do not.
   expect(luminousFraction).toBeGreaterThan(0.001);
   expect(luminousFraction).toBeLessThan(0.25);
   const initial = await snapshot();
