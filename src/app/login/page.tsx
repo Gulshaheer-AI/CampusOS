@@ -76,7 +76,10 @@ export default function LoginPage() {
         </h2>
         <p className="mt-2 text-xs sm:text-sm text-slate-600 font-medium">
           Or{" "}
-          <Link href="/signup" className="font-bold text-brand-purple hover:underline">
+          <Link
+            href="/signup"
+            className="font-bold text-brand-purple hover:underline"
+          >
             create a new student or faculty account
           </Link>
         </p>
@@ -91,7 +94,9 @@ export default function LoginPage() {
                 <Sparkles className="w-3.5 h-3.5 text-brand-purple" />
                 Instant Demo Access
               </span>
-              <Badge variant="purple" className="text-[10px]">1-Click Login</Badge>
+              <Badge variant="purple" className="text-[10px]">
+                1-Click Login
+              </Badge>
             </div>
             <p className="text-xs text-slate-600 font-medium">
               Select any role to test full platform capabilities immediately:
@@ -147,7 +152,10 @@ export default function LoginPage() {
 
           <form onSubmit={handleCustomLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-xs font-bold uppercase text-slate-700 mb-1"
+              >
                 University Email Address
               </label>
               <input
@@ -161,7 +169,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-xs font-bold uppercase text-slate-700 mb-1"
+              >
                 Password
               </label>
               <div className="relative">
@@ -179,13 +190,20 @@ export default function LoginPage() {
                   className="absolute right-3 top-3 text-slate-400 hover:text-brand-purple"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div>
-              <label htmlFor="role-select" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+              <label
+                htmlFor="role-select"
+                className="block text-xs font-bold uppercase text-slate-700 mb-1"
+              >
                 Account Role
               </label>
               <select
@@ -202,7 +220,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="clay-button-primary bg-[#6653E6] text-white font-black w-full py-2.5 rounded-xl shadow-md border-none"
+              className="clay-button-primary bg-[#153e25] text-white font-black w-full py-2.5 rounded-xl shadow-md border-none"
               isLoading={isLoading}
             >
               Sign In to CampusOS

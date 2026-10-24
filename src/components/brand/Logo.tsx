@@ -28,17 +28,22 @@ export function Logo({
   };
 
   const content = (
-    <div className={cn("inline-flex items-center gap-2.5 group select-none", className)}>
+    <div
+      className={cn(
+        "inline-flex items-center gap-2.5 group select-none",
+        className,
+      )}
+    >
       {/* Original geometric icon: intersecting nested learning nodes */}
       <div
         className={cn(
-          "relative flex items-center justify-center rounded-lg bg-gradient-to-br from-brand-violet to-brand-cyan p-0.5 shadow-glow transition-transform duration-200 group-hover:scale-105",
-          iconSizes[size]
+          "relative flex items-center justify-center rounded-lg bg-transparent p-0.5 transition-transform duration-200 group-hover:scale-105",
+          iconSizes[size],
         )}
       >
-        <div className="w-full h-full bg-midnight-950 rounded-[7px] flex items-center justify-center relative overflow-hidden">
+        <div className="w-full h-full bg-transparent rounded-[7px] flex items-center justify-center relative overflow-hidden">
           {/* Subtle inner grid lines */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-brand-violet/20 to-brand-cyan/20 opacity-80" />
+          <div className="absolute inset-0 bg-transparent" />
           {/* Geometric node glyph */}
           <svg
             viewBox="0 0 24 24"
@@ -47,7 +52,7 @@ export function Logo({
             strokeWidth="2.2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="w-4/5 h-4/5 text-white transform -rotate-12 group-hover:rotate-0 transition-transform duration-300"
+            className="w-4/5 h-4/5 text-[#a5efae] transform -rotate-12 group-hover:rotate-0 transition-transform duration-300"
           >
             <polygon points="12 2 2 7 12 12 22 7 12 2" />
             <polyline points="2 17 12 22 22 17" />
@@ -60,7 +65,7 @@ export function Logo({
         <span
           className={cn(
             "font-bold tracking-tight text-white flex items-center leading-none",
-            textSizes[size]
+            textSizes[size],
           )}
         >
           Campus<span className="text-brand-cyan">OS</span>
@@ -76,7 +81,10 @@ export function Logo({
 
   if (href) {
     return (
-      <Link href={href} className="focus:outline-none">
+      <Link
+        href={href}
+        className="rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-mint"
+      >
         {content}
       </Link>
     );

@@ -42,18 +42,20 @@ export function MondayOrb({
   const isThinking = state === "thinking";
 
   return (
-    <div className={cn("inline-flex items-center gap-2 select-none", className)}>
+    <div
+      className={cn("inline-flex items-center gap-2 select-none", className)}
+    >
       <div className="relative inline-flex items-center justify-center shrink-0">
         {/* Outer soft clay aura */}
         {animated && (
           <span
             className={cn(
               "absolute -inset-1 rounded-full opacity-60 blur-sm",
-              isThinking ? "animate-spin" : "animate-pulse"
+              isThinking ? "animate-spin" : "animate-pulse",
             )}
             style={{
               background:
-                "conic-gradient(from 180deg at 50% 50%, #FF8FA3 0deg, #6C5CE7 120deg, #4CD97B 240deg, #FF8FA3 360deg)",
+                "conic-gradient(from 180deg at 50% 50%, #a5efae 0deg, #235d36 120deg, #7fe599 240deg, #a5efae 360deg)",
             }}
           />
         )}
@@ -62,15 +64,15 @@ export function MondayOrb({
         <div
           className={cn(
             "relative rounded-full flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-105",
-            sizeClasses[size]
+            sizeClasses[size],
           )}
           style={{
             background:
               state === "mint"
                 ? "radial-gradient(circle at 30% 28%, #DCFFF5 0%, #B6E3D4 35%, #5FC2BA 70%, #1B2848 100%)"
-                : "radial-gradient(circle at 30% 28%, #FF9FF3 0%, #FF758F 28%, #6C5CE7 68%, #48DBFB 100%)",
+                : "radial-gradient(circle at 30% 28%, #c8ffd1 0%, #79d895 28%, #235d36 68%, #215a35 100%)",
             boxShadow:
-              "inset 3px 4px 7px rgba(255, 255, 255, 0.65), inset -3px -5px 8px rgba(40, 20, 90, 0.55), 0 6px 14px rgba(108, 92, 231, 0.45)",
+              "inset 3px 4px 7px rgba(255, 255, 255, 0.65), inset -3px -5px 8px rgba(5, 30, 16, 0.55), 0 6px 14px rgba(90, 220, 130, 0.2)",
           }}
           title="Monday AI — Your Personal Academic & Career Orb"
         >
@@ -89,13 +91,13 @@ export function MondayOrb({
             <span
               className={cn(
                 "rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.9)]",
-                eyeSizes[size]
+                eyeSizes[size],
               )}
             />
             <span
               className={cn(
                 "rounded-full bg-white shadow-[0_0_4px_rgba(255,255,255,0.9)]",
-                eyeSizes[size]
+                eyeSizes[size],
               )}
             />
           </div>
@@ -104,7 +106,7 @@ export function MondayOrb({
 
       {showLabel && (
         <div className="flex flex-col leading-tight">
-          <span className="text-xs font-extrabold tracking-tight bg-gradient-to-r from-[#FF8FA3] via-[#C4B5FD] to-[#4CD97B] bg-clip-text text-transparent">
+          <span className="text-xs font-extrabold tracking-tight bg-gradient-to-r from-[#a5efae] via-[#C4B5FD] to-[#7fe599] bg-clip-text text-transparent">
             Monday AI
           </span>
           <span className="text-[10px] text-slate-300 font-medium">

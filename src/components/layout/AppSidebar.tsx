@@ -1,15 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brand/Logo";
-import { MondayOrb } from "@/components/ui/MondayOrb";
-import { UserRole } from "@/types";
+import { UserProfile, UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  Bot,
+  Sparkles,
   Code2,
   FileQuestion,
   BookOpen,
@@ -20,253 +19,199 @@ import {
   Briefcase,
   Settings,
   FileText,
+  X,
+  Compass,
 } from "lucide-react";
 
-interface AppSidebarProps {
-  userRole?: UserRole;
-  isMobileOpen?: boolean;
-  onCloseMobile?: () => void;
-}
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ElementType;
-  badge?: string;
-  roleRequired?: UserRole[];
-  group: "learn" | "grow" | "general";
-}
-
-const NAV_ITEMS: NavItem[] = [
+const navigation = [
   {
     href: "/dashboard",
-    label: "Overview",
+    label: "Dashboard",
     icon: LayoutDashboard,
-    group: "general",
-  },
-  // CAMPUS LEARN
-  {
-    href: "/tutor",
-    label: "Monday AI Tutor",
-    icon: Bot,
-    badge: "Monday",
     group: "learn",
   },
+  { href: "/courses", label: "My Courses", icon: BookOpen, group: "learn" },
+  { href: "/tutor", label: "Monday AI", icon: Sparkles, group: "learn" },
+  { href: "/codeplay", label: "CodePlay", icon: Code2, group: "learn" },
+  { href: "/quizzes", label: "Quizzes", icon: FileQuestion, group: "learn" },
   {
-    href: "/codeplay",
-    label: "CodePlay IDE",
-    icon: Code2,
-    group: "learn",
-  },
-  {
-    href: "/quizzes",
-    label: "QuizForge",
-    icon: FileQuestion,
-    group: "learn",
-  },
-  {
-    href: "/courses",
-    label: "My Courses (C4)",
-    icon: BookOpen,
+    href: "/learn/explore",
+    label: "Concept Explorer",
+    icon: Compass,
     group: "learn",
   },
   {
     href: "/teacher",
     label: "Teacher Studio",
     icon: GraduationCap,
-    badge: "Faculty",
-    roleRequired: ["teacher", "admin"],
     group: "learn",
+    faculty: true,
   },
-  // CAMPUS GROW & OPPORTUNITIES
-  {
-    href: "/roadmaps",
-    label: "Skill Roadmaps",
-    icon: Map,
-    group: "grow",
-  },
-  {
-    href: "/challenges",
-    label: "Challenges",
-    icon: Trophy,
-    group: "grow",
-  },
-  {
-    href: "/portfolio",
-    label: "Portfolio",
-    icon: UserCheck,
-    group: "grow",
-  },
+  { href: "/roadmaps", label: "Skill Roadmaps", icon: Map, group: "grow" },
+  { href: "/challenges", label: "Challenges", icon: Trophy, group: "grow" },
+  { href: "/cv", label: "CV Studio", icon: FileText, group: "grow" },
   {
     href: "/opportunities",
     label: "Opportunities",
     icon: Briefcase,
-    badge: "Live",
     group: "grow",
   },
-  {
-    href: "/cv",
-    label: "CV Studio & AI Auditor",
-    icon: FileText,
-    badge: "12 ATS",
-    group: "grow",
-  },
-  // SETTINGS
-  {
-    href: "/settings",
-    label: "Settings",
-    icon: Settings,
-    group: "general",
-  },
+  { href: "/portfolio", label: "Portfolio", icon: UserCheck, group: "grow" },
 ];
 
+interface Props {
+  userRole?: UserRole;
+  currentUser?: UserProfile;
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
 export function AppSidebar({
   userRole = "student",
+  currentUser,
   isMobileOpen = false,
   onCloseMobile,
-}: AppSidebarProps) {
+}: Props) {
   const pathname = usePathname();
-
-  const filterItem = (item: NavItem) => {
-    if (!item.roleRequired) return true;
-    return item.roleRequired.includes(userRole);
-  };
-
-  const learnItems = NAV_ITEMS.filter((i) => i.group === "learn" && filterItem(i));
-  const growItems = NAV_ITEMS.filter((i) => i.group === "grow" && filterItem(i));
-  const generalItems = NAV_ITEMS.filter((i) => i.group === "general" && filterItem(i));
-
-  const renderLink = (item: NavItem) => {
-    const isActive =
-      item.href === "/dashboard"
-        ? pathname === "/dashboard"
-        : pathname.startsWith(item.href);
-    const Icon = item.icon;
-
-    return (
-      <Link
-        key={item.href}
-        href={item.href}
-        onClick={onCloseMobile}
-        className={cn(
-          "flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm transition-all group",
-          isActive
-            ? "bg-white text-[#5542D0] font-black shadow-lg shadow-purple-950/25 scale-[1.02]"
-            : "text-purple-100 hover:text-white hover:bg-white/15 font-semibold"
+  const drawer = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    drawer.current?.querySelector<HTMLElement>("button")?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCloseMobile?.();
+      if (e.key !== "Tab") return;
+      const items =
+        drawer.current?.querySelectorAll<HTMLElement>("a[href], button");
+      if (!items?.length) return;
+      const first = items[0],
+        last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", onKey);
+      previous?.focus();
+    };
+  }, [isMobileOpen, onCloseMobile]);
+  const content = (mobile = false) => (
+    <div className="workspace-sidebar flex flex-col h-full select-none">
+      <div className="h-[84px] px-7 flex items-center justify-between shrink-0">
+        <Logo href="/dashboard" size="md" />
+        {mobile && (
+          <button
+            aria-label="Close sidebar"
+            onClick={onCloseMobile}
+            className="p-2 rounded-lg hover:bg-white/10"
+          >
+            <X size={18} />
+          </button>
         )}
+      </div>
+      <nav
+        aria-label="Workspace navigation"
+        className="flex-1 overflow-y-auto px-5 pb-5"
       >
-        <div className="flex items-center gap-3">
-          {item.href === "/tutor" ? (
-            <MondayOrb size="xs" />
-          ) : (
-            <Icon
-              className={cn(
-                "w-4 h-4 transition-colors",
-                isActive ? "text-[#5542D0]" : "text-purple-200 group-hover:text-white"
-              )}
-            />
-          )}
-          <span className={cn(isActive ? "text-[#5542D0] font-black" : "text-purple-100 group-hover:text-white")}>
-            {item.label}
-          </span>
-        </div>
-        {item.badge && (
-          <span
+        <p className="text-[10px] uppercase tracking-[.16em] text-[#829d8c] px-2 mt-3 mb-5">
+          {userRole} workspace
+        </p>
+        {["learn", "grow"].map((group) => (
+          <div
+            key={group}
             className={cn(
-              "text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm",
-              isActive
-                ? "bg-purple-100 text-[#5542D0] border border-purple-200"
-                : item.badge === "Monday"
-                ? "bg-pink-400 text-white border border-pink-300/40"
-                : item.badge === "Faculty"
-                ? "bg-amber-400 text-slate-950 border border-amber-300"
-                : "bg-emerald-400 text-slate-950 border border-emerald-300"
+              "space-y-1",
+              group === "grow" && "border-t border-[#1b3224] mt-6 pt-6",
             )}
           >
-            {item.badge}
-          </span>
-        )}
-      </Link>
-    );
-  };
-
-  const sidebarContent = (
-    <div className="flex flex-col h-full bg-gradient-to-b from-[#6653E6] via-[#5A45DA] to-[#4835BA] text-white border-r border-purple-400/30 w-64 select-none shadow-2xl">
-      <div className="p-4 border-b border-white/15 bg-white/5">
-        <Logo href="/dashboard" size="sm" showTagline={true} />
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        <div>
-          <div className="px-3 pb-2 text-[11px] font-black uppercase tracking-wider text-purple-200">
-            Overview
+            {navigation
+              .filter(
+                (n) =>
+                  n.group === group && (!n.faculty || userRole !== "student"),
+              )
+              .map(({ href, label, icon: Icon }) => {
+                const active =
+                  pathname === href ||
+                  (href !== "/dashboard" && pathname.startsWith(href + "/"));
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={onCloseMobile}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex items-center gap-4 rounded-xl px-4 py-3 text-[13px] transition-colors border",
+                      active
+                        ? "bg-gradient-to-r from-[#10351f] to-[#205a32] border-[#356e47] text-[#f1fff4] font-semibold"
+                        : "border-transparent text-[#bacbbf] hover:bg-[#10271a] hover:text-white",
+                    )}
+                  >
+                    <Icon
+                      size={19}
+                      strokeWidth={1.5}
+                      className={active ? "text-[#a5efae]" : "text-[#9fb7a7]"}
+                    />
+                    {label}
+                  </Link>
+                );
+              })}
           </div>
-          <div className="space-y-1">{generalItems.slice(0, 1).map(renderLink)}</div>
-        </div>
-
-        <div>
-          <div className="px-3 pb-2 text-[11px] font-black uppercase tracking-wider text-purple-200 flex items-center justify-between">
-            <span>Campus Learn</span>
-            <span className="bg-white/20 text-white px-1.5 py-0.5 rounded font-mono text-[9px] font-black">MONDAY AI</span>
-          </div>
-          <div className="space-y-1">{learnItems.map(renderLink)}</div>
-        </div>
-
-        <div>
-          <div className="px-3 pb-2 text-[11px] font-black uppercase tracking-wider text-purple-200 flex items-center justify-between">
-            <span>Campus Grow</span>
-            <span className="bg-emerald-400/30 text-emerald-100 border border-emerald-300/40 px-1.5 py-0.5 rounded font-mono text-[9px] font-black">CAREER</span>
-          </div>
-          <div className="space-y-1">{growItems.map(renderLink)}</div>
-        </div>
-
-        <div>
-          <div className="px-3 pb-2 text-[11px] font-black uppercase tracking-wider text-purple-200">
-            Account
-          </div>
-          <div className="space-y-1">{generalItems.slice(1).map(renderLink)}</div>
-        </div>
-      </div>
-
-      {/* Monday AI & Role indicator clay card */}
-      <div className="p-3.5 m-3 rounded-2xl bg-[#4330B8]/90 border border-purple-300/30 space-y-2.5 shadow-lg backdrop-blur-md">
-        <div className="flex items-center gap-2.5">
-          <MondayOrb size="sm" />
-          <div>
-            <div className="text-xs font-bold text-white">Monday AI Engine</div>
-            <div className="text-[10px] text-emerald-300 font-semibold">Gemini 3.1 + RAG Active</div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between text-xs pt-2 border-t border-white/15">
-          <span className="text-purple-200 font-medium">Active Role</span>
-          <span
-            className={cn(
-              "capitalize font-bold px-2.5 py-0.5 rounded-full text-[10px]",
-              userRole === "student" && "bg-emerald-400 text-slate-950 border border-emerald-300",
-              userRole === "teacher" && "bg-amber-300 text-slate-950 border border-amber-200",
-              userRole === "admin" && "bg-cyan-300 text-slate-950 border border-cyan-200"
-            )}
-          >
+        ))}
+      </nav>
+      <div className="px-6 py-5 border-t border-[#1b3224] flex gap-3 items-center">
+        <span className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-[#265e37] to-[#0d2718] border border-[#31583d] flex items-center justify-center text-sm text-[#d8f6df]">
+          {currentUser?.name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .slice(0, 2) || "C"}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-medium truncate">
+            {currentUser?.name || "CampusOS"}
+          </p>
+          <p className="text-[10px] text-[#9ab3a2] mt-1 capitalize">
             {userRole}
-          </span>
+          </p>
         </div>
+        <Link
+          href="/settings"
+          aria-label="Settings"
+          onClick={onCloseMobile}
+          className="text-[#9fb7a7] p-1 rounded hover:text-white"
+        >
+          <Settings size={17} />
+        </Link>
       </div>
     </div>
   );
-
   return (
     <>
-      {/* Desktop static sidebar */}
-      <aside className="hidden lg:block fixed inset-y-0 left-0 z-40 print:hidden">{sidebarContent}</aside>
-
-      {/* Mobile backdrop & drawer */}
+      <aside className="hidden lg:block fixed inset-y-0 left-0 z-40 print:hidden">
+        {content()}
+      </aside>
       {isMobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex print:hidden">
+        <div className="lg:hidden fixed inset-0 z-50 print:hidden">
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onCloseMobile}
           />
-          <div className="relative z-50 flex w-full max-w-xs flex-1">{sidebarContent}</div>
+          <div
+            ref={drawer}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            className="relative h-full w-[250px]"
+          >
+            {content(true)}
+          </div>
         </div>
       )}
     </>

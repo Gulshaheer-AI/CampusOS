@@ -90,9 +90,11 @@ test("all five CV previews preserve source facts, export and print without chrom
 });
 test("faculty dashboard displays teaching metrics", async ({ page }) => {
   await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", {name: /Welcome back/})).toBeVisible();
-  await page.getByRole("button", {name: "Switch User Role"}).click();
-  await page.getByRole("button", {name: /Teacher \/ Faculty/}).click();
+  await expect(
+    page.getByRole("heading", { name: /Welcome back/ }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Switch User Role" }).click();
+  await page.getByRole("button", { name: /Teacher \/ Faculty/ }).click();
   await expect(
     page.getByRole("heading", { name: "Faculty Teaching Center" }),
   ).toBeVisible();
@@ -122,13 +124,11 @@ test("lecture upload over 5MB survives reload and downloads original bytes", asy
     .first()
     .click();
   const original = Buffer.alloc(6 * 1024 * 1024, 65);
-  await page
-    .locator('input[type="file"][accept*=".md"]')
-    .setInputFiles({
-      name: "large-lecture.pdf",
-      mimeType: "application/pdf",
-      buffer: original,
-    });
+  await page.locator('input[type="file"][accept*=".md"]').setInputFiles({
+    name: "large-lecture.pdf",
+    mimeType: "application/pdf",
+    buffer: original,
+  });
   await expect(
     page.getByText("large-lecture.pdf (6.0 MB)", { exact: true }),
   ).toBeVisible();
@@ -178,22 +178,34 @@ test("CodePlay executes real Python variables, loops, functions and errors", asy
       },
     );
   await page.goto("/codeplay", { waitUntil: "domcontentloaded" });
-  await page.getByText("algorithm.py", { exact: true }).first().click();
+  await expect(
+    page.getByRole("button", { name: "Run (Ctrl+Enter)", exact: true }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "algorithm.py", exact: true }).click();
   const editor = page.locator("textarea").last();
+  await expect(editor).toHaveValue(/def verify_binary_search/);
+  const consoleOutput = page.getByTestId("execution-console");
   await editor.fill(
     "def square(x):\n    return x*x\nprint(sum(square(i) for i in range(5)))",
   );
   await page
     .getByRole("button", { name: "Run (Ctrl+Enter)", exact: true })
     .click();
-  await expect(page.getByText("30", { exact: true })).toBeVisible({
+  await expect(consoleOutput.getByText("30", { exact: true })).toBeVisible({
     timeout: 60000,
   });
   await editor.fill("raise ValueError('real failure')");
   await page
     .getByRole("button", { name: "Run (Ctrl+Enter)", exact: true })
     .click();
-  await expect(page.getByText(/ValueError: real failure/)).toBeVisible({
+  await expect(consoleOutput.getByText(/ValueError: real failure/)).toBeVisible(
+    {
+      timeout: 60000,
+    },
+  );
+  await editor.fill("print(42)");
+  await page.keyboard.press("Control+Enter");
+  await expect(consoleOutput.getByText("42", { exact: true })).toBeVisible({
     timeout: 60000,
   });
 });

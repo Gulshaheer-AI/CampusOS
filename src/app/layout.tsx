@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#6653E6",
+  themeColor: "#06100b",
 };
 
 export default function RootLayout({
@@ -32,9 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-white text-slate-900 antialiased selection:bg-purple-200 selection:text-brand-purple">
-        {children}
-      </body>
+      <body className="campus-theme min-h-screen antialiased">{children}</body>
     </html>
   );
 }

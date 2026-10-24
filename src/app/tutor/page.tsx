@@ -13,7 +13,14 @@ import {
   getStudentNotes,
   getCourses,
 } from "@/lib/store";
-import { TutorConversation, TutorMessage, TutorStyle, UserProfile, StudentNote, CourseMaterial } from "@/types";
+import {
+  TutorConversation,
+  TutorMessage,
+  TutorStyle,
+  UserProfile,
+  StudentNote,
+  CourseMaterial,
+} from "@/types";
 import { checkRateLimit } from "@/lib/ai-provider";
 import {
   UploadedKnowledgeFile,
@@ -57,17 +64,25 @@ export default function TutorPage() {
   const [activeConvId, setActiveConvId] = useState<string>("");
   const [inputPrompt, setInputPrompt] = useState("");
   const [subject, setSubject] = useState("Computer Science");
-  const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
+  const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">(
+    "intermediate",
+  );
   const [style, setStyle] = useState<TutorStyle>("step_by_step");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const [isRagDrawerOpen, setIsRagDrawerOpen] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedKnowledgeFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedKnowledgeFile[]>(
+    [],
+  );
   const [studentNotes, setStudentNotes] = useState<StudentNote[]>([]);
-  const [courseMaterials, setCourseMaterials] = useState<Array<CourseMaterial & { courseTitle: string }>>([]);
+  const [courseMaterials, setCourseMaterials] = useState<
+    Array<CourseMaterial & { courseTitle: string }>
+  >([]);
   const [drawerTab, setDrawerTab] = useState<"locker" | "upload">("locker");
-  const [activeModelName, setActiveModelName] = useState("gemini-3.1-flash-lite");
+  const [activeModelName, setActiveModelName] = useState(
+    "gemini-3.1-flash-lite",
+  );
   const [fallbackTriggered, setFallbackTriggered] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -98,8 +113,7 @@ export default function TutorPage() {
             id: "msg-init-1",
             conversationId: `conv-${Date.now()}`,
             role: "assistant",
-            content:
-              `Hello ${current.name.split(" ")[0]}! I am Monday AI, your CampusOS academic tutor (powered by Gemini 3.1 Flash Lite with automatic fallback to 3.5 Flash Lite). You can upload documents, PDFs, images, CSVs, or lecture notes to ground my answers in your exact ${current.major || "course"} materials using RAG.`,
+            content: `Hello ${current.name.split(" ")[0]}! I am Monday AI, your CampusOS academic tutor (powered by Gemini 3.1 Flash Lite with automatic fallback to 3.5 Flash Lite). You can upload documents, PDFs, images, CSVs, or lecture notes to ground my answers in your exact ${current.major || "course"} materials using RAG.`,
             createdAt: new Date().toISOString(),
             suggestedFollowups: [
               "Explain how binary search avoids integer overflow",
@@ -121,7 +135,7 @@ export default function TutorPage() {
     // Load course materials from enrolled courses
     const enrolled = getCourses().filter((c) => c.isEnrolled);
     const mats = enrolled.flatMap((c) =>
-      (c.materials || []).map((m) => ({ ...m, courseTitle: c.title }))
+      (c.materials || []).map((m) => ({ ...m, courseTitle: c.title })),
     );
     setCourseMaterials(mats);
 
@@ -131,7 +145,11 @@ export default function TutorPage() {
 102,Hassan Ali,Software Engineering,88,92,Approved,Passed
 103,Zain Tariq,Data Science & Robotics,96,99,Approved,Passed`;
 
-    const csvRes = parseCsvIntoChunks(sampleCsv, "init-sample-csv", "CS101_Class_Grades.csv");
+    const csvRes = parseCsvIntoChunks(
+      sampleCsv,
+      "init-sample-csv",
+      "CS101_Class_Grades.csv",
+    );
 
     const sampleDoc: UploadedKnowledgeFile = {
       id: "init-sample-doc",
@@ -147,7 +165,7 @@ In binary search, the invariant states that if the search target exists in the a
 Midpoint computation invariant: To prevent 32-bit signed integer overflow when low + high exceeds 2^31 - 1, always evaluate mid = low + ((high - low) >> 1).
 Time complexity: Logarithmic O(log N) as the search space bisects at every step.`,
         "init-sample-doc",
-        "Lecture_04_Algorithmic_Invariants.pdf"
+        "Lecture_04_Algorithmic_Invariants.pdf",
       ),
     };
 
@@ -179,7 +197,13 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
             type: (foundNote.fileType as any) || "text",
             uploadedAt: "From Locker",
             rawText: foundNote.content,
-            chunks: chunkTextContent(foundNote.content, foundNote.id, foundNote.title, 250, 40),
+            chunks: chunkTextContent(
+              foundNote.content,
+              foundNote.id,
+              foundNote.title,
+              250,
+              40,
+            ),
           };
           initialFiles = [noteDoc, ...initialFiles];
           setIsRagDrawerOpen(true);
@@ -190,7 +214,8 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
     setUploadedFiles(initialFiles);
   }, []);
 
-  const isItemActiveInRag = (itemId: string) => uploadedFiles.some((f) => f.id === itemId);
+  const isItemActiveInRag = (itemId: string) =>
+    uploadedFiles.some((f) => f.id === itemId);
 
   const toggleNoteInRag = (note: StudentNote) => {
     if (isItemActiveInRag(note.id)) {
@@ -210,7 +235,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
     }
   };
 
-  const toggleMaterialInRag = (mat: CourseMaterial & { courseTitle: string }) => {
+  const toggleMaterialInRag = (
+    mat: CourseMaterial & { courseTitle: string },
+  ) => {
     if (isItemActiveInRag(mat.id)) {
       setUploadedFiles((prev) => prev.filter((f) => f.id !== mat.id));
     } else {
@@ -250,7 +277,8 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
     setUploadedFiles((prev) => prev.filter((f) => !lockerIds.has(f.id)));
   };
 
-  const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
+  const activeConv =
+    conversations.find((c) => c.id === activeConvId) || conversations[0];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -299,7 +327,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
     // Rate limit check
     const rateCheck = checkRateLimit(user.id);
     if (!rateCheck.allowed) {
-      setRateLimitError(`Rate limit reached: please wait ${rateCheck.retryAfterSeconds} seconds.`);
+      setRateLimitError(
+        `Rate limit reached: please wait ${rateCheck.retryAfterSeconds} seconds.`,
+      );
       setTimeout(() => setRateLimitError(null), 5000);
       return;
     }
@@ -329,22 +359,24 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
 
     saveConversation(updatedConv);
     setConversations((prev) =>
-      prev.map((c) => (c.id === updatedConv.id ? updatedConv : c))
+      prev.map((c) => (c.id === updatedConv.id ? updatedConv : c)),
     );
     setInputPrompt("");
     setIsLoading(true);
 
     try {
       // 1. RAG Retrieval across uploaded knowledge files
-      const relevantChunks = searchKnowledgeChunks(text, uploadedFiles, 4).map((r) => ({
-        fileName: r.chunk.fileName,
-        section: r.chunk.chunkIndex,
-        content: r.chunk.content,
-      }));
+      const relevantChunks = searchKnowledgeChunks(text, uploadedFiles, 4).map(
+        (r) => ({
+          fileName: r.chunk.fileName,
+          section: r.chunk.chunkIndex,
+          content: r.chunk.content,
+        }),
+      );
 
       // 2. Check if an image is in uploaded files
       const attachedImageFile = uploadedFiles.find(
-        (f) => f.type === "image" && f.imageDataUrl
+        (f) => f.type === "image" && f.imageDataUrl,
       );
       const attachedImage = attachedImageFile
         ? {
@@ -386,7 +418,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
       };
       saveConversation(finalConv);
       setConversations((prev) =>
-        prev.map((c) => (c.id === finalConv.id ? finalConv : c))
+        prev.map((c) => (c.id === finalConv.id ? finalConv : c)),
       );
     } catch (err: any) {
       console.warn("Client AI call fallback:", err);
@@ -403,7 +435,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
       };
       saveConversation(finalConv);
       setConversations((prev) =>
-        prev.map((c) => (c.id === finalConv.id ? finalConv : c))
+        prev.map((c) => (c.id === finalConv.id ? finalConv : c)),
       );
     } finally {
       setIsLoading(false);
@@ -418,6 +450,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
 
   return (
     <AppShell>
+      <h1 className="sr-only">Monday AI Tutor</h1>
       <div className="h-[calc(100vh-8.5rem)] flex flex-col lg:flex-row gap-4">
         {/* Left: Conversations Sidebar */}
         <div className="hidden lg:flex flex-col w-72 bg-white border border-purple-100 rounded-3xl p-4 shrink-0 overflow-hidden shadow-clay text-slate-900">
@@ -426,7 +459,13 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
               <MondayOrb size="sm" state={isLoading ? "thinking" : "idle"} />
               Monday AI Tutor
             </span>
-            <Button size="icon" variant="ghost" onClick={handleStartNewConv} title="New Conversation" className="hover:bg-purple-50">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleStartNewConv}
+              title="New Conversation"
+              className="hover:bg-purple-50"
+            >
               <Plus className="w-4 h-4 text-brand-purple" />
             </Button>
           </div>
@@ -445,12 +484,19 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                   "flex items-center justify-between p-2.5 rounded-2xl text-xs cursor-pointer transition-all group",
                   c.id === activeConvId
                     ? "clay-card-purple text-white font-bold shadow-md"
-                    : "text-slate-700 hover:text-brand-purple hover:bg-purple-50/80 font-medium"
+                    : "text-slate-700 hover:text-brand-purple hover:bg-purple-50/80 font-medium",
                 )}
               >
                 <div className="truncate flex-1 mr-2">
                   <div className="truncate font-bold">{c.title}</div>
-                  <div className={cn("text-[10px]", c.id === activeConvId ? "text-purple-200" : "text-slate-500")}>
+                  <div
+                    className={cn(
+                      "text-[10px]",
+                      c.id === activeConvId
+                        ? "text-purple-200"
+                        : "text-slate-500",
+                    )}
+                  >
                     {c.subject} • {c.level}
                   </div>
                 </div>
@@ -473,14 +519,23 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 <Zap className="w-3.5 h-3.5 text-brand-purple" />
                 Monday AI Engine
               </span>
-              <Badge variant="violet" className="text-[10px] px-1.5 py-0 font-bold">
+              <Badge
+                variant="violet"
+                className="text-[10px] px-1.5 py-0 font-bold"
+              >
                 Active
               </Badge>
             </div>
             <p className="text-[10px] text-slate-600 font-medium leading-tight">
-              Primary: <strong className="text-brand-purple font-bold">3.1 Flash Lite</strong>
+              Primary:{" "}
+              <strong className="text-brand-purple font-bold">
+                3.1 Flash Lite
+              </strong>
               <br />
-              RPM Fallback: <strong className="text-pink-600 font-bold">3.5 Flash Lite</strong>
+              RPM Fallback:{" "}
+              <strong className="text-pink-600 font-bold">
+                3.5 Flash Lite
+              </strong>
             </p>
             {fallbackTriggered && (
               <div className="text-[10px] text-emerald-700 font-bold pt-1">
@@ -491,7 +546,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
         </div>
 
         {/* Center: Main Chat Area */}
-        <div className="flex-1 flex flex-col bg-white border border-purple-100 rounded-3xl overflow-hidden shadow-clay">
+        <div className="min-w-0 flex-1 flex flex-col bg-white border border-purple-100 rounded-3xl overflow-hidden shadow-clay">
           {/* Controls Header: Subject, Level, Style & RAG Drawer Toggle */}
           <div className="p-3 border-b border-purple-100 bg-purple-50/60 flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-2">
@@ -504,7 +559,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 <option value="Computer Science">Computer Science</option>
                 <option value="Algorithms">Algorithms &amp; Complexity</option>
                 <option value="Databases">Databases &amp; SQL</option>
-                <option value="Artificial Intelligence">Applied AI &amp; RAG</option>
+                <option value="Artificial Intelligence">
+                  Applied AI &amp; RAG
+                </option>
                 <option value="Distributed Systems">Distributed Systems</option>
               </select>
 
@@ -527,7 +584,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 <option value="beginner">First Principles &amp; Analogy</option>
                 <option value="example_based">Concrete Worked Examples</option>
                 <option value="visual">Visual / Diagram Model</option>
-                <option value="exam_revision">Exam Revision &amp; Pitfalls</option>
+                <option value="exam_revision">
+                  Exam Revision &amp; Pitfalls
+                </option>
               </select>
             </div>
 
@@ -558,7 +617,8 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                     RAG Knowledge Base &amp; Notes Locker Grounding
                   </h3>
                   <p className="text-[11px] text-slate-600 font-medium mt-0.5">
-                    Active Grounded Files: {uploadedFiles.length} • Monday AI grounds answers strictly in these materials.
+                    Active Grounded Files: {uploadedFiles.length} • Monday AI
+                    grounds answers strictly in these materials.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -570,7 +630,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                         "px-2.5 py-1 rounded-md transition-colors",
                         drawerTab === "locker"
                           ? "bg-brand-purple text-white shadow-sm"
-                          : "text-slate-700 hover:text-brand-purple"
+                          : "text-slate-700 hover:text-brand-purple",
                       )}
                     >
                       <FolderOpen className="w-3.5 h-3.5 inline mr-1" />
@@ -583,14 +643,17 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                         "px-2.5 py-1 rounded-md transition-colors",
                         drawerTab === "upload"
                           ? "bg-brand-purple text-white shadow-sm"
-                          : "text-slate-700 hover:text-brand-purple"
+                          : "text-slate-700 hover:text-brand-purple",
                       )}
                     >
                       <Paperclip className="w-3.5 h-3.5 inline mr-1" />
                       Upload Files
                     </button>
                   </div>
-                  <Badge variant="violet" className="font-mono text-[10px] font-bold">
+                  <Badge
+                    variant="violet"
+                    className="font-mono text-[10px] font-bold"
+                  >
                     Model: {activeModelName}
                   </Badge>
                 </div>
@@ -623,7 +686,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
 
                   {studentNotes.length === 0 && courseMaterials.length === 0 ? (
                     <div className="p-4 rounded-xl border border-dashed border-purple-200 bg-white/60 text-center text-xs text-slate-500">
-                      No personal notes or course materials found. Switch to &ldquo;Upload Files&rdquo; or save notes in your Dashboard Locker.
+                      No personal notes or course materials found. Switch to
+                      &ldquo;Upload Files&rdquo; or save notes in your Dashboard
+                      Locker.
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
@@ -638,7 +703,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                               "p-2.5 rounded-xl border cursor-pointer transition-all flex items-start gap-2.5 select-none shadow-sm",
                               active
                                 ? "bg-white border-brand-purple ring-1 ring-brand-purple/30 text-slate-950"
-                                : "bg-white/70 border-purple-100 hover:border-purple-300 text-slate-700"
+                                : "bg-white/70 border-purple-100 hover:border-purple-300 text-slate-700",
                             )}
                           >
                             <input
@@ -652,7 +717,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                                 {note.title}
                               </div>
                               <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-0.5 font-mono">
-                                <span className="uppercase text-brand-purple font-bold">Locker Note</span>
+                                <span className="uppercase text-brand-purple font-bold">
+                                  Locker Note
+                                </span>
                                 <span>•</span>
                                 <span>{note.fileSize || "1.2 KB"}</span>
                               </div>
@@ -672,7 +739,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                               "p-2.5 rounded-xl border cursor-pointer transition-all flex items-start gap-2.5 select-none shadow-sm",
                               active
                                 ? "bg-white border-brand-purple ring-1 ring-brand-purple/30 text-slate-950"
-                                : "bg-white/70 border-purple-100 hover:border-purple-300 text-slate-700"
+                                : "bg-white/70 border-purple-100 hover:border-purple-300 text-slate-700",
                             )}
                           >
                             <input
@@ -686,7 +753,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                                 {mat.title}
                               </div>
                               <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-0.5 font-mono">
-                                <span className="uppercase text-emerald-700 font-bold">Course Material</span>
+                                <span className="uppercase text-emerald-700 font-bold">
+                                  Course Material
+                                </span>
                                 <span>•</span>
                                 <span>{mat.size}</span>
                               </div>
@@ -715,17 +784,27 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
           )}
 
           {/* Messages Feed */}
-          <div data-testid="chat-messages" className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          <div
+            data-testid="chat-messages"
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6"
+          >
             {activeConv?.messages.map((msg) => (
               <div
                 key={msg.id}
+                data-message-role={msg.role}
                 className={cn(
                   "flex gap-3 max-w-3xl",
-                  msg.role === "user" ? "ml-auto justify-end" : "mr-auto justify-start"
+                  msg.role === "user"
+                    ? "ml-auto justify-end"
+                    : "mr-auto justify-start",
                 )}
               >
                 {msg.role === "assistant" && (
-                  <MondayOrb size="sm" state="idle" className="shrink-0 mt-0.5" />
+                  <MondayOrb
+                    size="sm"
+                    state="idle"
+                    className="shrink-0 mt-0.5"
+                  />
                 )}
 
                 <div
@@ -733,13 +812,15 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                     "rounded-2xl p-4 text-xs sm:text-sm leading-relaxed",
                     msg.role === "user"
                       ? "clay-button-primary text-white rounded-tr-none max-w-lg shadow-md font-medium"
-                      : "bg-white border border-purple-100 text-slate-900 rounded-tl-none space-y-3 shadow-md"
+                      : "bg-white border border-purple-100 text-slate-900 rounded-tl-none space-y-3 shadow-md",
                   )}
                 >
                   {msg.role === "assistant" ? (
                     <MarkdownRenderer content={msg.content} />
                   ) : (
-                    <div className="whitespace-pre-line font-medium text-white">{msg.content}</div>
+                    <div className="whitespace-pre-line font-medium text-white">
+                      {msg.content}
+                    </div>
                   )}
 
                   {/* Code snippet block */}
@@ -752,13 +833,17 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                         </span>
                         <button
                           type="button"
-                          onClick={() => copyCode(msg.codeSnippet!.code, msg.id)}
+                          onClick={() =>
+                            copyCode(msg.codeSnippet!.code, msg.id)
+                          }
                           className="hover:text-white transition-colors flex items-center gap-1 text-[11px] text-slate-400"
                         >
                           {copiedId === msg.id ? (
                             <>
                               <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-                              <span className="text-emerald-400 font-bold">Copied</span>
+                              <span className="text-emerald-400 font-bold">
+                                Copied
+                              </span>
                             </>
                           ) : (
                             <>
@@ -792,25 +877,26 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                   )}
 
                   {/* Suggested follow-ups */}
-                  {msg.suggestedFollowups && msg.suggestedFollowups.length > 0 && (
-                    <div className="pt-2 space-y-1.5 border-t border-purple-100">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
-                        Monday AI Recommended Next Inquiries
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {msg.suggestedFollowups.map((followup, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => handleSendMessage(followup)}
-                            className="px-2.5 py-1 rounded-full border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-brand-purple text-brand-purple font-semibold text-[11px] text-left transition-colors shadow-sm"
-                          >
-                            {followup}
-                          </button>
-                        ))}
+                  {msg.suggestedFollowups &&
+                    msg.suggestedFollowups.length > 0 && (
+                      <div className="pt-2 space-y-1.5 border-t border-purple-100">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-700">
+                          Monday AI Recommended Next Inquiries
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {msg.suggestedFollowups.map((followup, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => handleSendMessage(followup)}
+                              className="px-2.5 py-1 rounded-full border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-brand-purple text-brand-purple font-semibold text-[11px] text-left transition-colors shadow-sm"
+                            >
+                              {followup}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             ))}
@@ -818,7 +904,10 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
             {isLoading && (
               <div className="flex gap-3 mr-auto items-center text-xs text-brand-purple font-bold animate-pulse">
                 <MondayOrb size="sm" state="thinking" />
-                <span>Monday AI is formulating grounded explanation via Gemini 3.1 Flash Lite...</span>
+                <span>
+                  Monday AI is formulating grounded explanation via Gemini 3.1
+                  Flash Lite...
+                </span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -826,7 +915,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
 
           {/* Quick Action Chips Bar */}
           <div className="px-4 py-2 bg-purple-50/70 border-t border-purple-100 flex items-center gap-2 overflow-x-auto text-xs">
-            <span className="text-[10px] uppercase font-bold text-slate-700 shrink-0">Prompts:</span>
+            <span className="text-[10px] uppercase font-bold text-slate-700 shrink-0">
+              Prompts:
+            </span>
             {[
               "Explain with a concrete analogy",
               "Show worked mathematical steps",

@@ -4,7 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import { MondayOrb } from "@/components/ui/MondayOrb";
 import {
   getCurrentUser,
@@ -16,7 +22,12 @@ import { downloadCvDocx } from "@/lib/docx-generator";
 import { downloadCvPdf } from "@/lib/pdf-generator";
 import { CvData, CvTemplate, CvAuditResult, UserProfile } from "@/types";
 import { RegionalCvPreview } from "@/components/cv/RegionalCvPreview";
-import { parseRawCvTextToCvData, applyAiUpgradesToCvData, extractTextFromCvFileBuffer, cleanCandidateNameFromFileName } from "@/lib/cv-parser";
+import {
+  parseRawCvTextToCvData,
+  applyAiUpgradesToCvData,
+  extractTextFromCvFileBuffer,
+  cleanCandidateNameFromFileName,
+} from "@/lib/cv-parser";
 import {
   FileText,
   Sparkles,
@@ -52,12 +63,16 @@ const CV_TEMPLATES: CvTemplate[] = [
     id: "pk-hec-pec",
     name: "Pakistan Professional",
     region: "pakistani",
-    governingBody: "Pakistan Engineering Council (PEC) & Higher Education Commission (HEC)",
+    governingBody:
+      "Pakistan Engineering Council (PEC) & Higher Education Commission (HEC)",
     standardsCode: "PK-HEC-PEC-CORP",
-    complianceRef: "P@SHA IT Exporters, Systems Ltd, Arbisoft, NetSol & Rozee ATS",
-    description: "Statutory & software house standard for Pakistani recruitment. Comprehensive division breakdown (Degree, Intermediate, Matric), software house experience, domain competencies, languages, and international relocation readiness.",
+    complianceRef:
+      "P@SHA IT Exporters, Systems Ltd, Arbisoft, NetSol & Rozee ATS",
+    description:
+      "Statutory & software house standard for Pakistani recruitment. Comprehensive division breakdown (Degree, Intermediate, Matric), software house experience, domain competencies, languages, and international relocation readiness.",
     atsScoreRate: 98,
-    atsTestedOn: "Systems Ltd, NetSol, Arbisoft, 10Pearls, Folio3, Rozee Enterprise ATS",
+    atsTestedOn:
+      "Systems Ltd, NetSol, Arbisoft, 10Pearls, Folio3, Rozee Enterprise ATS",
     verifiedOfficial: true,
     layout: "single_column",
     accentColor: "#10B981",
@@ -66,10 +81,13 @@ const CV_TEMPLATES: CvTemplate[] = [
     id: "us-harvard-ats",
     name: "United States ATS Standard (Harvard FAS OCS / Silicon Valley)",
     region: "us",
-    governingBody: "Harvard University FAS OCS & Silicon Valley Tech Hiring Consortium",
+    governingBody:
+      "Harvard University FAS OCS & Silicon Valley Tech Hiring Consortium",
     standardsCode: "US-HARVARD-ATS-XYZ",
-    complianceRef: "Ivy League Career Consortia & US EEOC Blind Hiring Compliance",
-    description: "The universal 1-page ATS format for US & multinational tech firms. High-density, pure single-column, action-driven Google XYZ formulas. Strictly excludes demographic bias fields per US hiring laws.",
+    complianceRef:
+      "Ivy League Career Consortia & US EEOC Blind Hiring Compliance",
+    description:
+      "The universal 1-page ATS format for US & multinational tech firms. High-density, pure single-column, action-driven Google XYZ formulas. Strictly excludes demographic bias fields per US hiring laws.",
     atsScoreRate: 99,
     atsTestedOn: "Workday, Taleo, Greenhouse, Lever, iCIMS, Google Careers",
     verifiedOfficial: true,
@@ -83,7 +101,8 @@ const CV_TEMPLATES: CvTemplate[] = [
     governingBody: "Silicon Valley Tech Recruitment Consortium",
     standardsCode: "TECH-CLEAN-SANS-2026",
     complianceRef: "Modern Digital Agencies, Seed-to-Scale Startups, Big Tech",
-    description: "Contemporary clean sans-serif layout favored by modern tech companies and digital agencies. Features categorized competency badges, prominent portfolio/GitHub links, and measurable client results.",
+    description:
+      "Contemporary clean sans-serif layout favored by modern tech companies and digital agencies. Features categorized competency badges, prominent portfolio/GitHub links, and measurable client results.",
     atsScoreRate: 97,
     atsTestedOn: "Greenhouse, Lever, Ashby, BambooHR, AngelList/Wellfound",
     verifiedOfficial: true,
@@ -94,10 +113,13 @@ const CV_TEMPLATES: CvTemplate[] = [
     id: "eu-europass",
     name: "European Union Official Standard (Europass CEDEFOP & CEFR)",
     region: "european",
-    governingBody: "European Parliament & Council Decision 2241/2004/EC | CEDEFOP",
+    governingBody:
+      "European Parliament & Council Decision 2241/2004/EC | CEDEFOP",
     standardsCode: "EU-CEDEFOP-CEFR-2026",
-    complianceRef: "Directive 2005/36/EC & European Qualifications Framework (EQF Level 6)",
-    description: "Official European Commission curriculum vitae format with CEFR Language Passport grid (A1-C2), German & English proficiency levels, ECTS qualifications, European driving licence, and EU Right to Work classification.",
+    complianceRef:
+      "Directive 2005/36/EC & European Qualifications Framework (EQF Level 6)",
+    description:
+      "Official European Commission curriculum vitae format with CEFR Language Passport grid (A1-C2), German & English proficiency levels, ECTS qualifications, European driving licence, and EU Right to Work classification.",
     atsScoreRate: 96,
     atsTestedOn: "Workday EU, Taleo Europe, StepStone, Monster EU, Personio",
     verifiedOfficial: true,
@@ -111,7 +133,8 @@ const CV_TEMPLATES: CvTemplate[] = [
     governingBody: "International Career Development & Corporate Standards",
     standardsCode: "CORP-MULTI-TRACK-2026",
     complianceRef: "Enterprise IT Consultancies & Cross-Border Delivery Houses",
-    description: "Optimized for multidisciplinary specialists combining Web Development, SEO, Data Analytics, and Workflow Automation. Side-by-side proficiency grid and verified client deliverables.",
+    description:
+      "Optimized for multidisciplinary specialists combining Web Development, SEO, Data Analytics, and Workflow Automation. Side-by-side proficiency grid and verified client deliverables.",
     atsScoreRate: 97,
     atsTestedOn: "Enterprise ATS, LinkedIn Recruiter, SAP SuccessFactors",
     verifiedOfficial: true,
@@ -122,7 +145,8 @@ const CV_TEMPLATES: CvTemplate[] = [
 
 export default function CvStudioPage() {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("pk-hec-pec");
+  const [selectedTemplateId, setSelectedTemplateId] =
+    useState<string>("pk-hec-pec");
   const [activeTab, setActiveTab] = useState<"studio" | "auditor">("studio");
   const [showQuickDetails, setShowQuickDetails] = useState<boolean>(true);
 
@@ -147,8 +171,12 @@ export default function CvStudioPage() {
 
   // AI Auditor state
   const [cvInputText, setCvInputText] = useState("");
-  const [auditTargetRole, setAuditTargetRole] = useState("Software Engineer (Full-Stack / Systems)");
-  const [auditRegion, setAuditRegion] = useState<"european" | "pakistani" | "us">("pakistani");
+  const [auditTargetRole, setAuditTargetRole] = useState(
+    "Software Engineer (Full-Stack / Systems)",
+  );
+  const [auditRegion, setAuditRegion] = useState<
+    "european" | "pakistani" | "us"
+  >("pakistani");
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditResult, setAuditResult] = useState<CvAuditResult | null>(null);
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
@@ -178,13 +206,16 @@ export default function CvStudioPage() {
     }
   };
 
-  const activeTemplate = CV_TEMPLATES.find((t) => t.id === selectedTemplateId) || CV_TEMPLATES[0];
+  const activeTemplate =
+    CV_TEMPLATES.find((t) => t.id === selectedTemplateId) || CV_TEMPLATES[0];
 
   const handleImportPortfolio = () => {
     if (!user) return;
     const portfolioProjects = getPortfolioProjects(user.id);
     if (portfolioProjects.length === 0) {
-      alert("No portfolio projects found. Complete a challenge or add a project in Portfolio first.");
+      alert(
+        "No portfolio projects found. Complete a challenge or add a project in Portfolio first.",
+      );
       return;
     }
 
@@ -236,7 +267,9 @@ export default function CvStudioPage() {
   const handleApplyAiFixes = () => {
     if (!auditResult) return;
 
-    const finalCv = auditResult.enhancedCvData || applyAiUpgradesToCvData(cvData, auditResult);
+    const finalCv =
+      auditResult.enhancedCvData ||
+      applyAiUpgradesToCvData(cvData, auditResult);
 
     setCvData(finalCv);
     if (user) {
@@ -247,7 +280,9 @@ export default function CvStudioPage() {
 
     // Smoothly scroll to the live document preview below so user immediately sees their upgraded CV
     setTimeout(() => {
-      document.getElementById("live-cv-preview-section")?.scrollIntoView({ behavior: "smooth" });
+      document
+        .getElementById("live-cv-preview-section")
+        ?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 
@@ -266,7 +301,10 @@ export default function CvStudioPage() {
       const bytes = new Uint8Array(buffer);
       const chunkSize = 8192;
       for (let i = 0; i < bytes.length; i += chunkSize) {
-        binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunkSize)));
+        binary += String.fromCharCode.apply(
+          null,
+          Array.from(bytes.subarray(i, i + chunkSize)),
+        );
       }
       const fileBase64 = btoa(binary);
 
@@ -287,7 +325,9 @@ export default function CvStudioPage() {
         const data = await res.json();
         if (data && data.cvData) {
           setCvData(data.cvData);
-          setCvInputText(data.extractedText || JSON.stringify(data.cvData, null, 2));
+          setCvInputText(
+            data.extractedText || JSON.stringify(data.cvData, null, 2),
+          );
           if (data.cvData.title) {
             setAuditTargetRole(data.cvData.title);
           }
@@ -299,26 +339,36 @@ export default function CvStudioPage() {
           }
 
           setUploadFeedback(
-            `📄 RAG Grounded: Document '${file.name}' parsed successfully! Candidate: "${data.cvData.fullName}" (${data.cvData.title}) • ${data.cvData.experience?.length || 0} experiences • ${data.cvData.skills?.length || 0} skill categories • ${data.cvData.languages?.length || 0} languages.`
+            `📄 RAG Grounded: Document '${file.name}' parsed successfully! Candidate: "${data.cvData.fullName}" (${data.cvData.title}) • ${data.cvData.experience?.length || 0} experiences • ${data.cvData.skills?.length || 0} skill categories • ${data.cvData.languages?.length || 0} languages.`,
           );
           setIsAuditing(false);
           return;
         }
       } catch (serverErr) {
-        console.warn("Server CV extraction failed, falling back to client parser:", serverErr);
+        console.warn(
+          "Server CV extraction failed, falling back to client parser:",
+          serverErr,
+        );
       }
 
       // Fallback: in-browser extraction
-      const extractedText = await extractTextFromCvFileBuffer(buffer, file.name);
-      if (!extractedText.trim()) throw new Error("No readable text found. Use a text PDF/DOCX or configure Gemini for image extraction.");
+      const extractedText = await extractTextFromCvFileBuffer(
+        buffer,
+        file.name,
+      );
+      if (!extractedText.trim())
+        throw new Error(
+          "No readable text found. Use a text PDF/DOCX or configure Gemini for image extraction.",
+        );
       const nameFromFile = cleanCandidateNameFromFileName(file.name);
       const parsed = parseRawCvTextToCvData(
         extractedText || file.name,
         {
-          fullName: nameFromFile !== "Candidate Legal Name" ? nameFromFile : undefined,
+          fullName:
+            nameFromFile !== "Candidate Legal Name" ? nameFromFile : undefined,
           email: undefined,
         },
-        file.name
+        file.name,
       );
 
       setCvData(parsed);
@@ -331,7 +381,7 @@ export default function CvStudioPage() {
       }
 
       setUploadFeedback(
-        `📄 RAG Grounded: Document '${file.name}' parsed successfully! Candidate: "${parsed.fullName}" (${parsed.title}) • ${parsed.experience.length} experiences • ${parsed.skills.length} categories.`
+        `📄 RAG Grounded: Document '${file.name}' parsed successfully! Candidate: "${parsed.fullName}" (${parsed.title}) • ${parsed.experience.length} experiences • ${parsed.skills.length} categories.`,
       );
 
       const res = await fetch("/api/ai/cv", {
@@ -354,7 +404,9 @@ export default function CvStudioPage() {
       }
     } catch (err) {
       console.warn("Failed to parse file:", err);
-      setUploadFeedback("⚠️ Could not extract text from file. Please ensure it is a valid PDF, DOCX, or text file.");
+      setUploadFeedback(
+        "⚠️ Could not extract text from file. Please ensure it is a valid PDF, DOCX, or text file.",
+      );
     } finally {
       setIsAuditing(false);
     }
@@ -375,13 +427,17 @@ export default function CvStudioPage() {
                 <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full">
                   3 Accredited Regional Standards
                 </span>
-                <span className="text-xs text-purple-100 font-semibold">95%+ Verified ATS Acceptance</span>
+                <span className="text-xs text-purple-100 font-semibold">
+                  95%+ Verified ATS Acceptance
+                </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Regional CV Studio &amp; AI Auditor
               </h1>
               <p className="mt-1 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-                Build accredited resumes tailored to European, Pakistani, and US hiring regulations. Edit every line directly like Microsoft Word, audit with Monday AI, and export to Word (.docx) or PDF.
+                Build accredited resumes tailored to European, Pakistani, and US
+                hiring regulations. Edit every line directly like Microsoft
+                Word, audit with Monday AI, and export to Word (.docx) or PDF.
               </p>
             </div>
 
@@ -392,12 +448,23 @@ export default function CvStudioPage() {
                 className={cn(
                   "px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
                   activeTab === "studio"
-                    ? "bg-white !text-purple-950 shadow-lg ring-2 ring-white/90 scale-105"
-                    : "bg-white/15 text-white hover:bg-white/25 border border-white/30"
+                    ? "bg-white text-brand-mint shadow-sm ring-1 ring-brand-mint/40"
+                    : "bg-white/15 text-white hover:bg-white/25 border border-white/30",
                 )}
               >
-                <FileText className={cn("w-4 h-4", activeTab === "studio" ? "!text-purple-950" : "text-white")} />
-                <span className={activeTab === "studio" ? "!text-purple-950 font-black" : "text-white font-bold"}>
+                <FileText
+                  className={cn(
+                    "w-4 h-4",
+                    activeTab === "studio" ? "text-brand-mint" : "text-white",
+                  )}
+                />
+                <span
+                  className={
+                    activeTab === "studio"
+                      ? "text-brand-mint font-black"
+                      : "text-white font-bold"
+                  }
+                >
                   CV Studio (MS Word Editor)
                 </span>
               </button>
@@ -407,12 +474,25 @@ export default function CvStudioPage() {
                 className={cn(
                   "px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
                   activeTab === "auditor"
-                    ? "bg-white !text-purple-950 shadow-lg ring-2 ring-white/90 scale-105"
-                    : "bg-white/15 text-white hover:bg-white/25 border border-white/30"
+                    ? "bg-white text-brand-mint shadow-sm ring-1 ring-brand-mint/40"
+                    : "bg-white/15 text-white hover:bg-white/25 border border-white/30",
                 )}
               >
-                <Sparkles className={cn("w-4 h-4", activeTab === "auditor" ? "text-amber-500" : "text-amber-300")} />
-                <span className={activeTab === "auditor" ? "!text-purple-950 font-black" : "text-white font-bold"}>
+                <Sparkles
+                  className={cn(
+                    "w-4 h-4",
+                    activeTab === "auditor"
+                      ? "text-amber-500"
+                      : "text-amber-300",
+                  )}
+                />
+                <span
+                  className={
+                    activeTab === "auditor"
+                      ? "text-brand-mint font-black"
+                      : "text-white font-bold"
+                  }
+                >
                   AI CV Auditor &amp; RAG Enhancer
                 </span>
               </button>
@@ -442,7 +522,9 @@ export default function CvStudioPage() {
                     Select Authentic Market Standard (5 Proven Standards)
                   </h3>
                   <p className="text-xs text-slate-600 font-medium">
-                    Strict, 100% recruiter-accepted layouts: Pakistan Professional, Harvard 1-Page ATS, Silicon Valley Clean Sans, European Europass CEFR, and Executive Multi-Track.
+                    Strict, 100% recruiter-accepted layouts: Pakistan
+                    Professional, Harvard 1-Page ATS, Silicon Valley Clean Sans,
+                    European Europass CEFR, and Executive Multi-Track.
                   </p>
                 </div>
 
@@ -456,17 +538,33 @@ export default function CvStudioPage() {
                     <UploadCloud className="w-3.5 h-3.5 mr-1 text-brand-purple" />
                     Upload Existing CV
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleImportPortfolio} className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImportPortfolio}
+                    className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
+                  >
                     <Zap className="w-3.5 h-3.5 mr-1 text-brand-purple" />
                     Import Portfolio Projects
                   </Button>
-                  <Button variant="primary" size="sm" onClick={handleSaveCv} className="font-bold shadow-md">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleSaveCv}
+                    className="font-bold shadow-md"
+                  >
                     {cvSavedNotice ? "Saved!" : "Save CV"}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => downloadCvPdf(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                    onClick={() =>
+                      downloadCvPdf(
+                        `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`,
+                        cvData,
+                        activeTemplate.id || activeTemplate.name,
+                      )
+                    }
                     className="font-bold border-rose-300 text-rose-700 bg-rose-50/50 hover:bg-rose-100 shadow-sm"
                   >
                     <Download className="w-3.5 h-3.5 mr-1 text-rose-600" />
@@ -475,13 +573,24 @@ export default function CvStudioPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => downloadCvDocx(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                    onClick={() =>
+                      downloadCvDocx(
+                        `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`,
+                        cvData,
+                        activeTemplate.id || activeTemplate.name,
+                      )
+                    }
                     className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50 shadow-sm"
                   >
                     <Download className="w-3.5 h-3.5 mr-1 text-emerald-600" />
                     Download Word (.docx)
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handlePrintCv} className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePrintCv}
+                    className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
+                  >
                     <Printer className="w-3.5 h-3.5 mr-1 text-slate-600" />
                     Print / Save as PDF
                   </Button>
@@ -500,13 +609,18 @@ export default function CvStudioPage() {
                       aria-label={`Select ${tmpl.name}`}
                       aria-pressed={isSelected}
                       data-template-id={tmpl.id}
-                      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedTemplateId(tmpl.id); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setSelectedTemplateId(tmpl.id);
+                        }
+                      }}
                       onClick={() => setSelectedTemplateId(tmpl.id)}
                       className={cn(
                         "p-4 rounded-2xl border text-left cursor-pointer transition-all space-y-2 flex flex-col justify-between",
                         isSelected
                           ? "bg-purple-50/80 border-brand-purple shadow-md ring-2 ring-brand-purple/20"
-                          : "bg-white border-purple-100 hover:border-purple-300 hover:shadow-sm"
+                          : "bg-white border-purple-100 hover:border-purple-300 hover:shadow-sm",
                       )}
                     >
                       <div>
@@ -518,7 +632,9 @@ export default function CvStudioPage() {
                             {tmpl.atsScoreRate}% ATS
                           </span>
                         </div>
-                        <h4 className="text-sm font-extrabold text-slate-950 leading-snug">{tmpl.name}</h4>
+                        <h4 className="text-sm font-extrabold text-slate-950 leading-snug">
+                          {tmpl.name}
+                        </h4>
                         <p className="text-[11px] text-slate-600 mt-1 leading-relaxed font-medium">
                           {tmpl.description}
                         </p>
@@ -547,90 +663,128 @@ export default function CvStudioPage() {
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-brand-purple" />
                   <span className="text-xs font-bold text-slate-900">
-                    Quick Profile Details (Syncs with MS Word Live Preview below)
+                    Quick Profile Details (Syncs with MS Word Live Preview
+                    below)
                   </span>
                   <span className="text-[10px] text-slate-500 font-medium">
                     (Father&apos;s Name, City, CNIC, Phone, Email)
                   </span>
                 </div>
-                <button type="button" className="text-slate-500 hover:text-slate-900">
-                  {showQuickDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                <button
+                  type="button"
+                  className="text-slate-500 hover:text-slate-900"
+                >
+                  {showQuickDetails ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
                 </button>
               </div>
 
               {showQuickDetails && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-purple-100 text-xs">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Full Legal Name</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      Full Legal Name
+                    </label>
                     <input
                       type="text"
                       value={cvData.fullName}
-                      onChange={(e) => setCvData({ ...cvData, fullName: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, fullName: e.target.value })
+                      }
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-bold focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Father&apos;s Name</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      Father&apos;s Name
+                    </label>
                     <input
                       type="text"
                       value={cvData.fatherName || ""}
-                      onChange={(e) => setCvData({ ...cvData, fatherName: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, fatherName: e.target.value })
+                      }
                       placeholder="e.g. Muhammad Tariq Khan"
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">City / Location</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      City / Location
+                    </label>
                     <input
                       type="text"
                       value={cvData.location || ""}
-                      onChange={(e) => setCvData({ ...cvData, location: e.target.value, domicile: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({
+                          ...cvData,
+                          location: e.target.value,
+                          domicile: e.target.value,
+                        })
+                      }
                       placeholder="e.g. Lahore / Islamabad"
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">CNIC / National ID</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      CNIC / National ID
+                    </label>
                     <input
                       type="text"
                       value={cvData.cnic || ""}
-                      onChange={(e) => setCvData({ ...cvData, cnic: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, cnic: e.target.value })
+                      }
                       placeholder="e.g. 35202-8419201-9"
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
-
-
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Target Professional Role</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      Target Professional Role
+                    </label>
                     <input
                       type="text"
                       value={cvData.title}
-                      onChange={(e) => setCvData({ ...cvData, title: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, title: e.target.value })
+                      }
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Email</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      Email
+                    </label>
                     <input
                       type="email"
                       value={cvData.email}
-                      onChange={(e) => setCvData({ ...cvData, email: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, email: e.target.value })
+                      }
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Phone</label>
+                    <label className="block text-slate-700 font-bold mb-1">
+                      Phone
+                    </label>
                     <input
                       type="text"
                       value={cvData.phone}
-                      onChange={(e) => setCvData({ ...cvData, phone: e.target.value })}
+                      onChange={(e) =>
+                        setCvData({ ...cvData, phone: e.target.value })
+                      }
                       className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                     />
                   </div>
@@ -657,11 +811,16 @@ export default function CvStudioPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
-                    <MondayOrb size="sm" state={isAuditing ? "thinking" : "idle"} />
+                    <MondayOrb
+                      size="sm"
+                      state={isAuditing ? "thinking" : "idle"}
+                    />
                     Monday AI CV Auditor &amp; RAG ATS Enhancer
                   </h3>
                   <p className="text-xs text-slate-600 font-medium">
-                    Upload your existing resume file (PDF, DOCX, TXT, JSON). Monday AI parses candidate identity and provides ATS scoring &amp; action-verb fixes.
+                    Upload your existing resume file (PDF, DOCX, TXT, JSON).
+                    Monday AI parses candidate identity and provides ATS scoring
+                    &amp; action-verb fixes.
                   </p>
                 </div>
 
@@ -692,14 +851,18 @@ export default function CvStudioPage() {
               {uploadFeedback && (
                 <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-start gap-2.5 text-xs text-emerald-950">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <div className="leading-relaxed font-medium">{uploadFeedback}</div>
+                  <div className="leading-relaxed font-medium">
+                    {uploadFeedback}
+                  </div>
                 </div>
               )}
 
               {/* Target Role & Region Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-purple-100 pt-4 text-xs">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Target Role / Specialization</label>
+                  <label className="block text-slate-700 font-bold mb-1">
+                    Target Role / Specialization
+                  </label>
                   <input
                     type="text"
                     value={auditTargetRole}
@@ -709,21 +872,31 @@ export default function CvStudioPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Target Hiring Region Standards</label>
+                  <label className="block text-slate-700 font-bold mb-1">
+                    Target Hiring Region Standards
+                  </label>
                   <select
                     value={auditRegion}
                     onChange={(e) => {
-                      const reg = e.target.value as "european" | "pakistani" | "us";
+                      const reg = e.target.value as
+                        "european" | "pakistani" | "us";
                       setAuditRegion(reg);
-                      if (reg === "pakistani") setSelectedTemplateId("pk-hec-pec");
-                      else if (reg === "european") setSelectedTemplateId("eu-europass");
+                      if (reg === "pakistani")
+                        setSelectedTemplateId("pk-hec-pec");
+                      else if (reg === "european")
+                        setSelectedTemplateId("eu-europass");
                       else setSelectedTemplateId("us-harvard-ats");
                     }}
                     className="w-full bg-slate-50 border border-purple-200 rounded-xl px-3 py-2 text-slate-950 font-bold focus:outline-none focus:border-brand-purple"
                   >
                     <option value="pakistani">Pakistan Professional</option>
-                    <option value="european">European Union (Europass &amp; CEFR Language Standards)</option>
-                    <option value="us">United States (Harvard FAS &amp; Silicon Valley ATS Standards)</option>
+                    <option value="european">
+                      European Union (Europass &amp; CEFR Language Standards)
+                    </option>
+                    <option value="us">
+                      United States (Harvard FAS &amp; Silicon Valley ATS
+                      Standards)
+                    </option>
                   </select>
                 </div>
               </div>
@@ -731,7 +904,8 @@ export default function CvStudioPage() {
               {/* Input text / preview */}
               <div>
                 <label className="block text-slate-700 font-bold mb-1 text-xs">
-                  Source CV Content (grounded from uploaded file or current editor)
+                  Source CV Content (grounded from uploaded file or current
+                  editor)
                 </label>
                 <textarea
                   rows={4}
@@ -750,8 +924,12 @@ export default function CvStudioPage() {
                 <div className="clay-card p-6 bg-white border-2 border-purple-200 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                   <div className="flex items-center gap-5">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#6653E6] to-[#9B88F7] flex flex-col items-center justify-center text-white shadow-md shrink-0">
-                      <span className="text-2xl font-black">{auditResult.atsScore}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-200">ATS Score</span>
+                      <span className="text-2xl font-black">
+                        {auditResult.atsScore}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-200">
+                        ATS Score
+                      </span>
                     </div>
 
                     <div>
@@ -763,9 +941,12 @@ export default function CvStudioPage() {
                           Target: {auditRegion.toUpperCase()}
                         </span>
                       </div>
-                      <h3 className="text-lg font-black text-slate-950">Monday AI Assessment Completed</h3>
+                      <h3 className="text-lg font-black text-slate-950">
+                        Monday AI Assessment Completed
+                      </h3>
                       <p className="text-xs text-slate-600 font-medium">
-                        Benchmarked against enterprise ATS algorithms (Workday, Taleo, Greenhouse, Rozee).
+                        Benchmarked against enterprise ATS algorithms (Workday,
+                        Taleo, Greenhouse, Rozee).
                       </p>
                     </div>
                   </div>
@@ -783,7 +964,13 @@ export default function CvStudioPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => downloadCvPdf(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_Enhanced_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                      onClick={() =>
+                        downloadCvPdf(
+                          `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_Enhanced_CV`,
+                          cvData,
+                          activeTemplate.id || activeTemplate.name,
+                        )
+                      }
                       className="font-bold border-rose-300 text-rose-700 bg-rose-50/50 hover:bg-rose-100"
                     >
                       <Download className="w-3.5 h-3.5 mr-1 text-rose-600" />
@@ -792,7 +979,13 @@ export default function CvStudioPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => downloadCvDocx(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_Enhanced_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                      onClick={() =>
+                        downloadCvDocx(
+                          `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_Enhanced_CV`,
+                          cvData,
+                          activeTemplate.id || activeTemplate.name,
+                        )
+                      }
                       className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
                     >
                       <Download className="w-3.5 h-3.5 mr-1 text-emerald-600" />
@@ -808,12 +1001,16 @@ export default function CvStudioPage() {
                     <CardHeader className="bg-emerald-50/60 pb-3 border-b border-emerald-100">
                       <CardTitle className="text-sm font-extrabold text-emerald-950 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                        Verified ATS Strengths ({auditResult.strengths?.length || 0})
+                        Verified ATS Strengths (
+                        {auditResult.strengths?.length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-3 space-y-2 text-xs">
                       {auditResult.strengths?.map((s, i) => (
-                        <div key={i} className="flex items-start gap-2 text-slate-700 leading-relaxed">
+                        <div
+                          key={i}
+                          className="flex items-start gap-2 text-slate-700 leading-relaxed"
+                        >
                           <span className="text-emerald-600 font-bold">•</span>
                           <span>{s}</span>
                         </div>
@@ -826,17 +1023,27 @@ export default function CvStudioPage() {
                     <CardHeader className="bg-purple-50/60 pb-3 border-b border-purple-100">
                       <CardTitle className="text-sm font-extrabold text-brand-purple flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-brand-purple" />
-                        Action Verb Upgrades ({auditResult.actionVerbSuggestions?.length || 0})
+                        Action Verb Upgrades (
+                        {auditResult.actionVerbSuggestions?.length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-3 space-y-2 text-xs">
                       {auditResult.actionVerbSuggestions?.map((item, i) => (
-                        <div key={i} className="p-2 rounded-xl bg-purple-50/50 border border-purple-100 flex items-center justify-between text-xs">
+                        <div
+                          key={i}
+                          className="p-2 rounded-xl bg-purple-50/50 border border-purple-100 flex items-center justify-between text-xs"
+                        >
                           <div>
-                            <span className="line-through text-rose-500 font-medium mr-2">{item.weak}</span>
-                            <span className="text-brand-purple font-extrabold">→ {item.replacement}</span>
+                            <span className="line-through text-rose-500 font-medium mr-2">
+                              {item.weak}
+                            </span>
+                            <span className="text-brand-purple font-extrabold">
+                              → {item.replacement}
+                            </span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-medium italic">{item.reason}</span>
+                          <span className="text-[10px] text-slate-500 font-medium italic">
+                            {item.reason}
+                          </span>
                         </div>
                       ))}
                     </CardContent>
@@ -855,7 +1062,9 @@ export default function CvStudioPage() {
                           Monday AI Fixes Successfully Applied!
                         </strong>
                         <span>
-                          Your upgraded, ATS-optimized CV is rendered below. Every line is directly editable like Microsoft Word. You can export to DOCX or download as PDF.
+                          Your upgraded, ATS-optimized CV is rendered below.
+                          Every line is directly editable like Microsoft Word.
+                          You can export to DOCX or download as PDF.
                         </span>
                       </div>
                     </div>
@@ -863,7 +1072,13 @@ export default function CvStudioPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => downloadCvPdf(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_AI_Fixed_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                        onClick={() =>
+                          downloadCvPdf(
+                            `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_AI_Fixed_CV`,
+                            cvData,
+                            activeTemplate.id || activeTemplate.name,
+                          )
+                        }
                         className="font-bold border-rose-300 bg-white text-rose-800 hover:bg-rose-50"
                       >
                         <Download className="w-3.5 h-3.5 mr-1 text-rose-600" />
@@ -872,7 +1087,13 @@ export default function CvStudioPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => downloadCvDocx(`${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_AI_Fixed_CV`, cvData, activeTemplate.id || activeTemplate.name)}
+                        onClick={() =>
+                          downloadCvDocx(
+                            `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_AI_Fixed_CV`,
+                            cvData,
+                            activeTemplate.id || activeTemplate.name,
+                          )
+                        }
                         className="font-bold border-emerald-300 bg-white text-emerald-900 hover:bg-emerald-100"
                       >
                         <Download className="w-3.5 h-3.5 mr-1 text-emerald-700" />
@@ -894,7 +1115,10 @@ export default function CvStudioPage() {
             )}
 
             {/* LIVE CANDIDATE CV PREVIEW & MICROSOFT WORD DIRECT-EDIT MODE (Always visible!) */}
-            <div id="live-cv-preview-section" className="border-t-2 border-dashed border-purple-200 pt-6 space-y-4 print:border-none print:pt-0">
+            <div
+              id="live-cv-preview-section"
+              className="border-t-2 border-dashed border-purple-200 pt-6 space-y-4 print:border-none print:pt-0"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden no-print">
                 <div>
                   <h4 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
@@ -902,12 +1126,15 @@ export default function CvStudioPage() {
                     Live CV Document &amp; Microsoft Word Editor
                   </h4>
                   <p className="text-xs text-slate-600 font-medium">
-                    Showing candidate data from uploaded file. Click anywhere on the sheet below to edit like Microsoft Word.
+                    Showing candidate data from uploaded file. Click anywhere on
+                    the sheet below to edit like Microsoft Word.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-700">Template Layout:</span>
+                  <span className="text-xs font-bold text-slate-700">
+                    Template Layout:
+                  </span>
                   <select
                     value={selectedTemplateId}
                     onChange={(e) => setSelectedTemplateId(e.target.value)}

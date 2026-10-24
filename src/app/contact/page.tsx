@@ -6,7 +6,13 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { contactFormSchema, ContactFormData } from "@/lib/validators";
-import { Mail, CheckCircle2, AlertCircle, Send, MessageSquare } from "lucide-react";
+import {
+  Mail,
+  CheckCircle2,
+  AlertCircle,
+  Send,
+  MessageSquare,
+} from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -21,7 +27,9 @@ export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -58,8 +66,13 @@ export default function ContactPage() {
       // Persist to local inquiry log if running in browser
       if (typeof window !== "undefined") {
         try {
-          const inquiries = JSON.parse(localStorage.getItem("campusos_inquiries") || "[]");
-          inquiries.push({ ...result.data, timestamp: new Date().toISOString() });
+          const inquiries = JSON.parse(
+            localStorage.getItem("campusos_inquiries") || "[]",
+          );
+          inquiries.push({
+            ...result.data,
+            timestamp: new Date().toISOString(),
+          });
           localStorage.setItem("campusos_inquiries", JSON.stringify(inquiries));
         } catch {
           // ignore storage error
@@ -86,8 +99,8 @@ export default function ContactPage() {
               Contact the CampusOS Team
             </h1>
             <p className="mt-3 text-sm sm:text-base text-purple-100 font-medium">
-              Have questions about course integration, feedback on the learning tools, or bug reports?
-              We&apos;d love to hear from you.
+              Have questions about course integration, feedback on the learning
+              tools, or bug reports? We&apos;d love to hear from you.
             </p>
           </div>
         </div>
@@ -98,11 +111,19 @@ export default function ContactPage() {
               <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-black text-slate-900">Message Sent Successfully</h3>
+              <h3 className="text-2xl font-black text-slate-900">
+                Message Sent Successfully
+              </h3>
               <p className="text-sm text-slate-600 max-w-md mx-auto font-medium">
-                Thank you, <strong className="text-slate-900">{formData.name}</strong>. We received your note regarding{" "}
-                <em className="text-brand-purple font-semibold">&quot;{formData.subject}&quot;</em> and our academic support team will reply to{" "}
-                <strong className="text-slate-900">{formData.email}</strong> shortly.
+                Thank you,{" "}
+                <strong className="text-slate-900">{formData.name}</strong>. We
+                received your note regarding{" "}
+                <em className="text-brand-purple font-semibold">
+                  &quot;{formData.subject}&quot;
+                </em>{" "}
+                and our academic support team will reply to{" "}
+                <strong className="text-slate-900">{formData.email}</strong>{" "}
+                shortly.
               </p>
               <div className="pt-4">
                 <Button
@@ -127,7 +148,10 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-bold uppercase text-slate-700 mb-1.5">
+                  <label
+                    htmlFor="name"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1.5"
+                  >
                     Your Full Name *
                   </label>
                   <input
@@ -148,7 +172,10 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs font-bold uppercase text-slate-700 mb-1.5">
+                  <label
+                    htmlFor="email"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1.5"
+                  >
                     University or Personal Email *
                   </label>
                   <input
@@ -171,7 +198,10 @@ export default function ContactPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="role" className="block text-xs font-bold uppercase text-slate-700 mb-1.5">
+                  <label
+                    htmlFor="role"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1.5"
+                  >
                     Primary Role
                   </label>
                   <select
@@ -183,12 +213,17 @@ export default function ContactPage() {
                   >
                     <option value="student">University Student</option>
                     <option value="teacher">Instructor / Faculty</option>
-                    <option value="other">Institutional IT / Administrator</option>
+                    <option value="other">
+                      Institutional IT / Administrator
+                    </option>
                   </select>
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-xs font-bold uppercase text-slate-700 mb-1.5">
+                  <label
+                    htmlFor="subject"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1.5"
+                  >
                     Subject *
                   </label>
                   <input
@@ -210,7 +245,10 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-xs font-bold uppercase text-slate-700 mb-1.5">
+                <label
+                  htmlFor="message"
+                  className="block text-xs font-bold uppercase text-slate-700 mb-1.5"
+                >
                   Message *
                 </label>
                 <textarea
@@ -231,7 +269,12 @@ export default function ContactPage() {
               </div>
 
               <div className="flex justify-end pt-2">
-                <Button type="submit" size="lg" isLoading={isSubmitting} className="clay-button-primary bg-[#6653E6] text-white font-black px-8 py-3 rounded-2xl shadow-lg border-none">
+                <Button
+                  type="submit"
+                  size="lg"
+                  isLoading={isSubmitting}
+                  className="clay-button-primary bg-[#153e25] text-white font-black px-8 py-3 rounded-2xl shadow-lg border-none"
+                >
                   <Send className="w-4 h-4 mr-2" />
                   Submit Inquiry
                 </Button>

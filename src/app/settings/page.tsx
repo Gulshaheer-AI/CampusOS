@@ -4,7 +4,13 @@ import React, { useState, useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import { getCurrentUser, setCurrentUser, resetToDemoData } from "@/lib/store";
 import { UserProfile } from "@/types";
 import { userProfileSchema } from "@/lib/validators";
@@ -27,7 +33,9 @@ export default function SettingsPage() {
   const [degree, setDegree] = useState("");
   const [department, setDepartment] = useState("");
   const [bio, setBio] = useState("");
-  const [learningPace, setLearningPace] = useState<"casual" | "regular" | "intensive">("regular");
+  const [learningPace, setLearningPace] = useState<
+    "casual" | "regular" | "intensive"
+  >("regular");
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [interestsText, setInterestsText] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -113,7 +121,8 @@ export default function SettingsPage() {
               Account &amp; Preferences
             </h1>
             <p className="mt-1 text-sm text-purple-100 font-medium">
-              Manage your personal academic identity, notification channels, and privacy settings.
+              Manage your personal academic identity, notification channels, and
+              privacy settings.
             </p>
           </div>
         </div>
@@ -141,13 +150,17 @@ export default function SettingsPage() {
                 Academic Identity
               </CardTitle>
               <CardDescription className="text-xs text-slate-600 font-medium">
-                Information displayed across your courses, peer challenges, and public portfolio.
+                Information displayed across your courses, peer challenges, and
+                public portfolio.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="user-name" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                  <label
+                    htmlFor="user-name"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                  >
                     Full Name
                   </label>
                   <input
@@ -160,7 +173,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="user-email" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                  <label
+                    htmlFor="user-email"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                  >
                     Email Address
                   </label>
                   <input
@@ -175,7 +191,10 @@ export default function SettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="user-degree" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                  <label
+                    htmlFor="user-degree"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                  >
                     Degree / Program
                   </label>
                   <input
@@ -189,7 +208,10 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="user-dept" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                  <label
+                    htmlFor="user-dept"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                  >
                     Department / College
                   </label>
                   <input
@@ -204,7 +226,10 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label htmlFor="user-bio" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                <label
+                  htmlFor="user-bio"
+                  className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                >
                   Academic Bio / Statement
                 </label>
                 <textarea
@@ -218,7 +243,10 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label htmlFor="user-interests" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                <label
+                  htmlFor="user-interests"
+                  className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                >
                   Technical Interests (comma-separated)
                 </label>
                 <input
@@ -244,7 +272,10 @@ export default function SettingsPage() {
             <CardContent className="space-y-4 pt-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="user-pace" className="block text-xs font-bold uppercase text-slate-700 mb-1">
+                  <label
+                    htmlFor="user-pace"
+                    className="block text-xs font-bold uppercase text-slate-700 mb-1"
+                  >
                     Study Pace Target
                   </label>
                   <select
@@ -255,7 +286,9 @@ export default function SettingsPage() {
                   >
                     <option value="casual">Casual (3-5 hours/week)</option>
                     <option value="regular">Regular (8-12 hours/week)</option>
-                    <option value="intensive">Intensive (15-20+ hours/week)</option>
+                    <option value="intensive">
+                      Intensive (15-20+ hours/week)
+                    </option>
                   </select>
                 </div>
 
@@ -267,7 +300,10 @@ export default function SettingsPage() {
                     onChange={(e) => setEmailNotifications(e.target.checked)}
                     className="w-4 h-4 rounded text-brand-purple bg-white border-2 border-purple-200 focus:ring-brand-purple"
                   />
-                  <label htmlFor="notifs" className="text-sm text-slate-700 font-semibold select-none">
+                  <label
+                    htmlFor="notifs"
+                    className="text-sm text-slate-700 font-semibold select-none"
+                  >
                     Receive weekly digest &amp; deadline alerts
                   </label>
                 </div>
@@ -276,7 +312,11 @@ export default function SettingsPage() {
           </Card>
 
           <div className="flex justify-end gap-3">
-            <Button type="submit" size="md" className="clay-button-primary bg-[#6653E6] text-white font-black px-6 py-2.5 rounded-xl shadow-md border-none">
+            <Button
+              type="submit"
+              size="md"
+              className="clay-button-primary bg-[#153e25] text-white font-black px-6 py-2.5 rounded-xl shadow-md border-none"
+            >
               <Save className="w-4 h-4 mr-2" />
               Save Changes
             </Button>
@@ -291,13 +331,15 @@ export default function SettingsPage() {
               Data Reset &amp; Account Deletion
             </CardTitle>
             <CardDescription className="text-rose-600/80 font-medium">
-              Permanent removal of all personal attempts, notes, and local workspace sessions.
+              Permanent removal of all personal attempts, notes, and local
+              workspace sessions.
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-xs text-slate-600 font-medium max-w-md">
-              Resetting local data will wipe any saved custom quizzes, challenge submissions, and
-              restore pristine default fixtures for Alex Chen, Prof. Vance, and Jordan Taylor.
+              Resetting local data will wipe any saved custom quizzes, challenge
+              submissions, and restore pristine default fixtures for Alex Chen,
+              Prof. Vance, and Jordan Taylor.
             </p>
             <Button
               variant="danger"
@@ -318,16 +360,28 @@ export default function SettingsPage() {
               <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-black text-slate-950 text-center">Are you absolutely sure?</h3>
+              <h3 className="text-lg font-black text-slate-950 text-center">
+                Are you absolutely sure?
+              </h3>
               <p className="text-xs text-slate-600 text-center leading-relaxed font-medium">
-                This action will erase all custom attempts, saved conversation history, and local changes.
-                Demo data will be freshly reseeded.
+                This action will erase all custom attempts, saved conversation
+                history, and local changes. Demo data will be freshly reseeded.
               </p>
               <div className="flex justify-end gap-3 pt-2">
-                <Button variant="outline" size="sm" onClick={() => setDeleteConfirmOpen(false)} className="rounded-xl font-bold">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  className="rounded-xl font-bold"
+                >
                   Cancel
                 </Button>
-                <Button variant="danger" size="sm" onClick={handleDeleteAccount} className="rounded-xl font-bold">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={handleDeleteAccount}
+                  className="rounded-xl font-bold"
+                >
                   Confirm Reset
                 </Button>
               </div>

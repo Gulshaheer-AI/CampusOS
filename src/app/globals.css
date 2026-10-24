@@ -2,202 +2,630 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-variable.woff2") format("woff2");
+}
+
 :root {
-  --background: #FFFFFF;
-  --foreground: #1E194B;
-  --clay-purple: #6653E6;
-  --clay-mint: #38D39F;
-  --clay-pink: #FF7675;
-  --clay-aqua: #74B9FF;
-  --clay-lavender: #9B88F7;
-  --clay-coral: #FF7675;
-  --clay-surface: #FFFFFF;
+  color-scheme: dark;
+  --background: #06100b;
+  --foreground: #f0f6f1;
+  --surface: #0c1b13;
+  --surface-raised: #11261b;
+  --border: #244333;
+  --muted: #a1b8a8;
+  --accent: #a5efae;
+  --clay-purple: #a5efae;
+  --clay-mint: #a5efae;
+  --clay-pink: #f5a8b3;
+  --clay-aqua: #9acdd7;
+  --clay-lavender: #a5efae;
+  --clay-coral: #f5a8b3;
+  --clay-surface: #0c1b13;
 }
-
 body {
-  background-color: #FFFFFF;
+  background-color: var(--background);
   color: var(--foreground);
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  overflow-x: hidden;
 }
-
-/* 3D Claymorphism Core Utility Classes (Exact Purple & White Theme from Photo) */
-.clay-card {
-  background: #FFFFFF;
-  border-radius: 1.5rem;
-  border: 1px solid rgba(108, 92, 231, 0.12);
-  box-shadow:
-    inset 2px 2px 4px rgba(255, 255, 255, 0.95),
-    inset -2px -2px 6px rgba(108, 92, 231, 0.04),
-    0 12px 28px -6px rgba(102, 83, 230, 0.1);
+* {
+  box-sizing: border-box;
 }
-
-.clay-card-purple {
-  background: linear-gradient(145deg, #6653E6 0%, #5741CB 45%, #4932B8 100%);
-  border-radius: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    inset 2px 3px 6px rgba(255, 255, 255, 0.45),
-    inset -3px -4px 8px rgba(70, 50, 160, 0.22),
-    0 14px 32px -6px rgba(102, 83, 230, 0.32);
-  color: #FFFFFF;
-}
-
-.clay-card-purple p,
-.clay-card-purple h1,
-.clay-card-purple h2,
-.clay-card-purple h3,
-.clay-card-purple h4,
-.clay-card-purple h5,
-.clay-card-purple h6 {
-  color: #FFFFFF;
-}
-
-.clay-card-pink {
-  background: linear-gradient(145deg, #FFF7F8 0%, #FFF0F2 100%);
-  border-radius: 1.5rem;
-  border: 1px solid rgba(255, 118, 117, 0.28);
-  box-shadow: 0 10px 24px -6px rgba(255, 118, 117, 0.12);
-}
-
-.clay-pill {
-  background: #FFFFFF;
-  border: 1px solid rgba(108, 92, 231, 0.16);
-  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.06);
-}
-
-.clay-button-primary {
-  background: linear-gradient(145deg, #6653E6 0%, #5741CB 60%, #4932B8 100%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    inset 2px 2px 5px rgba(255, 255, 255, 0.42),
-    inset -2px -3px 6px rgba(30, 15, 90, 0.35),
-    0 8px 20px -3px rgba(102, 83, 230, 0.45);
-  color: #FFFFFF;
-}
-
-.clay-button-mint {
-  background: linear-gradient(145deg, #4DE3AE 0%, #38D39F 60%, #28B986 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
-    inset -2px -3px 6px rgba(10, 75, 40, 0.3),
-    0 8px 18px -3px rgba(56, 211, 159, 0.42);
-  color: #0F172A;
-}
-
-.clay-button-pink {
-  background: linear-gradient(145deg, #FFA0A0 0%, #FF7675 60%, #E85D5C 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
-    inset -2px -3px 6px rgba(110, 25, 45, 0.3),
-    0 8px 18px -3px rgba(255, 118, 117, 0.42);
-  color: #0F172A;
-}
-
-.clay-button-aqua {
-  background: linear-gradient(145deg, #8CD0FF 0%, #6EC6FF 60%, #4FAEE6 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow:
-    inset 2px 2px 5px rgba(255, 255, 255, 0.45),
-    inset -2px -3px 6px rgba(15, 70, 85, 0.3),
-    0 8px 18px -3px rgba(110, 198, 255, 0.42);
-  color: #0F172A;
-}
-
-/* 4 Squircle Action Tiles from Photo (Transfer, Pay Bill, Shop, Saving) */
-.clay-tile-mint {
-  background: linear-gradient(145deg, #4DE3AE 0%, #38D39F 60%, #28B986 100%);
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 18px -3px rgba(56, 211, 159, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
-  color: #FFFFFF;
-}
-
-.clay-tile-pink {
-  background: linear-gradient(145deg, #FFA0A0 0%, #FF7675 60%, #E85D5C 100%);
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 18px -3px rgba(255, 118, 117, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
-  color: #FFFFFF;
-}
-
-.clay-tile-purple {
-  background: linear-gradient(145deg, #AD9DFF 0%, #8C77F5 60%, #745FE0 100%);
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 18px -3px rgba(140, 119, 245, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
-  color: #FFFFFF;
-}
-
-.clay-tile-aqua {
-  background: linear-gradient(145deg, #8CD0FF 0%, #6EC6FF 60%, #4FAEE6 100%);
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 8px 18px -3px rgba(110, 198, 255, 0.42), inset 2px 2px 4px rgba(255, 255, 255, 0.5);
-  color: #FFFFFF;
-}
-
-.clay-input {
-  background: #FFFFFF;
-  border: 1px solid rgba(108, 92, 231, 0.2);
-  color: #1E194B;
-  box-shadow:
-    inset 1px 2px 4px rgba(108, 92, 231, 0.05),
-    0 2px 4px rgba(108, 92, 231, 0.03);
-}
-
-/* Custom polished scrollbar in Royal Purple & Lilac Clay tones */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #F5F3FE;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #C8BDF4;
-  border-radius: 9999px;
-  border: 2px solid #F5F3FE;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6653E6;
-}
-
-/* Selection: Clay Royal Purple with pure white text */
 ::selection {
-  background: rgba(102, 83, 230, 0.35);
-  color: #1E194B;
+  background: #326544;
+  color: #f0f6f1;
 }
-
-/* Accessible focus ring: Clay Mint */
 :focus-visible {
-  outline: 2px solid #6653E6;
-  outline-offset: 2px;
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
-
-/* Ambient glow utilities for Claymorphism Theme */
+input,
+select,
+textarea {
+  color-scheme: dark;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #91a99a;
+  opacity: 1;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #a5efae;
+}
+.clay-card,
+.clay-card-purple,
+.clay-card-pink,
+.ui-card {
+  background: linear-gradient(130deg, #0e2016, #09160f);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px -16px #0008;
+  color: var(--foreground);
+}
+.clay-card-purple {
+  background:
+    radial-gradient(ellipse at 90% 10%, #173d25, transparent 70%), #0b1c12;
+}
+.clay-pill,
+.clay-input {
+  background: #0c1b13;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+.clay-button-primary,
+.clay-button-mint,
+.clay-button-aqua {
+  background: linear-gradient(135deg, #b8fac0, #98e9a4);
+  color: #082012;
+  border: 1px solid #b0efba;
+  box-shadow: 0 2px 12px #85eda315;
+}
+.clay-button-pink {
+  background: #f5a8b3;
+  color: #30151b;
+  border: 1px solid #fac5cd;
+}
+.clay-tile-mint,
+.clay-tile-purple,
+.clay-tile-aqua,
+.clay-tile-pink {
+  background: linear-gradient(135deg, #163a24, #0d2116);
+  border: 1px solid #315a3e;
+  border-radius: 14px;
+  color: var(--accent);
+  box-shadow: inset 0 1px 0 #a5efae0a;
+}
 .bg-odoo-gradient {
-  background: linear-gradient(135deg, #6C5CE7 0%, #FF8FA3 55%, #4CD97B 100%);
+  background: linear-gradient(135deg, #173f28, #0c2418);
 }
-
 .bg-radial-odoo {
-  background: radial-gradient(circle at 50% 0%, rgba(108, 92, 231, 0.38) 0%, rgba(255, 143, 163, 0.18) 38%, transparent 72%);
+  background: radial-gradient(ellipse at 50% 0%, #21583355, transparent 70%);
 }
-
-/* Respect reduced motion preferences */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #08160e;
+}
+::-webkit-scrollbar-thumb {
+  background: #365c45;
+  border: 2px solid #08160e;
+  border-radius: 20px;
+}
+.workspace-shell {
+  background:
+    radial-gradient(ellipse at 90% 0%, #14382125, transparent 45%), #06100b;
+}
+.workspace-main {
+  max-width: 1600px;
+  min-width: 0;
+}
+.workspace-header {
+  background: #06100be8;
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #1b3224;
+}
+.workspace-sidebar {
+  width: 250px;
+  background:
+    radial-gradient(ellipse at 0% 85%, #0e301c65, transparent 50%), #07120c;
+  border-right: 1px solid #1b3224;
+}
+.workspace-footer {
+  border-top: 1px solid #1b3224;
+  color: var(--muted);
+  padding: 22px 32px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.workspace-footer a:hover {
+  color: var(--accent);
+}
+.ui-button {
+  border-radius: 10px;
+  font-weight: 600;
+  transition:
+    background 160ms,
+    border-color 160ms,
+    box-shadow 160ms,
+    transform 160ms;
+}
+.campus-theme .ui-button[data-tone="primary"] {
+  background: linear-gradient(135deg, #b8fac0, #98e9a4);
+  color: #082012;
+  border: 1px solid #b0efba;
+}
+.campus-theme .ui-button[data-tone="primary"]:hover {
+  box-shadow: 0 0 20px #a5efae20;
+}
+.campus-theme .ui-button[data-tone="outline"],
+.campus-theme .ui-button[data-tone="secondary"] {
+  background: #10271b;
+  border: 1px solid #365c45;
+  color: #e2efe5;
+}
+.campus-theme .ui-button[data-tone="ghost"] {
+  background: transparent;
+  color: #c3e2cc;
+  border: 1px solid transparent;
+}
+.campus-theme .ui-button[data-tone="ghost"]:hover,
+.campus-theme .ui-button[data-tone="outline"]:hover,
+.campus-theme .ui-button[data-tone="secondary"]:hover {
+  background: #1a3826;
+  border-color: #578365;
+}
+.campus-theme .ui-button[data-tone="danger"] {
+  background: #8b283c;
+  color: #fff0f3;
+  border: 1px solid #bc5266;
+}
+.ui-badge {
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.dashboard-hero {
+  min-height: 230px;
+  padding: 32px 40px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #315c3e;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 83% 50%, #153b2380, transparent 50%),
+    linear-gradient(115deg, #0b2113, #06160c);
+}
+.dashboard-hero-copy {
+  position: relative;
+  z-index: 2;
+  width: 65%;
+}
+.dashboard-hero h2 {
+  font-size: clamp(26px, 2.5vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+  margin: 12px 0;
+}
+.dashboard-hero p {
+  color: #b5c8bb;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.dashboard-kicker {
+  color: #85d99e;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+}
+.dashboard-stat {
+  padding: 18px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.dashboard-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5efae;
+  background: linear-gradient(135deg, #173b24, #0b1c11);
+  border: 1px solid #274c33;
+  box-shadow: inset 0 1px 0 #a5efae09;
+}
+.dashboard-panel {
+  padding: 22px;
+  min-width: 0;
+}
+.dashboard-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.dashboard-panel-title h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.dashboard-course {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-top: 1px solid #1e3827;
+}
+.dashboard-course:last-child {
+  padding-bottom: 0;
+}
+.dashboard-course-progress {
+  height: 5px;
+  background: #21382a;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.dashboard-course-progress span {
+  display: block;
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #7ddb93, #a5efae);
+}
+.orb-art {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 40%;
+  height: 340px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  contain: layout style;
+}
+.orb-art svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.orb-motion {
+  transform-origin: 200px 200px;
+  animation: orb-drift 32s linear infinite;
+}
+.orb-motion:nth-child(2n) {
+  animation-duration: 41s;
+  animation-direction: reverse;
+}
+.orb-motion:nth-child(3n) {
+  animation-duration: 53s;
+}
+.orb-caption {
+  position: absolute;
+  right: 24px;
+  bottom: 65px;
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: 1px solid #30593b;
+  background: #0a2419c9;
+  font-size: 10px;
+  color: #cef9d5;
+}
+@keyframes orb-drift {
+  0% {
+    transform: rotate(0deg) translate(0, 0);
+  }
+  50% {
+    transform: rotate(180deg) translate(7px, -5px);
+  }
+  100% {
+    transform: rotate(360deg) translate(0, 0);
+  }
+}
+@media (min-width: 1024px) {
+  .workspace-content {
+    padding-left: 250px;
+  }
+}
+@media (max-width: 767px) {
+  .dashboard-hero {
+    padding: 28px 24px;
+  }
+  .dashboard-hero-copy {
+    width: 100%;
+  }
+  .orb-art {
+    opacity: 0.2;
+    width: 70%;
+    right: -18%;
+  }
+  .orb-caption {
+    display: none;
+  }
+  .dashboard-stat {
+    padding: 16px;
+    gap: 12px;
+  }
+  .dashboard-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .dashboard-panel {
+    padding: 18px;
+  }
+  .dashboard-course {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
   ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Compatibility colors for existing module surfaces; never recolor CV paper. */
+@media screen {
+  .campus-theme .bg-white:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-slate-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-slate-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-gray-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-gray-100:not(:where(.cv-document, .cv-document *)) {
+    background-color: #0c1b13;
+  }
+  .campus-theme .text-slate-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-slate-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-slate-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-slate-950:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-900:not(:where(.cv-document, .cv-document *)) {
+    color: #edf5ef;
+  }
+  .campus-theme .text-slate-400:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-slate-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-slate-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-400:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-gray-600:not(:where(.cv-document, .cv-document *)) {
+    color: #a1b8a8;
+  }
+  .campus-theme .text-purple-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-300:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-400:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-purple-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-indigo-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-indigo-800:not(:where(.cv-document, .cv-document *)) {
+    color: #a5efae;
+  }
+  .campus-theme .bg-purple-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-50\/40:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-50\/50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-100\/80:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-purple-50\/80:not(:where(.cv-document, .cv-document *)) {
+    background-color: #132b1d;
+  }
+  .campus-theme .border-purple-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-purple-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-purple-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-purple-300:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-purple-400:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-purple-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-slate-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-slate-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-slate-300:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-gray-200:not(:where(.cv-document, .cv-document *)) {
+    border-color: #244333;
+  }
+  .campus-theme .text-rose-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-rose-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-rose-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-rose-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-rose-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-rose-950:not(:where(.cv-document, .cv-document *)) {
+    color: #ffc3ce;
+  }
+  .campus-theme .bg-rose-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-rose-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-rose-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #351821;
+  }
+  .campus-theme .border-rose-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-rose-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-rose-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #713246;
+  }
+  .campus-theme .text-red-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-red-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-red-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-red-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-red-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-red-950:not(:where(.cv-document, .cv-document *)) {
+    color: #ffc3ce;
+  }
+  .campus-theme .bg-red-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-red-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-red-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #351821;
+  }
+  .campus-theme .border-red-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-red-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-red-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #713246;
+  }
+  .campus-theme .text-amber-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-amber-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-amber-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-amber-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-amber-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-amber-950:not(:where(.cv-document, .cv-document *)) {
+    color: #f5d59c;
+  }
+  .campus-theme .bg-amber-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-amber-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-amber-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #302816;
+  }
+  .campus-theme .border-amber-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-amber-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-amber-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #66552e;
+  }
+  .campus-theme .text-emerald-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-emerald-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-emerald-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-emerald-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-emerald-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-emerald-950:not(:where(.cv-document, .cv-document *)) {
+    color: #b8f4c8;
+  }
+  .campus-theme .bg-emerald-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-emerald-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-emerald-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #142e20;
+  }
+  .campus-theme .border-emerald-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-emerald-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-emerald-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #31583f;
+  }
+  .campus-theme .text-green-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-green-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-green-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-green-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-green-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-green-950:not(:where(.cv-document, .cv-document *)) {
+    color: #b8f4c8;
+  }
+  .campus-theme .bg-green-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-green-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-green-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #142e20;
+  }
+  .campus-theme .border-green-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-green-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-green-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #31583f;
+  }
+  .campus-theme .text-blue-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-blue-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-blue-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-blue-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-blue-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-blue-950:not(:where(.cv-document, .cv-document *)) {
+    color: #bbddf8;
+  }
+  .campus-theme .bg-blue-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-blue-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-blue-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #132637;
+  }
+  .campus-theme .border-blue-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-blue-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-blue-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #2b506c;
+  }
+  .campus-theme .text-sky-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-sky-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-sky-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-sky-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-sky-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-sky-950:not(:where(.cv-document, .cv-document *)) {
+    color: #bbddf8;
+  }
+  .campus-theme .bg-sky-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-sky-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-sky-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #132637;
+  }
+  .campus-theme .border-sky-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-sky-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-sky-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #2b506c;
+  }
+  .campus-theme .text-cyan-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-cyan-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-cyan-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-cyan-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-cyan-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-cyan-950:not(:where(.cv-document, .cv-document *)) {
+    color: #b6e5e7;
+  }
+  .campus-theme .bg-cyan-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-cyan-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-cyan-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #122d2c;
+  }
+  .campus-theme .border-cyan-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-cyan-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-cyan-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #2b5656;
+  }
+  .campus-theme .text-teal-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-teal-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-teal-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-teal-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-teal-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-teal-950:not(:where(.cv-document, .cv-document *)) {
+    color: #b6e5e7;
+  }
+  .campus-theme .bg-teal-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-teal-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-teal-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #122d2c;
+  }
+  .campus-theme .border-teal-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-teal-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-teal-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #2b5656;
+  }
+  .campus-theme .text-pink-500:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-pink-600:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-pink-700:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-pink-800:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-pink-900:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .text-pink-950:not(:where(.cv-document, .cv-document *)) {
+    color: #ffc3ce;
+  }
+  .campus-theme .bg-pink-50:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-pink-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .bg-pink-200:not(:where(.cv-document, .cv-document *)) {
+    background-color: #351821;
+  }
+  .campus-theme .border-pink-100:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-pink-200:not(:where(.cv-document, .cv-document *)),
+  .campus-theme .border-pink-300:not(:where(.cv-document, .cv-document *)) {
+    border-color: #713246;
   }
 }
 
@@ -224,9 +652,9 @@ body {
   /* Reset document root to clean white canvas */
   html,
   body {
-    background: #FFFFFF !important;
-    background-color: #FFFFFF !important;
-    color: #0F172A !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
     margin: 0 !important;
     padding: 0 !important;
     font-size: 10pt !important;
@@ -272,17 +700,758 @@ body {
   }
 }
 
-
 /* Keep document flow and candidate typography intact in browser print. */
 @media print {
-  body:has(#cv-printable-area) * { visibility: hidden; }
+  body:has(#cv-printable-area) * {
+    visibility: hidden;
+  }
   body:has(#cv-printable-area) #cv-printable-area,
-  body:has(#cv-printable-area) #cv-printable-area * { visibility: visible; }
-  body:has(#cv-printable-area) #cv-printable-area { position: absolute; top: 0; left: 0; }
-  .cv-document { overflow: visible !important; height: auto !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
-  .cv-document .cv-heading { margin: 0 0 14pt !important; padding: 14pt 12pt !important; }
-  .cv-document h2 { break-after: avoid; page-break-after: avoid; }
-  .cv-document .cv-section { break-inside: auto; }
-  .cv-document .cv-line { orphans: 2; widows: 2; }
-  .cv-document thead { display: table-header-group; }
+  body:has(#cv-printable-area) #cv-printable-area * {
+    visibility: visible;
+  }
+  body:has(#cv-printable-area) #cv-printable-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .cv-document {
+    overflow: visible !important;
+    height: auto !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .cv-document .cv-heading {
+    margin: 0 0 14pt !important;
+    padding: 14pt 12pt !important;
+  }
+  .cv-document h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .cv-document .cv-section {
+    break-inside: auto;
+  }
+  .cv-document .cv-line {
+    orphans: 2;
+    widows: 2;
+  }
+  .cv-document thead {
+    display: table-header-group;
+  }
+}
+
+@media screen {
+  .campus-theme
+    .hover\:bg-purple-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-purple-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-slate-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-gray-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-emerald-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-rose-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-amber-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-blue-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-pink-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-cyan-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-50\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-50\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-50\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-50\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-100:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-100\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-100\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-100\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-100\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-200:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-200\/40:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-200\/50:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-200\/70:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+  .campus-theme
+    .hover\:bg-teal-200\/80:hover:not(:where(.cv-document, .cv-document *)) {
+    background-color: #1b3926;
+  }
+}
+
+@media screen {
+  .campus-theme .bg-brand-purple.text-white,
+  .campus-theme .bg-brand-violet.text-white,
+  .campus-theme .bg-brand-cyan.text-white,
+  .campus-theme .bg-brand-teal.text-white {
+    background-color: #245b35;
+  }
+  .campus-theme .text-brand-purple > svg,
+  .campus-theme .text-brand-violet > svg {
+    color: currentColor;
+  }
+  .campus-theme .bg-clip-text {
+    color: #a5efae;
+    background-image: none;
+  }
+  .campus-theme .font-black {
+    font-weight: 650;
+  }
+  .campus-theme .font-extrabold {
+    font-weight: 650;
+  }
+  .cv-document {
+    color-scheme: light;
+  }
+}
+
+@media screen {
+  .campus-theme .ui-button[data-tone="primary"] :is(svg, span),
+  .campus-theme .clay-button-primary:not(.ui-button) :is(svg, span, div, p) {
+    color: #082012;
+  }
+  .campus-theme .bg-white\/60,
+  .campus-theme .bg-white\/70,
+  .campus-theme .bg-purple-50\/70 {
+    background-color: #10271a;
+  }
+}
+
+@media (max-width: 1023px) {
+  .codeplay-workspace .grid[style] {
+    height: auto !important;
+  }
+  .codeplay-workspace .grid[style] > div {
+    min-height: 320px;
+  }
+  .codeplay-workspace .grid[style] > div:has(textarea) {
+    min-height: 540px;
+  }
+  .codeplay-workspace .flex.items-center.justify-between {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+}
+
+@media screen {
+  .campus-theme .bg-purple-50\/60,
+  .campus-theme .bg-purple-50\/90 {
+    background-color: #10271a;
+  }
+  .campus-theme .text-purple-100,
+  .campus-theme .text-purple-200 {
+    color: #bdcec2;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-course {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 32px;
+    column-gap: 12px;
+    row-gap: 10px;
+  }
+  .dashboard-course > span.dashboard-icon {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .dashboard-course > div:first-of-type {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .dashboard-course > div:first-of-type > a {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .dashboard-course > div:nth-of-type(2) {
+    grid-column: 2;
+    grid-row: 2;
+    width: 100%;
+  }
+  .dashboard-course > a.dashboard-icon {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+  .dashboard-recommendation > div {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .dashboard-recommendation > div > a {
+    grid-column: 2;
+    width: max-content;
+  }
+  .dashboard-recommendation > div > div > p:first-child {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

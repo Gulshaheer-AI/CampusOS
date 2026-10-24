@@ -2,10 +2,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { LearningOrbit } from "@/components/ui/LearningOrbit";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import {
   getCurrentUser,
   getCourses,
@@ -18,7 +25,16 @@ import {
   saveStudentNote,
   deleteStudentNote,
 } from "@/lib/store";
-import { UserProfile, Course, Quiz, QuizAttempt, Roadmap, Challenge, Opportunity, StudentNote } from "@/types";
+import {
+  UserProfile,
+  Course,
+  Quiz,
+  QuizAttempt,
+  Roadmap,
+  Challenge,
+  Opportunity,
+  StudentNote,
+} from "@/types";
 import { calculateRoadmapProgress } from "@/lib/scoring";
 import { parseDocumentFile } from "@/lib/rag-parser";
 import {
@@ -65,7 +81,11 @@ export default function DashboardPage() {
   const [noteContent, setNoteContent] = useState("");
   const [noteCourse, setNoteCourse] = useState("");
   const [noteTags, setNoteTags] = useState("");
-  const [uploadedNoteFile, setUploadedNoteFile] = useState<{ name: string; size: string; data?: string } | null>(null);
+  const [uploadedNoteFile, setUploadedNoteFile] = useState<{
+    name: string;
+    size: string;
+    data?: string;
+  } | null>(null);
   const noteFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -86,12 +106,15 @@ export default function DashboardPage() {
   const totalAttempts = attempts.length;
   const avgScore =
     totalAttempts > 0
-      ? Math.round(attempts.reduce((sum, a) => sum + a.scorePercentage, 0) / totalAttempts)
+      ? Math.round(
+          attempts.reduce((sum, a) => sum + a.scorePercentage, 0) /
+            totalAttempts,
+        )
       : 0;
 
   // Collect weak topics from all attempts
   const allWeakTopics = Array.from(
-    new Set(attempts.flatMap((a) => a.weakTopics || []))
+    new Set(attempts.flatMap((a) => a.weakTopics || [])),
   );
 
   // Active roadmap progress
@@ -103,7 +126,9 @@ export default function DashboardPage() {
   const savedOpps = opportunities.filter((o) => o.isBookmarked || o.userStatus);
 
   // Note Actions
-  const handleCreateNoteFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCreateNoteFile = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -134,7 +159,9 @@ export default function DashboardPage() {
           data: text,
         });
         if (!noteTitle.trim()) {
-          setNoteTitle(file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "));
+          setNoteTitle(
+            file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "),
+          );
         }
       };
       reader.readAsText(file);
@@ -157,12 +184,14 @@ export default function DashboardPage() {
       courseName: noteCourse.trim() || undefined,
       content: noteContent.trim(),
       fileName: uploadedNoteFile?.name,
-      fileSize: uploadedNoteFile?.size || `${Math.max(1, Math.round(noteContent.length / 1024))} KB`,
+      fileSize:
+        uploadedNoteFile?.size ||
+        `${Math.max(1, Math.round(noteContent.length / 1024))} KB`,
       fileType: uploadedNoteFile?.name?.endsWith(".pdf")
         ? "pdf"
         : uploadedNoteFile?.name?.endsWith(".docx")
-        ? "docx"
-        : "text",
+          ? "docx"
+          : "text",
       fileData: uploadedNoteFile?.data || noteContent,
       tags: tagsArray.length > 0 ? tagsArray : undefined,
       createdAt: new Date().toISOString(),
@@ -202,180 +231,362 @@ export default function DashboardPage() {
   };
 
   if (user.role !== "student") {
-    const taught = courses.filter(c => c.instructorId === user.id);
-    const courseIds = new Set(taught.map(c => c.id));
-    const quizzes = getQuizzes().filter(q => q.creatorId === user.id && !q.isPractice);
-    const quizIds = new Set(quizzes.map(q => q.id));
-    const submissions = getAttempts().filter(a => quizIds.has(a.quizId));
-    return <AppShell><div className="space-y-6">
-      <div className="clay-card-purple p-8"><h1 className="text-3xl font-bold text-white">Faculty Teaching Center</h1><p className="text-white mt-2">Welcome back, {user.name}</p></div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[ ["Courses taught", taught.length], ["Course enrollments", taught.reduce((n,c) => n+c.enrolledStudentsCount,0)], ["Quiz submissions", submissions.length] ].map(([label,value]) => <Card key={label}><CardContent className="p-5"><p className="text-slate-700">{label}</p><strong className="text-3xl text-slate-950">{value}</strong></CardContent></Card>)}
-      </div>
-      <Link href="/teacher"><Button>Open Teacher Studio · Courses, rosters &amp; assessments</Button></Link>
-      <h2 className="text-xl font-bold">Your courses</h2>
-      {taught.length === 0 && <p>No courses assigned yet.</p>}
-      {taught.map(c => <Card key={c.id}><CardContent className="p-5"><Link href={`/courses/${c.id}`} className="font-bold text-purple-800">{c.code}: {c.title}</Link><p>{c.enrolledStudentsCount} enrollments · {quizzes.filter(q => q.classCode === c.classCode || q.assignedClass === c.classCode).length} assessments</p></CardContent></Card>)}
-      <h2 className="text-xl font-bold">Assessment review</h2>
-      <p>Quizzes are graded automatically. Review submissions and learning gaps in Teacher Studio.</p>
-      {quizzes.map(q => <Link key={q.id} href="/teacher" className="block text-purple-800 underline">{q.title} · {submissions.filter(a => a.quizId === q.id).length} submissions</Link>)}
-    </div></AppShell>;
+    const taught = courses.filter((c) => c.instructorId === user.id);
+    const quizzes = getQuizzes().filter(
+      (q) => q.creatorId === user.id && !q.isPractice,
+    );
+    const quizIds = new Set(quizzes.map((q) => q.id));
+    const submissions = getAttempts().filter((a) => quizIds.has(a.quizId));
+    return (
+      <AppShell>
+        <div className="space-y-6">
+          <div className="clay-card-purple p-8">
+            <h1 className="text-3xl font-bold text-white">
+              Faculty Teaching Center
+            </h1>
+            <p className="text-white mt-2">Welcome back, {user.name}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              ["Courses taught", taught.length],
+              [
+                "Course enrollments",
+                taught.reduce((n, c) => n + c.enrolledStudentsCount, 0),
+              ],
+              ["Quiz submissions", submissions.length],
+            ].map(([label, value]) => (
+              <Card key={label}>
+                <CardContent className="p-5">
+                  <p className="text-slate-700">{label}</p>
+                  <strong className="text-3xl text-slate-950">{value}</strong>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <Link href="/teacher">
+            <Button>
+              Open Teacher Studio · Courses, rosters &amp; assessments
+            </Button>
+          </Link>
+          <h2 className="text-xl font-bold">Your courses</h2>
+          {taught.length === 0 && <p>No courses assigned yet.</p>}
+          {taught.map((c) => (
+            <Card key={c.id}>
+              <CardContent className="p-5">
+                <Link
+                  href={`/courses/${c.id}`}
+                  className="font-bold text-purple-800"
+                >
+                  {c.code}: {c.title}
+                </Link>
+                <p>
+                  {c.enrolledStudentsCount} enrollments ·{" "}
+                  {
+                    quizzes.filter(
+                      (q) =>
+                        q.classCode === c.classCode ||
+                        q.assignedClass === c.classCode,
+                    ).length
+                  }{" "}
+                  assessments
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+          <h2 className="text-xl font-bold">Assessment review</h2>
+          <p>
+            Quizzes are graded automatically. Review submissions and learning
+            gaps in Teacher Studio.
+          </p>
+          {quizzes.map((q) => (
+            <Link
+              key={q.id}
+              href="/teacher"
+              className="block text-purple-800 underline"
+            >
+              {q.title} · {submissions.filter((a) => a.quizId === q.id).length}{" "}
+              submissions
+            </Link>
+          ))}
+        </div>
+      </AppShell>
+    );
   }
 
   return (
     <AppShell>
-      <div className="space-y-8">
-        {/* Welcome Banner (Royal Periwinkle Purple Clay Card from Photo) */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-pink-400/20 blur-[70px] rounded-full pointer-events-none" />
+      <div className="space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+              Welcome back, {user.name.split(" ")[0]}
+            </h1>
+            <p className="text-sm text-[#a1b8a8] mt-2">
+              A little progress today. A bigger future tomorrow.
+            </p>
+          </div>
+          <Link
+            href="/portfolio"
+            className="ui-button border border-[#365c45] px-4 py-2.5 text-xs text-[#d8f2df] inline-flex items-center gap-3 hover:bg-[#10271a]"
+          >
+            View my portfolio <ArrowRight size={15} />
+          </Link>
+        </div>
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 bg-white/15 px-2.5 py-0.5 rounded-full">
-                  {user.role === "student" ? "Student Learning Center" : "Faculty Teaching Center"}
-                </span>
-                <span className="text-[10px] bg-white/20 text-white font-bold px-2 py-0.5 rounded-full">
-                  {user.learningPace} pace
-                </span>
+        <section className="dashboard-hero" aria-label="AI learning companion">
+          <div className="dashboard-hero-copy">
+            <span className="dashboard-kicker">YOUR AI LEARNING COMPANION</span>
+            <h2>What will you build today?</h2>
+            <p>Learn a concept, solve a challenge, or plan your next step.</p>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <Link
+                href="/tutor"
+                className="ui-button inline-flex gap-2.5 items-center px-5 py-3 text-xs"
+                data-tone="primary"
+              >
+                <Sparkles size={17} />
+                Ask Monday AI
+              </Link>
+              <Link
+                href="/roadmaps"
+                className="ui-button inline-flex gap-2.5 items-center px-5 py-3 text-xs"
+                data-tone="outline"
+              >
+                <Map size={17} />
+                Explore roadmaps
+              </Link>
+            </div>
+          </div>
+          <LearningOrbit />
+        </section>
+
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+          {[
+            {
+              label: "Enrolled courses",
+              value: String(enrolledCourses.length).padStart(2, "0"),
+              icon: BookOpen,
+              href: "/courses",
+            },
+            {
+              label: "Quiz average",
+              value: `${avgScore}%`,
+              icon: TrendingUp,
+              href: "/quizzes",
+            },
+            {
+              label: "Saved opportunities",
+              value: String(savedOpps.length).padStart(2, "0"),
+              icon: Briefcase,
+              href: "/opportunities",
+            },
+            {
+              label: "Roadmap progress",
+              value: `${roadmapStats.percentage}%`,
+              icon: Map,
+              href: "/roadmaps",
+            },
+          ].map(({ label, value, icon: Icon, href }) => (
+            <Link
+              href={href}
+              key={label}
+              className="ui-card dashboard-stat hover:border-[#4a7857] transition-colors"
+            >
+              <span className="dashboard-icon">
+                <Icon size={21} strokeWidth={1.5} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] sm:text-xs text-[#b1c5b8]">{label}</p>
+                <p className="text-2xl sm:text-3xl font-semibold tracking-tight mt-1">
+                  {value}
+                </p>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Welcome back, {user.name} 👋
-              </h1>
-              <p className="mt-1 text-sm text-purple-100">
-                {user.degree || "Computer Science"} • {user.department || "Engineering"}
-              </p>
-              {user.interests && user.interests.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {user.interests.map((interest) => (
-                    <span
-                      key={interest}
-                      className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/15 border border-white/20 text-white font-medium"
+            </Link>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-4">
+          <section className="ui-card dashboard-panel">
+            <div className="dashboard-panel-title">
+              <h2>Continue learning</h2>
+              <Link
+                href="/courses"
+                className="text-xs text-[#a5efae] inline-flex items-center gap-2"
+              >
+                View all <ArrowRight size={14} />
+              </Link>
+            </div>
+            {enrolledCourses.length === 0 && (
+              <div className="border-t border-[#1e3827] pt-6">
+                <p className="text-sm text-[#a1b8a8] mb-4">
+                  Your next chapter starts here. Join a course to track your
+                  progress.
+                </p>
+                <Link
+                  href="/courses"
+                  className="text-xs text-[#a5efae] inline-flex items-center gap-2"
+                >
+                  Explore courses <ArrowRight size={14} />
+                </Link>
+              </div>
+            )}
+            {enrolledCourses.slice(0, 2).map((course) => {
+              const lessons = course.modules.flatMap((m) => m.lessons);
+              const progress = lessons.length
+                ? Math.round(
+                    (lessons.filter((l) => l.isCompleted).length /
+                      lessons.length) *
+                      100,
+                  )
+                : 0;
+              const next = lessons.find((l) => !l.isCompleted);
+              return (
+                <div className="dashboard-course" key={course.id}>
+                  <span className="dashboard-icon !w-12 !h-12">
+                    <BookOpen size={23} strokeWidth={1.5} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[9px] uppercase tracking-widest text-[#84cc99] mb-1.5">
+                      {course.code}
+                    </p>
+                    <Link
+                      href={`/courses/${course.id}`}
+                      className="text-sm font-medium hover:text-[#a5efae]"
                     >
-                      {interest}
-                    </span>
-                  ))}
+                      {course.title}
+                    </Link>
+                    <p className="text-[11px] text-[#a1b8a8] mt-1.5 truncate">
+                      {next?.title ||
+                        (lessons.length
+                          ? "All lessons complete"
+                          : course.instructorName)}
+                    </p>
+                  </div>
+                  <div className="w-28 sm:w-36 flex items-center gap-3">
+                    <div
+                      className="dashboard-course-progress flex-1"
+                      role="progressbar"
+                      aria-label={`${course.title} progress`}
+                      aria-valuenow={progress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      <span style={{ width: `${progress}%` }} />
+                    </div>
+                    <span className="text-[11px]">{progress}%</span>
+                  </div>
+                  <Link
+                    href={`/courses/${course.id}`}
+                    aria-label={`Resume ${course.title}`}
+                    className="dashboard-icon !w-9 !h-9 hover:border-[#a5efae]"
+                  >
+                    <ArrowRight size={16} />
+                  </Link>
                 </div>
-              )}
+              );
+            })}
+          </section>
+          <section className="ui-card dashboard-panel flex flex-col">
+            <div className="dashboard-panel-title">
+              <h2>Your next opportunity</h2>
+              <Briefcase size={17} className="text-[#a5efae]" />
             </div>
-
-            {/* Quick Actions */}
-            <div className="flex flex-wrap items-center gap-3">
-              <Link href="/tutor">
-                <Button variant="secondary" size="sm" className="bg-white text-brand-purple hover:bg-purple-50 font-bold border-none shadow-md">
-                  <Bot className="w-4 h-4 mr-2 text-brand-purple" />
-                  Ask Monday AI
-                </Button>
-              </Link>
-              <Link href="/quizzes">
-                <Button variant="outline" size="sm" className="border-white/30 text-white hover:bg-white/15 font-semibold">
-                  <FileQuestion className="w-4 h-4 mr-2 text-emerald-300" />
-                  Practice Quiz
-                </Button>
-              </Link>
-              <Link href="/codeplay">
-                <Button variant="outline" size="sm" className="border-white/30 text-white hover:bg-white/15 font-semibold">
-                  <Code2 className="w-4 h-4 mr-2 text-cyan-200" />
-                  Open CodePlay
-                </Button>
-              </Link>
-            </div>
-          </div>
+            {savedOpps[0] ? (
+              <>
+                <p className="text-sm font-medium">{savedOpps[0].title}</p>
+                <p className="text-xs text-[#a1b8a8] mt-2">
+                  {savedOpps[0].organization} · {savedOpps[0].location}
+                </p>
+                <p className="text-xs leading-relaxed text-[#a1b8a8] mt-4 line-clamp-2">
+                  {savedOpps[0].description}
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-4">
+                  <span className="dashboard-icon">
+                    <Briefcase size={23} />
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium">Find your next step</p>
+                    <p className="text-xs text-[#a1b8a8] mt-1">
+                      Internships, scholarships &amp; more
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs leading-relaxed text-[#a1b8a8] my-4">
+                  Explore opportunities for your skills and goals. Save the ones
+                  you want to pursue.
+                </p>
+              </>
+            )}
+            <Link
+              href="/opportunities"
+              className="ui-button mt-auto text-xs py-2.5 text-center inline-flex justify-center items-center gap-3"
+              data-tone="outline"
+            >
+              Explore opportunities <ArrowRight size={14} />
+            </Link>
+          </section>
         </div>
 
-        {/* 4 Action Squircle Tiles Directly Matching Screenshot (Transfer, Pay Bill, Shop, Saving) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Link href="/tutor" className="group">
-            <div className="clay-card p-4 flex flex-col items-center text-center transition-all hover:-translate-y-1 shadow-clay bg-white border border-purple-100">
-              <div className="w-14 h-14 rounded-2xl clay-tile-mint flex items-center justify-center mb-2 shadow-md group-hover:scale-105 transition-transform">
-                <Bot className="w-7 h-7 text-white" />
+        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-4">
+          <section className="ui-card dashboard-panel dashboard-recommendation">
+            <h2 className="text-xs text-[#d2e5d8] mb-4">
+              Recommended challenge
+            </h2>
+            <div className="flex flex-wrap items-center gap-4">
+              <span className="dashboard-icon">
+                <Code2 size={23} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium">
+                  {challenges[0]?.title || "Build something new"}
+                </p>
+                <p className="text-xs text-[#a1b8a8] mt-2 line-clamp-1">
+                  {challenges[0]?.summary ||
+                    "Turn what you know into something you can show."}
+                </p>
               </div>
-              <span className="text-xs font-extrabold text-slate-900">Ask Monday AI</span>
-              <span className="text-[10px] text-slate-500 font-medium">Concept Tutor &amp; RAG</span>
+              <Link
+                href={
+                  challenges[0]
+                    ? `/challenges/${challenges[0].id}`
+                    : "/challenges"
+                }
+                className="ui-button inline-flex items-center gap-3 text-xs px-4 py-3"
+                data-tone="primary"
+              >
+                Start challenge <ArrowRight size={15} />
+              </Link>
             </div>
-          </Link>
-
-          <Link href="/quizzes" className="group">
-            <div className="clay-card p-4 flex flex-col items-center text-center transition-all hover:-translate-y-1 shadow-clay bg-white border border-purple-100">
-              <div className="w-14 h-14 rounded-2xl clay-tile-pink flex items-center justify-center mb-2 shadow-md group-hover:scale-105 transition-transform">
-                <FileQuestion className="w-7 h-7 text-white" />
+          </section>
+          <section className="ui-card dashboard-panel">
+            <h2 className="text-xs text-[#d2e5d8] mb-4">Career toolkit</h2>
+            <div className="flex items-center gap-4">
+              <FileText
+                className="text-[#a5efae] shrink-0"
+                size={26}
+                strokeWidth={1.4}
+              />
+              <div className="flex-1">
+                <p className="text-sm font-medium">Polish your CV</p>
+                <p className="text-[11px] text-[#a1b8a8] mt-2">
+                  Make your next application count.
+                </p>
               </div>
-              <span className="text-xs font-extrabold text-slate-900">Practice Quizzes</span>
-              <span className="text-[10px] text-slate-500 font-medium">Diagnostic Diagnostics</span>
+              <Link
+                href="/cv"
+                aria-label="Open CV Studio"
+                className="dashboard-icon !h-9 !w-9"
+              >
+                <ArrowRight size={15} />
+              </Link>
             </div>
-          </Link>
-
-          <Link href="/opportunities" className="group">
-            <div className="clay-card p-4 flex flex-col items-center text-center transition-all hover:-translate-y-1 shadow-clay bg-white border border-purple-100">
-              <div className="w-14 h-14 rounded-2xl clay-tile-purple flex items-center justify-center mb-2 shadow-md group-hover:scale-105 transition-transform">
-                <Briefcase className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-xs font-extrabold text-slate-900">Opportunities &amp; CV</span>
-              <span className="text-[10px] text-slate-500 font-medium">12 Verified CVs &amp; Jobs</span>
-            </div>
-          </Link>
-
-          <Link href="/codeplay" className="group">
-            <div className="clay-card p-4 flex flex-col items-center text-center transition-all hover:-translate-y-1 shadow-clay bg-white border border-purple-100">
-              <div className="w-14 h-14 rounded-2xl clay-tile-aqua flex items-center justify-center mb-2 shadow-md group-hover:scale-105 transition-transform">
-                <Code2 className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-xs font-extrabold text-slate-900">CodePlay Studio</span>
-              <span className="text-[10px] text-slate-500 font-medium">Sandboxed IDE Lab</span>
-            </div>
-          </Link>
+          </section>
         </div>
 
-        {/* Dynamic Metric Cards */}
-        {/* Dynamic Metric Cards in Royal Purple */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="clay-card-purple p-6 rounded-3xl text-white shadow-xl hover:scale-[1.02] transition-all duration-300 border border-white/25 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white font-black uppercase tracking-wider">Enrolled Courses</span>
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
-            <div className="mt-3 text-3xl font-black text-white">{enrolledCourses.length}</div>
-            <div className="mt-1 text-xs text-white font-medium">
-              Active semester load
-            </div>
-          </div>
-
-          <div className="clay-card-purple p-6 rounded-3xl text-white shadow-xl hover:scale-[1.02] transition-all duration-300 border border-white/25 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white font-black uppercase tracking-wider">Quiz Average</span>
-              <TrendingUp className="w-5 h-5 text-emerald-300" />
-            </div>
-            <div className="mt-3 text-3xl font-black text-white">{avgScore}%</div>
-            <div className="mt-1 text-xs text-white font-medium">
-              Across {totalAttempts} completed attempt{totalAttempts === 1 ? "" : "s"}
-            </div>
-          </div>
-
-          <div className="clay-card-purple p-6 rounded-3xl text-white shadow-xl hover:scale-[1.02] transition-all duration-300 border border-white/25 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white font-black uppercase tracking-wider">Roadmap Progress</span>
-              <Map className="w-5 h-5 text-cyan-300" />
-            </div>
-            <div className="mt-3 text-3xl font-black text-white">{roadmapStats.percentage}%</div>
-            <div className="mt-1 text-xs text-white font-medium">
-              {roadmapStats.completedTasks} of {roadmapStats.totalTasks} weekly tasks
-            </div>
-          </div>
-
-          <div className="clay-card-purple p-6 rounded-3xl text-white shadow-xl hover:scale-[1.02] transition-all duration-300 border border-white/25 flex flex-col justify-between">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-white font-black uppercase tracking-wider">Opportunities</span>
-              <Briefcase className="w-5 h-5 text-amber-300" />
-            </div>
-            <div className="mt-3 text-3xl font-black text-white">{savedOpps.length}</div>
-            <div className="mt-1 text-xs text-white font-medium">
-              Deadlines tracked
-            </div>
-          </div>
-        </div>
-
-        {/* Student Personal Notes Locker */}
+        {/* Personal notes locker */}
         <div className="bg-white border border-purple-100 shadow-clay rounded-2xl p-6 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-purple-100 gap-3">
             <div className="flex items-center gap-3">
@@ -384,13 +595,16 @@ export default function DashboardPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-extrabold text-slate-950">Student Personal Notes Locker</h2>
+                  <h2 className="text-lg font-extrabold text-slate-950">
+                    Personal notes locker
+                  </h2>
                   <Badge variant="violet" className="text-[10px] font-bold">
                     {notes.length} Private Notes
                   </Badge>
                 </div>
                 <p className="text-xs text-slate-600 font-medium">
-                  Upload, organize, edit, and ground your private study notes with Monday AI
+                  Upload, organize, edit, and ground your private study notes
+                  with Monday AI
                 </p>
               </div>
             </div>
@@ -417,9 +631,12 @@ export default function DashboardPage() {
           {notes.length === 0 ? (
             <div className="text-center py-8 px-4 rounded-xl border border-dashed border-purple-200 bg-purple-50/40 space-y-2">
               <FileText className="w-8 h-8 text-brand-purple/60 mx-auto" />
-              <p className="text-xs font-bold text-slate-800">Your notes locker is currently empty</p>
+              <p className="text-xs font-bold text-slate-800">
+                Your notes locker is currently empty
+              </p>
               <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
-                Upload lecture slides, copy summaries, or write study notes. You can toggle them into Monday AI Tutor for grounded dynamic Q&A.
+                Upload lecture slides, copy summaries, or write study notes. You
+                can toggle them into Monday AI Tutor for grounded dynamic Q&A.
               </p>
             </div>
           ) : (
@@ -434,7 +651,10 @@ export default function DashboardPage() {
                       <h3 className="font-extrabold text-sm text-slate-950 leading-snug truncate flex-1">
                         {note.title}
                       </h3>
-                      <Badge variant="violet" className="text-[9px] uppercase font-bold shrink-0">
+                      <Badge
+                        variant="violet"
+                        className="text-[9px] uppercase font-bold shrink-0"
+                      >
                         {note.fileType || "text"}
                       </Badge>
                     </div>
@@ -506,56 +726,6 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main 2-col: Continue Learning & Recent Lessons */}
           <div className="lg:col-span-2 space-y-6">
-            <Card className="border-purple-100 bg-white shadow-clay text-slate-900">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-purple-50">
-                <div>
-                  <CardTitle className="text-lg font-extrabold text-slate-900">Continue Learning</CardTitle>
-                  <CardDescription className="text-xs text-slate-500">Pick up right where you left off</CardDescription>
-                </div>
-                <Link href="/courses">
-                  <Button variant="ghost" size="sm" className="text-xs text-brand-purple hover:bg-purple-50 font-bold">
-                    All Courses
-                    <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Button>
-                </Link>
-              </CardHeader>
-              <CardContent className="space-y-3 pt-3">
-                {enrolledCourses.map((course) => {
-                  const firstModule = course.modules[0];
-                  const nextLesson = firstModule?.lessons.find((l) => !l.isCompleted) || firstModule?.lessons[0];
-
-                  return (
-                    <div
-                      key={course.id}
-                      className="p-4 rounded-xl border border-purple-100 bg-purple-50/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:bg-purple-50/70"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono font-bold text-brand-purple px-2 py-0.5 rounded bg-purple-100">
-                            {course.code}
-                          </span>
-                          <span className="text-xs text-slate-600 font-medium">{course.instructorName}</span>
-                        </div>
-                        <h4 className="text-sm font-bold text-slate-900">{course.title}</h4>
-                        {nextLesson && (
-                          <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
-                            <Play className="w-3 h-3 text-brand-purple" />
-                            Next Lesson: {nextLesson.title} ({nextLesson.durationMinutes} mins)
-                          </p>
-                        )}
-                      </div>
-
-                      <Link href={`/courses/${course.id}`}>
-                        <Button variant="primary" size="sm" className="shrink-0 font-bold">
-                          Resume Lesson
-                        </Button>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-
             {/* Active Career Roadmap Tracker */}
             {activeRoadmap && (
               <Card className="border-purple-100 bg-white shadow-clay text-slate-900">
@@ -565,10 +735,16 @@ export default function DashboardPage() {
                       <Map className="w-5 h-5 text-brand-purple" />
                       Active Roadmap: {activeRoadmap.title}
                     </CardTitle>
-                    <CardDescription className="text-xs text-slate-500">{activeRoadmap.tagline}</CardDescription>
+                    <CardDescription className="text-xs text-slate-500">
+                      {activeRoadmap.tagline}
+                    </CardDescription>
                   </div>
                   <Link href={`/roadmaps/${activeRoadmap.id}`}>
-                    <Button variant="ghost" size="sm" className="text-xs text-brand-purple hover:bg-purple-50 font-bold">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs text-brand-purple hover:bg-purple-50 font-bold"
+                    >
                       View Roadmap
                       <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
@@ -579,7 +755,9 @@ export default function DashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs text-slate-600 mb-1.5 font-bold">
                       <span>4-Week Sprint Progress</span>
-                      <span className="text-brand-purple font-mono">{roadmapStats.percentage}% Complete</span>
+                      <span className="text-brand-purple font-mono">
+                        {roadmapStats.percentage}% Complete
+                      </span>
                     </div>
                     <div className="w-full h-2.5 bg-purple-100 rounded-full overflow-hidden border border-purple-200">
                       <div
@@ -602,14 +780,27 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-2.5">
                           <CheckCircle2
                             className={`w-4 h-4 ${
-                              t.completed ? "text-emerald-600" : "text-slate-400"
+                              t.completed
+                                ? "text-emerald-600"
+                                : "text-slate-400"
                             }`}
                           />
-                          <span className={t.completed ? "text-slate-400 line-through" : "text-slate-800 font-semibold"}>
+                          <span
+                            className={
+                              t.completed
+                                ? "text-slate-400 line-through"
+                                : "text-slate-800 font-semibold"
+                            }
+                          >
                             {t.title}
                           </span>
                         </div>
-                        <Badge variant="violet" className="text-[10px] font-mono">{t.estimatedHours}h</Badge>
+                        <Badge
+                          variant="violet"
+                          className="text-[10px] font-mono"
+                        >
+                          {t.estimatedHours}h
+                        </Badge>
                       </div>
                     ))}
                   </div>
@@ -639,11 +830,19 @@ export default function DashboardPage() {
                       className="p-3 rounded-xl border border-amber-200 bg-amber-50/80 flex items-center justify-between"
                     >
                       <div>
-                        <div className="text-xs font-bold text-amber-950">{topic}</div>
-                        <div className="text-[11px] text-amber-800">Score &lt; 70% in recent tests</div>
+                        <div className="text-xs font-bold text-amber-950">
+                          {topic}
+                        </div>
+                        <div className="text-[11px] text-amber-800">
+                          Score &lt; 70% in recent tests
+                        </div>
                       </div>
                       <Link href={`/tutor?topic=${encodeURIComponent(topic)}`}>
-                        <Button size="sm" variant="ghost" className="text-xs text-brand-purple font-bold hover:underline p-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-xs text-brand-purple font-bold hover:underline p-1"
+                        >
                           Revise with AI
                         </Button>
                       </Link>
@@ -651,13 +850,18 @@ export default function DashboardPage() {
                   ))
                 ) : (
                   <div className="p-4 rounded-xl bg-purple-50/40 text-center text-xs text-slate-600 border border-purple-100">
-                    No critical weaknesses detected yet. Complete more practice quizzes to calibrate your diagnostics!
+                    No critical weaknesses detected yet. Complete more practice
+                    quizzes to calibrate your diagnostics!
                   </div>
                 )}
 
                 <div className="pt-2">
                   <Link href="/quizzes">
-                    <Button variant="outline" size="sm" className="w-full text-xs font-semibold border-purple-200 text-slate-800 hover:bg-purple-50">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs font-semibold border-purple-200 text-slate-800 hover:bg-purple-50"
+                    >
                       Take a Practice Assessment
                     </Button>
                   </Link>
@@ -672,7 +876,9 @@ export default function DashboardPage() {
                   <Calendar className="w-4 h-4 text-brand-purple" />
                   Tracked Deadlines
                 </CardTitle>
-                <CardDescription className="text-xs text-slate-500">Saved scholarships &amp; internships</CardDescription>
+                <CardDescription className="text-xs text-slate-500">
+                  Saved scholarships &amp; internships
+                </CardDescription>
               </CardHeader>
               <CardContent className="pt-3 space-y-3">
                 {savedOpps.slice(0, 3).map((opp) => (
@@ -681,12 +887,19 @@ export default function DashboardPage() {
                     className="p-3 rounded-xl border border-purple-100 bg-purple-50/40 space-y-1.5"
                   >
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-900 truncate max-w-[170px]">{opp.title}</span>
-                      <span className="text-[10px] text-brand-purple font-mono font-semibold">{opp.deadline}</span>
+                      <span className="font-bold text-slate-900 truncate max-w-[170px]">
+                        {opp.title}
+                      </span>
+                      <span className="text-[10px] text-brand-purple font-mono font-semibold">
+                        {opp.deadline}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-slate-600">
                       <span>{opp.organization}</span>
-                      <Badge variant="violet" className="text-[9px] uppercase font-bold">
+                      <Badge
+                        variant="violet"
+                        className="text-[9px] uppercase font-bold"
+                      >
                         {opp.userStatus || "saved"}
                       </Badge>
                     </div>
@@ -695,7 +908,11 @@ export default function DashboardPage() {
 
                 <div className="pt-2">
                   <Link href="/opportunities">
-                    <Button variant="ghost" size="sm" className="w-full text-xs text-brand-purple font-bold hover:bg-purple-50">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs text-brand-purple font-bold hover:bg-purple-50"
+                    >
                       Browse Opportunities Directory
                       <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
@@ -716,8 +933,12 @@ export default function DashboardPage() {
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-slate-950 text-base">Add Private Study Note</h3>
-                    <p className="text-xs text-slate-500">Upload documents or write notes for AI study grounding</p>
+                    <h3 className="font-extrabold text-slate-950 text-base">
+                      Add Private Study Note
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Upload documents or write notes for AI study grounding
+                    </p>
                   </div>
                 </div>
                 <button
@@ -729,7 +950,10 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <form onSubmit={handleSaveNewNote} className="space-y-3.5 flex-1 overflow-y-auto pr-1">
+              <form
+                onSubmit={handleSaveNewNote}
+                className="space-y-3.5 flex-1 overflow-y-auto pr-1"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-bold uppercase text-slate-700">
@@ -750,7 +974,9 @@ export default function DashboardPage() {
                       className="text-[11px] h-7 px-2.5 font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
                     >
                       <FileUp className="w-3.5 h-3.5 mr-1 text-brand-purple" />
-                      {uploadedNoteFile ? "Change File" : "Choose File (.pdf, .docx, .txt)"}
+                      {uploadedNoteFile
+                        ? "Change File"
+                        : "Choose File (.pdf, .docx, .txt)"}
                     </Button>
                   </div>
 
@@ -838,7 +1064,12 @@ export default function DashboardPage() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" variant="primary" size="sm" className="font-bold shadow-md">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="sm"
+                    className="font-bold shadow-md"
+                  >
                     Save to Locker
                   </Button>
                 </div>
@@ -856,7 +1087,9 @@ export default function DashboardPage() {
                   <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-brand-purple">
                     <Edit3 className="w-4 h-4" />
                   </div>
-                  <h3 className="font-extrabold text-slate-950 text-base">Edit Note</h3>
+                  <h3 className="font-extrabold text-slate-950 text-base">
+                    Edit Note
+                  </h3>
                 </div>
                 <button
                   type="button"
@@ -867,7 +1100,10 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              <form onSubmit={handleSaveEditedNote} className="space-y-3.5 flex-1 overflow-y-auto pr-1">
+              <form
+                onSubmit={handleSaveEditedNote}
+                className="space-y-3.5 flex-1 overflow-y-auto pr-1"
+              >
                 <div>
                   <label className="block text-xs font-bold uppercase text-slate-700 mb-1">
                     Note Title
@@ -876,7 +1112,9 @@ export default function DashboardPage() {
                     type="text"
                     required
                     value={editingNote.title}
-                    onChange={(e) => setEditingNote({ ...editingNote, title: e.target.value })}
+                    onChange={(e) =>
+                      setEditingNote({ ...editingNote, title: e.target.value })
+                    }
                     className="w-full bg-slate-50 border border-purple-200 rounded-xl px-3.5 py-2 text-xs text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                   />
                 </div>
@@ -888,7 +1126,12 @@ export default function DashboardPage() {
                   <input
                     type="text"
                     value={editingNote.courseName || ""}
-                    onChange={(e) => setEditingNote({ ...editingNote, courseName: e.target.value })}
+                    onChange={(e) =>
+                      setEditingNote({
+                        ...editingNote,
+                        courseName: e.target.value,
+                      })
+                    }
                     className="w-full bg-slate-50 border border-purple-200 rounded-xl px-3 py-2 text-xs text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
                   />
                 </div>
@@ -901,7 +1144,12 @@ export default function DashboardPage() {
                     rows={6}
                     required
                     value={editingNote.content}
-                    onChange={(e) => setEditingNote({ ...editingNote, content: e.target.value })}
+                    onChange={(e) =>
+                      setEditingNote({
+                        ...editingNote,
+                        content: e.target.value,
+                      })
+                    }
                     className="w-full bg-slate-50 border border-purple-200 rounded-xl px-3.5 py-2 text-xs text-slate-950 font-medium focus:outline-none focus:border-brand-purple leading-relaxed"
                   />
                 </div>
@@ -916,7 +1164,12 @@ export default function DashboardPage() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" variant="primary" size="sm" className="font-bold shadow-md">
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="sm"
+                    className="font-bold shadow-md"
+                  >
                     Save Changes
                   </Button>
                 </div>
@@ -935,9 +1188,12 @@ export default function DashboardPage() {
                     <FileText className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-slate-950 text-base">{viewingNote.title}</h3>
+                    <h3 className="font-extrabold text-slate-950 text-base">
+                      {viewingNote.title}
+                    </h3>
                     <p className="text-xs text-slate-500 font-mono">
-                      {viewingNote.courseName || "General Note"} • {viewingNote.fileSize || "1.2 KB"}
+                      {viewingNote.courseName || "General Note"} •{" "}
+                      {viewingNote.fileSize || "1.2 KB"}
                     </p>
                   </div>
                 </div>
@@ -958,7 +1214,11 @@ export default function DashboardPage() {
 
               <div className="flex justify-between items-center pt-3 border-t border-purple-100">
                 <Link href={`/tutor?noteId=${viewingNote.id}`}>
-                  <Button variant="primary" size="sm" className="font-bold shadow-md text-xs">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="font-bold shadow-md text-xs"
+                  >
                     <Sparkles className="w-3.5 h-3.5 mr-1" />
                     Study with Monday AI
                   </Button>

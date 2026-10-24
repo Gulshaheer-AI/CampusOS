@@ -1,182 +1,302 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { UserProfile } from "@/types";
-import { switchRole, getStudents } from "@/lib/store";
-import { MondayOrb } from "@/components/ui/MondayOrb";
+import {
+  switchRole,
+  getStudents,
+  getCourses,
+  getChallenges,
+} from "@/lib/store";
 import {
   Menu,
   Search,
   User,
   GraduationCap,
-  ShieldAlert,
   ChevronDown,
   LogOut,
   Sparkles,
   Check,
+  Settings,
+  ArrowRight,
+  X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-interface AppHeaderProps {
+interface Props {
   currentUser: UserProfile;
   onUserChange?: (user: UserProfile) => void;
   onOpenMobileSidebar?: () => void;
 }
-
+const destinations = [
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "My Courses", href: "/courses" },
+  { title: "Monday AI Tutor", href: "/tutor" },
+  { title: "CodePlay", href: "/codeplay" },
+  { title: "Quizzes", href: "/quizzes" },
+  { title: "Skill Roadmaps", href: "/roadmaps" },
+  { title: "Challenges", href: "/challenges" },
+  { title: "CV Studio", href: "/cv" },
+  { title: "Opportunities", href: "/opportunities" },
+  { title: "Portfolio", href: "/portfolio" },
+  { title: "Concept Explorer", href: "/learn/explore" },
+  { title: "Settings", href: "/settings" },
+];
 export function AppHeader({
   currentUser,
   onUserChange,
   onOpenMobileSidebar,
-}: AppHeaderProps) {
+}: Props) {
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  const handlePersonaSelect = (key: string) => {
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [results, setResults] = useState(destinations);
+  const input = useRef<HTMLInputElement>(null);
+  const header = useRef<HTMLElement>(null);
+  const pathname = usePathname();
+  const currentPage =
+    destinations.find((d) => d.href === pathname)?.title ||
+    (pathname.startsWith("/teacher") ? "Teacher Studio" : "Workspace");
+  useEffect(() => {
+    const close = (event: MouseEvent) => {
+      if (!header.current?.contains(event.target as Node)) {
+        setRoleMenuOpen(false);
+        setUserMenuOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    const key = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+        event.preventDefault();
+        input.current?.focus();
+      }
+      if (event.key === "Escape") {
+        setRoleMenuOpen(false);
+        setUserMenuOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", key);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", key);
+    };
+  }, []);
+  const select = (key: string) => {
     const updated = switchRole(key);
-    if (onUserChange) onUserChange(updated);
+    onUserChange?.(updated);
     setRoleMenuOpen(false);
-    // Route pages hold persona-specific state outside AppShell; reload it with the new identity.
     window.location.reload();
   };
-
+  const search = (value: string) => {
+    setQuery(value);
+    setSearchOpen(true);
+    const all = [
+      ...destinations,
+      ...getCourses().map((c) => ({
+        title: `${c.code}: ${c.title}`,
+        href: `/courses/${c.id}`,
+      })),
+      ...getChallenges().map((c) => ({
+        title: c.title,
+        href: `/challenges/${c.id}`,
+      })),
+    ];
+    setResults(
+      all
+        .filter((item) =>
+          item.title.toLowerCase().includes(value.trim().toLowerCase()),
+        )
+        .slice(0, 7),
+    );
+  };
+  const menuClass =
+    "absolute right-0 mt-3 w-64 rounded-xl bg-[#0d2116] p-2 shadow-2xl z-50 border border-[#31533b]";
+  const menuItem =
+    "flex items-center justify-between gap-2 w-full p-3 rounded-lg text-left text-xs text-[#e1efe5] hover:bg-[#1b3926]";
   return (
-    <header className="sticky top-0 z-30 h-16 border-b border-purple-400/30 bg-gradient-to-r from-[#6653E6] via-[#5A45DA] to-[#4835BA] text-white px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-md print:hidden no-print">
-      {/* Left: Mobile hamburger & search */}
-      <div className="flex items-center gap-4">
+    <header
+      ref={header}
+      className="workspace-header sticky top-0 z-30 min-h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 print:hidden no-print"
+    >
+      <div className="flex gap-3 items-center shrink-0">
         <button
           type="button"
-          onClick={onOpenMobileSidebar}
-          className="lg:hidden p-2 text-white hover:bg-white/15 rounded-xl transition-colors"
           aria-label="Open sidebar"
+          onClick={onOpenMobileSidebar}
+          className="lg:hidden p-2 rounded-lg text-[#c6dfce] hover:bg-white/10"
         >
-          <Menu className="w-5 h-5" />
+          <Menu size={20} />
         </button>
-
-        <div className="relative hidden sm:block w-64 md:w-80">
-          <Search className="absolute left-3.5 top-2.5 w-4 h-4 text-brand-purple" />
-          <input
-            type="text"
-            placeholder="Search courses, concepts, challenges..."
-            className="w-full bg-white text-slate-950 placeholder:text-slate-500 font-medium rounded-2xl pl-9 pr-4 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-white/80 shadow-sm"
-          />
+        <div className="hidden xl:flex items-center gap-3 text-[11px]">
+          <span className="text-[#b6cbbc]">Workspace</span>
+          <span className="text-[#5e7d68]">/</span>
+          <span>{currentPage}</span>
         </div>
       </div>
-
-      {/* Right: Monday AI Quick Pill + Persona Switcher & Profile */}
-      <div className="flex items-center gap-3">
+      <div className="relative flex-1 max-w-xl hidden sm:block">
+        <Search size={16} className="absolute left-4 top-3 text-[#a1b8a8]" />
+        <input
+          ref={input}
+          aria-label="Search workspace"
+          value={query}
+          onChange={(e) => search(e.target.value)}
+          onFocus={() => search(query)}
+          placeholder="Search courses, skills, opportunities..."
+          className="w-full h-10 bg-[#0b1b12] border border-[#2a4734] rounded-xl pl-10 pr-14 text-xs text-[#e1efe5] focus:outline-none focus:border-[#77b88b]"
+        />
+        <kbd className="absolute right-3 top-2.5 text-[10px] text-[#9ab3a2] bg-[#1b3022] rounded px-1.5 py-0.5">
+          Ctrl K
+        </kbd>
+        {searchOpen && (
+          <div
+            className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-[#0d2116] p-2 shadow-2xl border border-[#31533b]"
+            aria-label="Search results"
+          >
+            <div className="flex justify-between items-center px-3 py-2 text-[10px] uppercase tracking-wider text-[#9ab3a2]">
+              <span>Workspace results</span>
+              <button
+                aria-label="Close search"
+                onClick={() => setSearchOpen(false)}
+              >
+                <X size={14} />
+              </button>
+            </div>
+            {results.length ? (
+              results.map((r) => (
+                <Link
+                  key={r.href}
+                  href={r.href}
+                  onClick={() => setSearchOpen(false)}
+                  className={menuItem}
+                >
+                  {r.title}
+                  <ArrowRight size={13} className="shrink-0" />
+                </Link>
+              ))
+            ) : (
+              <p className="text-xs text-[#a1b8a8] px-3 py-4">
+                No matching courses or tools. Try another search.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0 ml-auto">
         <Link
           href="/tutor"
-          className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white border border-white hover:bg-purple-50 shadow-sm transition-all group"
-          title="Ask Monday AI Tutor"
+          aria-label="Ask Monday AI Tutor"
+          className="hidden md:flex text-[#a5efae] p-2 rounded-lg hover:bg-[#153321]"
         >
-          <MondayOrb size="xs" />
-          <span className="text-xs font-black text-brand-purple">
-            Monday AI
-          </span>
+          <Sparkles size={18} strokeWidth={1.5} />
         </Link>
-
-        {/* Interactive Persona & Role Switcher dropdown */}
         <div className="relative">
           <button
             type="button"
+            aria-label="Switch User Role"
+            aria-expanded={roleMenuOpen}
             onClick={() => {
               setRoleMenuOpen(!roleMenuOpen);
               setUserMenuOpen(false);
+              setSearchOpen(false);
             }}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl border border-white/40 bg-white hover:bg-purple-50 shadow-sm text-xs text-slate-900 font-bold transition-all"
-            aria-label="Switch User Role"
+            className="flex items-center gap-2 rounded-lg border border-[#274733] px-3 py-2 text-[11px] hover:bg-[#153321]"
           >
-            <span className="text-slate-500 hidden md:inline font-medium">Active:</span>
-            <span
-              className={cn(
-                "font-black flex items-center gap-1.5",
-                currentUser.role === "student" && "text-brand-purple",
-                currentUser.role === "teacher" && "text-brand-pink",
-                currentUser.role === "admin" && "text-emerald-700"
-              )}
-            >
-              {currentUser.role === "student" && <Sparkles className="w-3.5 h-3.5" />}
-              {currentUser.role === "teacher" && <GraduationCap className="w-3.5 h-3.5" />}
-              {currentUser.role === "admin" && <ShieldAlert className="w-3.5 h-3.5" />}
-              <span>{currentUser.name.split(" ")[0]}</span>
-              <span className="text-[10px] opacity-80 capitalize">({currentUser.role})</span>
-            </span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+            <GraduationCap size={15} className="text-[#a5efae]" />
+            <span className="capitalize">{currentUser.role}</span>
+            <ChevronDown size={12} />
           </button>
-
           {roleMenuOpen && (
-            <div className="absolute right-0 mt-2 w-72 rounded-3xl bg-white p-3 shadow-2xl z-50 border border-purple-100 text-slate-800">
-              <p className="px-2 py-1 text-xs font-bold text-slate-700">Student workspaces</p>
-              {getStudents().map((student, index) => <button key={student.id} type="button" onClick={() => handlePersonaSelect(student.id)} className="w-full flex items-center justify-between p-3 rounded-xl text-left text-sm text-slate-900 hover:bg-purple-50">
-                <span>Student profile {index + 1}</span>
-                {currentUser.id === student.id && <Check className="w-4 h-4 text-purple-800" />}
-              </button>)}
-              <p className="px-2 pt-3 pb-1 text-xs font-bold text-slate-700 border-t border-purple-100">Faculty &amp; administration</p>
-              {([{key: "teacher", label: "Teacher / Faculty"}, {key: "admin", label: "Platform Admin"}] as const).map(role => <button key={role.key} type="button" onClick={() => handlePersonaSelect(role.key)} className="w-full flex items-center justify-between p-3 rounded-xl text-left text-sm text-slate-900 hover:bg-purple-50">
-                <span>{role.label}</span>
-                {currentUser.role === role.key && <Check className="w-4 h-4 text-purple-800" />}
-              </button>)}
+            <div className={menuClass}>
+              <p className="px-3 py-2 text-[10px] uppercase tracking-wider text-[#9ab3a2]">
+                Student workspaces
+              </p>
+              {getStudents().map((student, i) => (
+                <button
+                  key={student.id}
+                  onClick={() => select(student.id)}
+                  className={menuItem}
+                >
+                  <span>Student profile {i + 1}</span>
+                  {currentUser.id === student.id && (
+                    <Check size={14} className="text-[#a5efae]" />
+                  )}
+                </button>
+              ))}
+              <p className="px-3 pt-4 pb-2 text-[10px] uppercase tracking-wider border-t border-[#244333] text-[#9ab3a2]">
+                Faculty &amp; administration
+              </p>
+              {(
+                [
+                  { key: "teacher", label: "Teacher / Faculty" },
+                  { key: "admin", label: "Platform Admin" },
+                ] as const
+              ).map((role) => (
+                <button
+                  key={role.key}
+                  onClick={() => select(role.key)}
+                  className={menuItem}
+                >
+                  <span>{role.label}</span>
+                  {currentUser.role === role.key && (
+                    <Check size={14} className="text-[#a5efae]" />
+                  )}
+                </button>
+              ))}
             </div>
           )}
         </div>
-
-        {/* User avatar menu */}
         <div className="relative">
           <button
-            type="button"
+            aria-label="User profile menu"
+            aria-expanded={userMenuOpen}
             onClick={() => {
               setUserMenuOpen(!userMenuOpen);
               setRoleMenuOpen(false);
+              setSearchOpen(false);
             }}
-            className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-brand-violet/50 transition-all focus:outline-none"
-            aria-label="User profile menu"
+            className="h-9 w-9 rounded-full bg-gradient-to-br from-[#296b3b] to-[#102e1b] border border-[#3c6b48] flex items-center justify-center text-xs font-medium text-[#e6ffeb]"
           >
-            <div className="w-9 h-9 rounded-full clay-button-primary flex items-center justify-center text-white font-bold text-xs">
-              {currentUser.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
+            {currentUser.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .slice(0, 2)}
           </button>
-
           {userMenuOpen && (
-            <div className="absolute right-0 mt-2 w-64 rounded-3xl bg-white p-3 shadow-2xl z-50 border-2 border-purple-200 text-slate-900">
-              <div className="px-3 py-2 border-b border-purple-100">
-                <div className="font-extrabold text-sm text-slate-950 truncate">{currentUser.name}</div>
-                <div className="text-xs font-medium text-slate-600 truncate">{currentUser.email}</div>
-                <div className="text-[11px] font-bold text-brand-purple mt-0.5 truncate">{currentUser.degree}</div>
+            <div className={menuClass}>
+              <div className="p-3 border-b border-[#244333]">
+                <p className="text-sm font-medium truncate">
+                  {currentUser.name}
+                </p>
+                <p className="text-xs text-[#a1b8a8] truncate mt-1">
+                  {currentUser.email}
+                </p>
               </div>
-
-              <div className="py-1.5 space-y-1">
-                <Link
-                  href="/settings"
-                  onClick={() => setUserMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-800 hover:text-brand-purple hover:bg-purple-50 rounded-xl transition-colors"
-                >
-                  <User className="w-3.5 h-3.5 text-brand-purple" />
-                  Profile & Settings
-                </Link>
-                <Link
-                  href="/portfolio"
-                  onClick={() => setUserMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-800 hover:text-brand-purple hover:bg-purple-50 rounded-xl transition-colors"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                  My Public Portfolio
-                </Link>
-              </div>
-
-              <div className="pt-1 border-t border-purple-100">
-                <Link
-                  href="/"
-                  onClick={() => setUserMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
-                >
-                  <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                  Sign Out
-                </Link>
-              </div>
+              <Link
+                href="/settings"
+                onClick={() => setUserMenuOpen(false)}
+                className={menuItem}
+              >
+                Profile &amp; Settings <Settings size={14} />
+              </Link>
+              <Link
+                href="/portfolio"
+                onClick={() => setUserMenuOpen(false)}
+                className={menuItem}
+              >
+                My Public Portfolio <User size={14} />
+              </Link>
+              <Link
+                href="/"
+                onClick={() => setUserMenuOpen(false)}
+                className={menuItem}
+              >
+                Sign Out <LogOut size={14} />
+              </Link>
             </div>
           )}
         </div>

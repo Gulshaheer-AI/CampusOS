@@ -148,7 +148,7 @@ body {
   letter-spacing: -0.5px;
 }
 .subtitle {
-  color: #94A3B8;
+  color: #CBD5E1;
   font-size: 13px;
   margin-top: 6px;
   line-height: 1.5;
@@ -168,7 +168,7 @@ body {
 .metric-label {
   display: block;
   font-size: 11px;
-  color: #94A3B8;
+  color: #CBD5E1;
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -240,7 +240,7 @@ body {
   margin-left: 6px;
   font-size: 11px;
   font-family: monospace;
-  color: #94A3B8;
+  color: #CBD5E1;
 }
 .terminal-content {
   padding: 12px;
@@ -317,13 +317,20 @@ verify_binary_search()`,
 
 export default function CodePlayPage() {
   const [files, setFiles] = useState<IdeFile[]>(DEFAULT_FILES);
+  const [isReady, setIsReady] = useState(false);
   const [activeFileId, setActiveFileId] = useState<string>("file-html");
-  const [consoleLogs, setConsoleLogs] = useState<{ type: "log" | "warn" | "error"; text: string; time: string }[]>([]);
+  const [consoleLogs, setConsoleLogs] = useState<
+    { type: "log" | "warn" | "error"; text: string; time: string }[]
+  >([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Height controls for Row 1 (Live Preview + Console) and Row 2 (Code Editor)
-  const [previewHeight, setPreviewHeight] = useState<"380px" | "500px" | "640px">("500px");
-  const [editorHeight, setEditorHeight] = useState<"420px" | "540px" | "680px">("540px");
+  const [previewHeight, setPreviewHeight] = useState<
+    "380px" | "500px" | "640px"
+  >("500px");
+  const [editorHeight, setEditorHeight] = useState<"420px" | "540px" | "680px">(
+    "540px",
+  );
 
   // History stack for instant Undo of AI changes
   const [undoStack, setUndoStack] = useState<IdeFile[][]>([]);
@@ -340,7 +347,8 @@ export default function CodePlayPage() {
 
   const htmlContent = files.find((f) => f.language === "html")?.content || "";
   const cssContent = files.find((f) => f.language === "css")?.content || "";
-  const jsContent = files.find((f) => f.language === "javascript")?.content || "";
+  const jsContent =
+    files.find((f) => f.language === "javascript")?.content || "";
 
   // Compile sandboxed document
   const compileSandboxDoc = () => {
@@ -394,9 +402,22 @@ export default function CodePlayPage() {
     setConsoleLogs([]);
     pythonRun.current?.cancel();
     if (activeFile.language === "python") {
-      setConsoleLogs([{ type: "log", text: "Loading Python runtime…", time: new Date().toLocaleTimeString() }]);
+      setConsoleLogs([
+        {
+          type: "log",
+          text: "Loading Python runtime…",
+          time: new Date().toLocaleTimeString(),
+        },
+      ]);
       pythonRun.current = runPython(activeFile.content, (text, error) => {
-        setConsoleLogs(logs => [...logs.slice(-99), { type: error ? "error" : "log", text, time: new Date().toLocaleTimeString() }]);
+        setConsoleLogs((logs) => [
+          ...logs.slice(-99),
+          {
+            type: error ? "error" : "log",
+            text,
+            time: new Date().toLocaleTimeString(),
+          },
+        ]);
       });
       return;
     }
@@ -407,13 +428,18 @@ export default function CodePlayPage() {
 
   useEffect(() => {
     handleRunCode();
+    setIsReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Listen to iframe console messages
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
-      if (e.data?.source === "codeplay_console") {
+      if (
+        activeFile.language !== "python" &&
+        e.source === iframeRef.current?.contentWindow &&
+        e.data?.source === "codeplay_console"
+      ) {
         setConsoleLogs((prev) => [
           ...prev.slice(-49),
           { type: e.data.type, text: e.data.text, time: e.data.time },
@@ -422,7 +448,7 @@ export default function CodePlayPage() {
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [activeFile.language]);
 
   // Keyboard shortcut Ctrl+Enter to run
   useEffect(() => {
@@ -434,7 +460,7 @@ export default function CodePlayPage() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [htmlContent, cssContent, jsContent]);
+  }, [htmlContent, cssContent, jsContent, activeFileId, activeFile.content]);
 
   // File Upload Handler
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -467,7 +493,10 @@ export default function CodePlayPage() {
   };
 
   // Monday AI Code Assistant: Directly applies code modifications to buffer & executes
-  const handleAiAction = async (action: "beautify" | "debug" | "explain" | "fix_error" | "generate" | "custom") => {
+  const handleAiAction = async (
+    action:
+      "beautify" | "debug" | "explain" | "fix_error" | "generate" | "custom",
+  ) => {
     setIsAiGenerating(true);
     setAiMessage(null);
 
@@ -502,22 +531,30 @@ export default function CodePlayPage() {
               if (f.id === activeFileId && data.activeContent) {
                 return { ...f, content: data.activeContent };
               }
-              if (f.language === "html" && data.html) return { ...f, content: data.html };
-              if (f.language === "css" && data.css) return { ...f, content: data.css };
-              if (f.language === "javascript" && data.js) return { ...f, content: data.js };
-              if (f.language === "python" && data.activeContent) return { ...f, content: data.activeContent };
+              if (f.language === "html" && data.html)
+                return { ...f, content: data.html };
+              if (f.language === "css" && data.css)
+                return { ...f, content: data.css };
+              if (f.language === "javascript" && data.js)
+                return { ...f, content: data.js };
+              if (f.language === "python" && data.activeContent)
+                return { ...f, content: data.activeContent };
               return f;
-            })
+            }),
           );
 
-          setAiMessage(`Monday AI updated ${activeFile.name} & re-executed preview! ${data.explanation}`);
+          setAiMessage(
+            `Monday AI updated ${activeFile.name} & re-executed preview! ${data.explanation}`,
+          );
           if (aiPrompt) setAiPrompt("");
           setTimeout(() => handleRunCode(), 150);
         }
       }
     } catch (err) {
       console.warn("CodePlay AI error:", err);
-      setAiMessage("Monday AI experienced a connection timeout. Retrying with local code repair...");
+      setAiMessage(
+        "Monday AI experienced a connection timeout. Retrying with local code repair...",
+      );
     } finally {
       setIsAiGenerating(false);
     }
@@ -533,11 +570,15 @@ export default function CodePlayPage() {
   };
 
   const handleCreateNewFile = () => {
-    const filename = prompt("Enter new file name (e.g. algorithm.py, styles2.css, helper.js):", "helper.js");
+    const filename = prompt(
+      "Enter new file name (e.g. algorithm.py, styles2.css, helper.js):",
+      "helper.js",
+    );
     if (!filename) return;
     const cleanName = filename.trim();
     let language: IdeFile["language"] = "javascript";
-    if (cleanName.endsWith(".html") || cleanName.endsWith(".htm")) language = "html";
+    if (cleanName.endsWith(".html") || cleanName.endsWith(".htm"))
+      language = "html";
     else if (cleanName.endsWith(".css")) language = "css";
     else if (cleanName.endsWith(".py")) language = "python";
     else if (cleanName.endsWith(".json")) language = "json";
@@ -546,7 +587,10 @@ export default function CodePlayPage() {
       id: `file-${Date.now()}`,
       name: cleanName,
       language,
-      content: language === "python" ? "# Python file in CodePlay\n" : "// New code buffer\n",
+      content:
+        language === "python"
+          ? "# Python file in CodePlay\n"
+          : "// New code buffer\n",
     };
     setFiles((prev) => [...prev, newFile]);
     setActiveFileId(newFile.id);
@@ -567,7 +611,9 @@ export default function CodePlayPage() {
 
   const updateActiveContent = (newContent: string) => {
     setFiles((prev) =>
-      prev.map((f) => (f.id === activeFileId ? { ...f, content: newContent } : f))
+      prev.map((f) =>
+        f.id === activeFileId ? { ...f, content: newContent } : f,
+      ),
     );
   };
 
@@ -575,18 +621,27 @@ export default function CodePlayPage() {
 
   return (
     <AppShell>
-      <div className={cn("space-y-5", isFullscreen && "fixed inset-0 z-50 bg-slate-950 p-4 overflow-y-auto")}>
+      <div
+        className={cn(
+          "codeplay-workspace space-y-5",
+          isFullscreen && "fixed inset-0 z-50 bg-slate-950 p-4 overflow-y-auto",
+        )}
+      >
         {/* Main Hero Banner - Royal Purple Clay Card */}
         <div className="clay-card-purple p-5 sm:p-6 relative overflow-hidden text-white shadow-xl rounded-3xl">
           <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <Badge variant="cyan" className="font-bold">Campus Learn</Badge>
+                <Badge variant="cyan" className="font-bold">
+                  Campus Learn
+                </Badge>
                 <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full">
                   Monday AI Multi-Language IDE
                 </span>
-                <span className="text-xs text-purple-100 font-semibold">Isolated Browser Sandbox</span>
+                <span className="text-xs text-purple-100 font-semibold">
+                  Isolated Browser Sandbox
+                </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 CodePlay Coding Playground &amp; IDE
@@ -626,6 +681,7 @@ export default function CodePlayPage() {
               <Button
                 size="sm"
                 onClick={handleRunCode}
+                disabled={!isReady}
                 className="font-black text-xs bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-md border-none"
               >
                 <Play className="w-3.5 h-3.5 mr-1 fill-slate-950" />
@@ -638,7 +694,11 @@ export default function CodePlayPage() {
                 className="p-2 rounded-xl bg-white/20 text-white hover:bg-white/30"
                 title={isFullscreen ? "Exit Fullscreen" : "Fullscreen IDE"}
               >
-                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                {isFullscreen ? (
+                  <Minimize2 className="w-4 h-4" />
+                ) : (
+                  <Maximize2 className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -648,7 +708,10 @@ export default function CodePlayPage() {
         <div className="clay-card p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs bg-white border border-purple-200 shadow-sm rounded-2xl">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-extrabold text-slate-950 flex items-center gap-2 mr-1">
-              <MondayOrb size="sm" state={isAiGenerating ? "thinking" : "idle"} />
+              <MondayOrb
+                size="sm"
+                state={isAiGenerating ? "thinking" : "idle"}
+              />
               Monday AI Copilot:
             </span>
 
@@ -717,7 +780,8 @@ export default function CodePlayPage() {
               onChange={(e) => setAiPrompt(e.target.value)}
               placeholder="Ask Monday AI: 'Edit code to add modal', 'Fix error in ide'..."
               onKeyDown={(e) => {
-                if (e.key === "Enter" && aiPrompt.trim()) handleAiAction("custom");
+                if (e.key === "Enter" && aiPrompt.trim())
+                  handleAiAction("custom");
               }}
               className="flex-1 clay-input rounded-xl px-3 py-1.5 text-xs text-slate-950 font-medium placeholder-slate-400 bg-white border border-purple-200"
             />
@@ -763,7 +827,9 @@ export default function CodePlayPage() {
               Row 1: Live Interactive Preview &amp; Execution Console
             </span>
             <div className="flex items-center gap-1">
-              <span className="text-[11px] text-slate-500 font-medium mr-1">Preview Height:</span>
+              <span className="text-[11px] text-slate-500 font-medium mr-1">
+                Preview Height:
+              </span>
               {(["380px", "500px", "640px"] as const).map((h) => (
                 <button
                   key={h}
@@ -773,16 +839,23 @@ export default function CodePlayPage() {
                     "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     previewHeight === h
                       ? "bg-brand-purple text-white shadow-sm"
-                      : "bg-purple-50 text-slate-700 hover:bg-purple-100 border border-purple-200"
+                      : "bg-purple-50 text-slate-700 hover:bg-purple-100 border border-purple-200",
                   )}
                 >
-                  {h === "380px" ? "Compact (380px)" : h === "500px" ? "Normal (500px)" : "Full (640px)"}
+                  {h === "380px"
+                    ? "Compact (380px)"
+                    : h === "500px"
+                      ? "Normal (500px)"
+                      : "Full (640px)"}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4" style={{ height: previewHeight }}>
+          <div
+            className="grid grid-cols-1 lg:grid-cols-12 gap-4"
+            style={{ height: previewHeight }}
+          >
             {/* Live Preview Iframe (7 cols) */}
             <div className="lg:col-span-7 bg-white border-2 border-purple-100 rounded-2xl overflow-hidden flex flex-col shadow-clay h-full">
               <div className="px-3.5 py-2 bg-purple-50/80 border-b border-purple-100 flex items-center justify-between text-xs">
@@ -830,10 +903,14 @@ export default function CodePlayPage() {
                 </div>
               </div>
 
-              <div className="flex-1 p-3 overflow-y-auto space-y-1.5 font-mono text-[11px]">
+              <div
+                data-testid="execution-console"
+                className="flex-1 p-3 overflow-y-auto space-y-1.5 font-mono text-[11px]"
+              >
                 {consoleLogs.length === 0 ? (
                   <div className="text-slate-500 text-center py-10 italic font-medium">
-                    No runtime messages yet. Logs, console.log outputs, and errors stream here in real time.
+                    No runtime messages yet. Logs, console.log outputs, and
+                    errors stream here in real time.
                   </div>
                 ) : (
                   consoleLogs.map((log, i) => (
@@ -844,15 +921,19 @@ export default function CodePlayPage() {
                         log.type === "error"
                           ? "bg-rose-950/40 text-rose-300 border-rose-900/50"
                           : log.type === "warn"
-                          ? "bg-amber-950/40 text-amber-300 border-amber-900/50"
-                          : "bg-slate-900/80 text-slate-300 border-slate-800"
+                            ? "bg-amber-950/40 text-amber-300 border-amber-900/50"
+                            : "bg-slate-900/80 text-slate-300 border-slate-800",
                       )}
                     >
-                      <span className="text-[9px] text-slate-500 shrink-0">{log.time}</span>
+                      <span className="text-[9px] text-slate-500 shrink-0">
+                        {log.time}
+                      </span>
                       <span className="font-bold uppercase text-[9px] px-1 rounded bg-slate-800 border border-slate-700">
                         {log.type}
                       </span>
-                      <span className="whitespace-pre-wrap break-all">{log.text}</span>
+                      <span className="whitespace-pre-wrap break-all">
+                        {log.text}
+                      </span>
                     </div>
                   ))
                 )}
@@ -871,7 +952,9 @@ export default function CodePlayPage() {
               Row 2: Workspace Files Explorer &amp; Full-Size Code Editor
             </span>
             <div className="flex items-center gap-1">
-              <span className="text-[11px] text-slate-500 font-medium mr-1">Editor Height:</span>
+              <span className="text-[11px] text-slate-500 font-medium mr-1">
+                Editor Height:
+              </span>
               {(["420px", "540px", "680px"] as const).map((h) => (
                 <button
                   key={h}
@@ -881,16 +964,23 @@ export default function CodePlayPage() {
                     "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     editorHeight === h
                       ? "bg-brand-purple text-white shadow-sm"
-                      : "bg-purple-50 text-slate-700 hover:bg-purple-100 border border-purple-200"
+                      : "bg-purple-50 text-slate-700 hover:bg-purple-100 border border-purple-200",
                   )}
                 >
-                  {h === "420px" ? "Standard (420px)" : h === "540px" ? "Tall (540px)" : "Max (680px)"}
+                  {h === "420px"
+                    ? "Standard (420px)"
+                    : h === "540px"
+                      ? "Tall (540px)"
+                      : "Max (680px)"}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4" style={{ height: editorHeight }}>
+          <div
+            className="grid grid-cols-1 lg:grid-cols-12 gap-4"
+            style={{ height: editorHeight }}
+          >
             {/* File Explorer Sidebar (2 cols) */}
             <div className="lg:col-span-2 flex flex-col bg-white border-2 border-purple-100 rounded-2xl p-3 space-y-2 overflow-y-auto shadow-clay text-slate-900 h-full">
               <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-brand-purple pb-2 border-b border-purple-100">
@@ -924,15 +1014,25 @@ export default function CodePlayPage() {
                         "w-full text-left px-2.5 py-2 rounded-xl text-xs font-mono flex items-center justify-between transition-all cursor-pointer group",
                         isActive
                           ? "clay-button-primary text-white font-bold shadow-sm"
-                          : "text-slate-700 hover:text-brand-purple hover:bg-purple-50 font-medium"
+                          : "text-slate-700 hover:text-brand-purple hover:bg-purple-50 font-medium",
                       )}
                     >
                       <span className="truncate flex items-center gap-1.5 flex-1 mr-1">
-                        <FileCode className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-white" : "text-brand-purple")} />
+                        <FileCode
+                          className={cn(
+                            "w-3.5 h-3.5 shrink-0",
+                            isActive ? "text-white" : "text-brand-purple",
+                          )}
+                        />
                         <span className="truncate">{file.name}</span>
                       </span>
                       <div className="flex items-center gap-1 shrink-0">
-                        <span className={cn("text-[10px] uppercase font-bold", isActive ? "text-purple-200" : "text-slate-500")}>
+                        <span
+                          className={cn(
+                            "text-[10px] uppercase font-bold",
+                            isActive ? "text-purple-200" : "text-slate-500",
+                          )}
+                        >
                           {file.language.slice(0, 2)}
                         </span>
                         {files.length > 1 && (
@@ -941,7 +1041,9 @@ export default function CodePlayPage() {
                             onClick={(e) => handleDeleteFile(file.id, e)}
                             className={cn(
                               "opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-rose-100 hover:text-rose-600 transition-all",
-                              isActive ? "text-purple-200 hover:text-white" : "text-slate-400"
+                              isActive
+                                ? "text-purple-200 hover:text-white"
+                                : "text-slate-400",
                             )}
                             title="Delete file"
                           >
@@ -977,7 +1079,7 @@ export default function CodePlayPage() {
                       "px-3 py-1.5 rounded-t-lg text-xs font-mono border-t border-x transition-colors shrink-0 flex items-center gap-1.5",
                       f.id === activeFileId
                         ? "bg-slate-900 text-white border-brand-purple/50 font-bold border-t-2"
-                        : "bg-transparent text-slate-400 border-transparent hover:text-slate-200"
+                        : "bg-transparent text-slate-400 border-transparent hover:text-slate-200",
                     )}
                   >
                     <FileCode className="w-3 h-3 text-cyan-400" />
@@ -990,11 +1092,13 @@ export default function CodePlayPage() {
               <div className="flex-1 flex overflow-hidden font-mono text-xs bg-slate-900">
                 {/* Line Numbers Gutter */}
                 <div className="w-12 bg-slate-950 border-r border-slate-800 py-3 text-right pr-2 text-slate-500 select-none overflow-hidden shrink-0">
-                  {Array.from({ length: Math.min(lineCount, 600) }).map((_, i) => (
-                    <div key={i} className="leading-relaxed text-[11px]">
-                      {i + 1}
-                    </div>
-                  ))}
+                  {Array.from({ length: Math.min(lineCount, 600) }).map(
+                    (_, i) => (
+                      <div key={i} className="leading-relaxed text-[11px]">
+                        {i + 1}
+                      </div>
+                    ),
+                  )}
                 </div>
 
                 {/* Code Textarea */}
@@ -1009,14 +1113,18 @@ export default function CodePlayPage() {
               {/* Status Bar */}
               <div className="px-3 py-1.5 bg-slate-950 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between font-mono">
                 <div className="flex items-center gap-3 font-medium">
-                  <span className="text-purple-300 font-bold">{activeFile.name}</span>
+                  <span className="text-purple-300 font-bold">
+                    {activeFile.name}
+                  </span>
                   <span>•</span>
                   <span>{lineCount} lines</span>
                   <span>•</span>
                   <span>{activeFile.content.length} chars</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">Sandboxed Environment ✓</span>
+                  <span className="text-emerald-400 font-bold">
+                    Sandboxed Environment ✓
+                  </span>
                   <span className="text-slate-500">|</span>
                   <span className="text-slate-400">Ctrl+Enter to Run</span>
                 </div>

@@ -6,7 +6,13 @@ import { useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import {
   getCurrentUser,
   getPortfolioProjects,
@@ -105,7 +111,9 @@ function PortfolioContent() {
 
   const handleCopyShareLink = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(`${window.location.origin}/portfolio?student=${viewedUser?.id}`);
+      navigator.clipboard.writeText(
+        `${window.location.origin}/portfolio?student=${viewedUser?.id}`,
+      );
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2500);
     }
@@ -116,8 +124,14 @@ function PortfolioContent() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.name.endsWith(".zip") && !file.name.endsWith(".tar.gz") && !file.name.endsWith(".rar")) {
-      setZipError("Please select a valid archive file (.zip, .tar.gz, or .rar).");
+    if (
+      !file.name.endsWith(".zip") &&
+      !file.name.endsWith(".tar.gz") &&
+      !file.name.endsWith(".rar")
+    ) {
+      setZipError(
+        "Please select a valid archive file (.zip, .tar.gz, or .rar).",
+      );
       return;
     }
 
@@ -180,10 +194,15 @@ function PortfolioContent() {
   };
 
   const handleDownloadProjectZip = (proj: PortfolioProject) => {
-    if (proj.zipFileUrl && proj.zipFileUrl.startsWith("data:application/zip;base64,")) {
+    if (
+      proj.zipFileUrl &&
+      proj.zipFileUrl.startsWith("data:application/zip;base64,")
+    ) {
       const anchor = document.createElement("a");
       anchor.href = proj.zipFileUrl;
-      anchor.download = proj.zipFileName || `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.zip`;
+      anchor.download =
+        proj.zipFileName ||
+        `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.zip`;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
@@ -193,7 +212,9 @@ function PortfolioContent() {
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = proj.zipFileName || `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-codebase.zip`;
+      anchor.download =
+        proj.zipFileName ||
+        `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-codebase.zip`;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
@@ -225,14 +246,19 @@ function PortfolioContent() {
                   Recruiter Public Portfolio View
                 </span>
               ) : (
-                <span className="text-xs text-purple-100 font-medium">Verified Project Showcase</span>
+                <span className="text-xs text-purple-100 font-medium">
+                  Verified Project Showcase
+                </span>
               )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              {isRecruiterView ? `${viewedUser.name}'s Verified Portfolio` : "Student Portfolio & Project Showcase"}
+              {isRecruiterView
+                ? `${viewedUser.name}'s Verified Portfolio`
+                : "Student Portfolio & Project Showcase"}
             </h1>
             <p className="mt-1 text-sm text-purple-100 font-medium">
-              Showcase verified course challenges, personal projects, and downloadable source code archives to recruiters.
+              Showcase verified course challenges, personal projects, and
+              downloadable source code archives to recruiters.
             </p>
           </div>
 
@@ -380,8 +406,12 @@ function PortfolioContent() {
                       <div className="flex items-center gap-2 text-left truncate mr-2">
                         <FileArchive className="w-4 h-4 text-amber-500 shrink-0" />
                         <div className="truncate">
-                          <p className="text-xs font-bold text-slate-900 truncate">{uploadedZip.name}</p>
-                          <p className="text-[10px] text-slate-500">{formatFileSize(uploadedZip.size)}</p>
+                          <p className="text-xs font-bold text-slate-900 truncate">
+                            {uploadedZip.name}
+                          </p>
+                          <p className="text-[10px] text-slate-500">
+                            {formatFileSize(uploadedZip.size)}
+                          </p>
                         </div>
                       </div>
                       <button
@@ -398,8 +428,12 @@ function PortfolioContent() {
                   ) : (
                     <div className="space-y-1">
                       <UploadCloud className="w-6 h-6 text-brand-purple mx-auto" />
-                      <p className="text-xs text-slate-800 font-semibold">Click to attach codebase ZIP archive</p>
-                      <p className="text-[10px] text-slate-500">Supports .zip, .tar.gz up to 50 MB</p>
+                      <p className="text-xs text-slate-800 font-semibold">
+                        Click to attach codebase ZIP archive
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        Supports .zip, .tar.gz up to 50 MB
+                      </p>
                     </div>
                   )}
                 </div>
@@ -412,10 +446,20 @@ function PortfolioContent() {
               </div>
 
               <div className="flex justify-end gap-2 pt-2 border-t border-purple-100">
-                <Button variant="outline" size="sm" type="button" onClick={() => setShowAddModal(false)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                >
                   Cancel
                 </Button>
-                <Button variant="primary" size="sm" type="submit" className="font-bold shadow-md">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  type="submit"
+                  className="font-bold shadow-md"
+                >
                   Publish Project
                 </Button>
               </div>
@@ -427,29 +471,45 @@ function PortfolioContent() {
       {/* Profile Card Header */}
       <div className="rounded-2xl border border-purple-100 bg-white shadow-clay p-6 sm:p-8 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#6653E6] to-[#9B88F7] flex items-center justify-center text-white text-2xl font-black shadow-md shrink-0">
-            {viewedUser.name.split(" ").map((n) => n[0]).join("")}
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#153e25] to-[#9B88F7] flex items-center justify-center text-white text-2xl font-black shadow-md shrink-0">
+            {viewedUser.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </div>
 
           <div className="space-y-1 flex-1">
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-extrabold text-slate-950">{viewedUser.name}</h2>
-              <Badge variant="purple" className="text-[10px]">Verified Student</Badge>
+              <h2 className="text-2xl font-extrabold text-slate-950">
+                {viewedUser.name}
+              </h2>
+              <Badge variant="purple" className="text-[10px]">
+                Verified Student
+              </Badge>
               {isRecruiterView && (
-                <Badge variant="mint" className="text-[10px]">Recruiter Ready</Badge>
+                <Badge variant="mint" className="text-[10px]">
+                  Recruiter Ready
+                </Badge>
               )}
             </div>
             <p className="text-xs sm:text-sm text-brand-purple font-bold">
               {viewedUser.degree} • {viewedUser.department}
             </p>
-            <p className="text-xs text-slate-600 font-medium max-w-2xl mt-1 leading-relaxed">{viewedUser.bio}</p>
+            <p className="text-xs text-slate-600 font-medium max-w-2xl mt-1 leading-relaxed">
+              {viewedUser.bio}
+            </p>
           </div>
 
           {isRecruiterView && (
             <div className="p-3 bg-purple-50 rounded-2xl border border-purple-200 text-xs space-y-1 shrink-0">
-              <span className="font-bold text-brand-purple block">Candidate Information:</span>
+              <span className="font-bold text-brand-purple block">
+                Candidate Information:
+              </span>
               <p className="text-slate-700 font-medium">{viewedUser.email}</p>
-              <Link href="/cv" className="text-brand-purple font-bold hover:underline inline-flex items-center gap-1 mt-1">
+              <Link
+                href="/cv"
+                className="text-brand-purple font-bold hover:underline inline-flex items-center gap-1 mt-1"
+              >
                 <Briefcase className="w-3.5 h-3.5" />
                 View Regional CV
               </Link>
@@ -458,7 +518,9 @@ function PortfolioContent() {
         </div>
 
         <div className="pt-4 border-t border-purple-100 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-bold uppercase text-slate-500 mr-2">Verified Skills:</span>
+          <span className="text-[10px] font-bold uppercase text-slate-500 mr-2">
+            Verified Skills:
+          </span>
           {viewedUser.interests.map((skill, i) => (
             <span
               key={i}
@@ -488,23 +550,31 @@ function PortfolioContent() {
               key={proj.id}
               className={cn(
                 "bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-purple-300 transition-all rounded-2xl",
-                !proj.isPublic && "opacity-75 border-dashed"
+                !proj.isPublic && "opacity-75 border-dashed",
               )}
             >
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {proj.verified && (
-                      <Badge variant="tag10" className="text-[10px] flex items-center gap-1">
+                      <Badge
+                        variant="tag10"
+                        className="text-[10px] flex items-center gap-1"
+                      >
                         <CheckCircle2 className="w-3 h-3" />
                         Verified
                       </Badge>
                     )}
-                    <Badge variant="tag2" className="text-[10px] flex items-center gap-1">
+                    <Badge
+                      variant="tag2"
+                      className="text-[10px] flex items-center gap-1"
+                    >
                       <FileArchive className="w-3 h-3" />
                       ZIP Source
                     </Badge>
-                    {!proj.isPublic && <Badge variant="outline">Private Draft</Badge>}
+                    {!proj.isPublic && (
+                      <Badge variant="outline">Private Draft</Badge>
+                    )}
                   </div>
 
                   {!isRecruiterView && (
@@ -524,7 +594,9 @@ function PortfolioContent() {
                   )}
                 </div>
 
-                <CardTitle className="text-lg font-extrabold text-slate-950">{proj.title}</CardTitle>
+                <CardTitle className="text-lg font-extrabold text-slate-950">
+                  {proj.title}
+                </CardTitle>
                 <CardDescription className="text-xs text-slate-600 font-medium leading-relaxed mt-1">
                   {proj.description}
                 </CardDescription>
@@ -548,7 +620,8 @@ function PortfolioContent() {
                   <div className="flex items-center gap-1.5 text-slate-800 truncate mr-2 font-medium">
                     <FileArchive className="w-4 h-4 text-amber-500 shrink-0" />
                     <span className="truncate text-[11px] font-mono">
-                      {proj.zipFileName || `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.zip`}
+                      {proj.zipFileName ||
+                        `${proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.zip`}
                     </span>
                   </div>
                   <button
@@ -603,8 +676,9 @@ function PortfolioContent() {
       <div className="p-4 rounded-2xl border border-purple-100 bg-white shadow-clay flex items-start gap-3 text-xs text-slate-700 font-medium">
         <Shield className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
         <span>
-          <strong>Portfolio Privacy Guarantee:</strong> Only projects explicitly marked as public are
-          accessible to outside visitors. Your course grades, raw quiz attempts, personal tutor chats, and contact
+          <strong>Portfolio Privacy Guarantee:</strong> Only projects explicitly
+          marked as public are accessible to outside visitors. Your course
+          grades, raw quiz attempts, personal tutor chats, and contact
           information are kept strictly private.
         </span>
       </div>
@@ -615,7 +689,13 @@ function PortfolioContent() {
 export default function PortfolioPage() {
   return (
     <AppShell>
-      <Suspense fallback={<div className="p-8 text-center text-brand-purple font-bold">Loading Portfolio...</div>}>
+      <Suspense
+        fallback={
+          <div className="p-8 text-center text-brand-purple font-bold">
+            Loading Portfolio...
+          </div>
+        }
+      >
         <PortfolioContent />
       </Suspense>
     </AppShell>

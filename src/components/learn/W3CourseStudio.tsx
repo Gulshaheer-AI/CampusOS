@@ -2,7 +2,12 @@
 
 import { runPython } from "@/lib/python-runner";
 import React, { useState, useEffect, useRef } from "react";
-import { W3Course, W3Chapter, getAllW3Courses, getW3CourseById } from "@/lib/w3schools-data";
+import {
+  W3Course,
+  W3Chapter,
+  getAllW3Courses,
+  getW3CourseById,
+} from "@/lib/w3schools-data";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -41,28 +46,37 @@ export function W3CourseStudio({
   const allCourses = getAllW3Courses();
 
   // State
-  const [activeCourseId, setActiveCourseId] = useState<"python" | "javascript" | "html" | "css" | "sql">(
-    initialCourseId
-  );
+  const [activeCourseId, setActiveCourseId] = useState<
+    "python" | "javascript" | "html" | "css" | "sql"
+  >(initialCourseId);
   const currentCourse = getW3CourseById(activeCourseId) || allCourses[0];
 
   const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0);
   const [sidebarSearch, setSidebarSearch] = useState<string>("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [bookmarkedChapters, setBookmarkedChapters] = useState<Record<string, boolean>>({});
+  const [bookmarkedChapters, setBookmarkedChapters] = useState<
+    Record<string, boolean>
+  >({});
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
   // Active Chapter
-  const activeChapter: W3Chapter = currentCourse.chapters[activeChapterIndex] || currentCourse.chapters[0];
+  const activeChapter: W3Chapter =
+    currentCourse.chapters[activeChapterIndex] || currentCourse.chapters[0];
 
   // Try-It-Yourself Code Sandbox State
-  const [editorCode, setEditorCode] = useState<string>(activeChapter.tryItYourself.starterCode);
-  const [sandboxOutput, setSandboxOutput] = useState<string>("Run the example to see its output.");
+  const [editorCode, setEditorCode] = useState<string>(
+    activeChapter.tryItYourself.starterCode,
+  );
+  const [sandboxOutput, setSandboxOutput] = useState<string>(
+    "Run the example to see its output.",
+  );
   const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
 
   // Exercise Code Challenge State
   const [exerciseInput, setExerciseInput] = useState<string>("");
-  const [exerciseStatus, setExerciseStatus] = useState<"idle" | "correct" | "incorrect">("idle");
+  const [exerciseStatus, setExerciseStatus] = useState<
+    "idle" | "correct" | "incorrect"
+  >("idle");
   const [showHint, setShowHint] = useState<boolean>(false);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
   const [earnedXp, setEarnedXp] = useState<number>(0);
@@ -75,9 +89,13 @@ export function W3CourseStudio({
   }, [initialCourseId]);
 
   useEffect(() => {
-    const requestedChapter = initialChapterId || new URLSearchParams(window.location.search).get("chapter");
+    const requestedChapter =
+      initialChapterId ||
+      new URLSearchParams(window.location.search).get("chapter");
     if (requestedChapter) {
-      const idx = currentCourse.chapters.findIndex((c) => c.id === requestedChapter);
+      const idx = currentCourse.chapters.findIndex(
+        (c) => c.id === requestedChapter,
+      );
       if (idx !== -1) setActiveChapterIndex(idx);
     } else {
       setActiveChapterIndex(0);
@@ -88,7 +106,10 @@ export function W3CourseStudio({
   useEffect(() => {
     if (activeChapter) {
       setEditorCode(activeChapter.tryItYourself.starterCode);
-      setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
+      setSandboxOutput(
+        "Expected example result (not executed):\n" +
+          activeChapter.tryItYourself.expectedOutput,
+      );
       setExerciseInput("");
       setExerciseStatus("idle");
       setShowHint(false);
@@ -97,7 +118,9 @@ export function W3CourseStudio({
   }, [activeChapter]);
 
   // Switch Course Track
-  const handleSelectCourse = (courseId: "python" | "javascript" | "html" | "css" | "sql") => {
+  const handleSelectCourse = (
+    courseId: "python" | "javascript" | "html" | "css" | "sql",
+  ) => {
     setActiveCourseId(courseId);
     setActiveChapterIndex(0);
     setSidebarSearch("");
@@ -130,14 +153,19 @@ export function W3CourseStudio({
   // Share Copy Link
   const handleCopyLink = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(`${window.location.origin}/roadmaps?course=${activeCourseId}&chapter=${activeChapter.id}`);
+      navigator.clipboard.writeText(
+        `${window.location.origin}/roadmaps?course=${activeCourseId}&chapter=${activeChapter.id}`,
+      );
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
     }
   };
 
   const pythonRun = useRef<ReturnType<typeof runPython> | null>(null);
-  useEffect(() => () => pythonRun.current?.cancel(), [activeCourseId, activeChapter.id]);
+  useEffect(
+    () => () => pythonRun.current?.cancel(),
+    [activeCourseId, activeChapter.id],
+  );
 
   // Execute Code in Sandbox
   const handleRunCode = () => {
@@ -145,7 +173,11 @@ export function W3CourseStudio({
     setIsRunningCode(true);
     if (activeChapter.tryItYourself.language === "python") {
       setSandboxOutput("");
-      pythonRun.current = runPython(editorCode, (text) => setSandboxOutput(previous => previous ? previous + "\n" + text : text));
+      pythonRun.current = runPython(editorCode, (text) =>
+        setSandboxOutput((previous) =>
+          previous ? previous + "\n" + text : text,
+        ),
+      );
       pythonRun.current.done.then(() => setIsRunningCode(false));
       return;
     }
@@ -156,7 +188,13 @@ export function W3CourseStudio({
           const logs: string[] = [];
           const customConsole = {
             log: (...args: any[]) => {
-              logs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "));
+              logs.push(
+                args
+                  .map((a) =>
+                    typeof a === "object" ? JSON.stringify(a) : String(a),
+                  )
+                  .join(" "),
+              );
               setSandboxOutput(logs.join("\n"));
             },
             error: (...args: any[]) => logs.push("Error: " + args.join(" ")),
@@ -166,13 +204,22 @@ export function W3CourseStudio({
           // Safe evaluation with simulated console
           const runFn = new Function("console", editorCode);
           runFn(customConsole);
-          setSandboxOutput(logs.length > 0 ? logs.join("\n") : "Code executed successfully with no console output.");
+          setSandboxOutput(
+            logs.length > 0
+              ? logs.join("\n")
+              : "Code executed successfully with no console output.",
+          );
         } else {
           // SQL, HTML, CSS: display formatted expected result
-          setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
+          setSandboxOutput(
+            "Expected example result (not executed):\n" +
+              activeChapter.tryItYourself.expectedOutput,
+          );
         }
       } catch (err: any) {
-        setSandboxOutput(`Runtime Exception: ${err?.message || "Execution error"}`);
+        setSandboxOutput(
+          `Runtime Exception: ${err?.message || "Execution error"}`,
+        );
       } finally {
         setIsRunningCode(false);
       }
@@ -182,16 +229,23 @@ export function W3CourseStudio({
   // Reset Sandbox Code
   const handleResetCode = () => {
     setEditorCode(activeChapter.tryItYourself.starterCode);
-    setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
+    setSandboxOutput(
+      "Expected example result (not executed):\n" +
+        activeChapter.tryItYourself.expectedOutput,
+    );
   };
 
   // Check Code Challenge Exercise
   const handleSubmitExercise = () => {
     const cleanInput = exerciseInput.trim();
     const correct = activeChapter.exercise.blankAnswer.trim();
-    const acceptable = activeChapter.exercise.acceptableAnswers?.map((a) => a.trim()) || [correct];
+    const acceptable = activeChapter.exercise.acceptableAnswers?.map((a) =>
+      a.trim(),
+    ) || [correct];
 
-    const isMatch = acceptable.some((ans) => ans.toLowerCase() === cleanInput.toLowerCase());
+    const isMatch = acceptable.some(
+      (ans) => ans.toLowerCase() === cleanInput.toLowerCase(),
+    );
 
     if (isMatch) {
       setExerciseStatus("correct");
@@ -202,9 +256,10 @@ export function W3CourseStudio({
   };
 
   // Filtered Chapters for Sidebar
-  const filteredChapters = currentCourse.chapters.filter((ch) =>
-    ch.title.toLowerCase().includes(sidebarSearch.toLowerCase()) ||
-    ch.description.toLowerCase().includes(sidebarSearch.toLowerCase())
+  const filteredChapters = currentCourse.chapters.filter(
+    (ch) =>
+      ch.title.toLowerCase().includes(sidebarSearch.toLowerCase()) ||
+      ch.description.toLowerCase().includes(sidebarSearch.toLowerCase()),
   );
 
   return (
@@ -212,7 +267,7 @@ export function W3CourseStudio({
       {/* =========================================================================
           TOP COURSE SWITCHER BAR (Matches W3Schools dark navbar from user image)
          ========================================================================= */}
-      <div className="bg-[#282A35] text-white px-3 sm:px-6 py-2.5 flex items-center justify-between border-b border-slate-700 overflow-x-auto scrollbar-none">
+      <div className="bg-[#0c2015] text-white px-3 sm:px-6 py-2.5 flex items-center justify-between border-b border-slate-700 overflow-x-auto scrollbar-none">
         <div className="flex items-center gap-1 sm:gap-2">
           {allCourses.map((c) => {
             const isActive = c.id === activeCourseId;
@@ -223,8 +278,8 @@ export function W3CourseStudio({
                 className={cn(
                   "px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-black uppercase tracking-wider transition-all whitespace-nowrap",
                   isActive
-                    ? "bg-white text-[#282A35] shadow-md font-black"
-                    : "text-slate-200 hover:text-white hover:bg-white/10"
+                    ? "bg-[#193c26] text-[#a5efae] shadow-md font-black"
+                    : "text-slate-200 hover:text-white hover:bg-white/10",
                 )}
               >
                 {c.tabLabel}
@@ -247,7 +302,7 @@ export function W3CourseStudio({
         {/* Right side course badge & mobile toggle */}
         <div className="flex items-center gap-2 pl-2">
           <Badge
-            style={{ backgroundColor: currentCourse.accentColor }}
+            style={{ backgroundColor: "#142e20", color: "#b8f4c8" }}
             className="text-white text-[11px] font-bold border-none hidden sm:inline-flex"
           >
             {currentCourse.categoryBadge}
@@ -257,7 +312,11 @@ export function W3CourseStudio({
             className="lg:hidden p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white"
             aria-label="Toggle Chapters Sidebar"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -269,8 +328,8 @@ export function W3CourseStudio({
            ===================================================================== */}
         <aside
           className={cn(
-            "w-full lg:w-64 xl:w-72 border-r border-slate-200 bg-[#F1F3F5] flex flex-col shrink-0 transition-all",
-            mobileMenuOpen ? "block" : "hidden lg:flex"
+            "w-full lg:w-64 xl:w-72 border-r border-slate-200 bg-[#0c1b13] flex flex-col shrink-0 transition-all",
+            mobileMenuOpen ? "block" : "hidden lg:flex",
           )}
         >
           {/* Sidebar Header */}
@@ -300,7 +359,9 @@ export function W3CourseStudio({
           {/* Chapter List */}
           <div className="overflow-y-auto max-h-[calc(100vh-220px)] lg:max-h-[750px] p-2 space-y-0.5 scrollbar-thin">
             {filteredChapters.map((ch, idx) => {
-              const originalIndex = currentCourse.chapters.findIndex((c) => c.id === ch.id);
+              const originalIndex = currentCourse.chapters.findIndex(
+                (c) => c.id === ch.id,
+              );
               const isActive = originalIndex === activeChapterIndex;
               const isBookmarked = bookmarkedChapters[ch.id];
 
@@ -315,8 +376,8 @@ export function W3CourseStudio({
                     className={cn(
                       "w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center justify-between group",
                       isActive
-                        ? "bg-[#E7E9EB] text-slate-950 font-bold border-l-4 border-[#04AA6D] shadow-xs"
-                        : "text-slate-700 hover:bg-slate-200/70 hover:text-slate-900"
+                        ? "bg-[#193c26] text-slate-950 font-bold border-l-4 border-[#a5efae] shadow-xs"
+                        : "text-slate-700 hover:bg-slate-200/70 hover:text-slate-900",
                     )}
                   >
                     <span className="truncate">{ch.title}</span>
@@ -328,7 +389,7 @@ export function W3CourseStudio({
                         <ChevronRight
                           className={cn(
                             "w-3.5 h-3.5 text-slate-400 transition-transform",
-                            isActive && "rotate-90 text-[#04AA6D]"
+                            isActive && "rotate-90 text-[#a5efae]",
                           )}
                         />
                       )}
@@ -357,7 +418,10 @@ export function W3CourseStudio({
         {/* =====================================================================
             MAIN CONTENT AREA (Matches W3Schools Layout from screenshot)
            ===================================================================== */}
-        <main className="flex-1 p-4 sm:p-8 space-y-8 overflow-x-hidden bg-white">
+        <section
+          aria-label="Academy lesson"
+          className="flex-1 p-4 sm:p-8 space-y-8 overflow-x-hidden bg-white"
+        >
           {/* Header Bar with Bookmark & Previous/Next Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
             <div className="flex items-center gap-3">
@@ -375,7 +439,7 @@ export function W3CourseStudio({
                     "w-5 h-5",
                     bookmarkedChapters[activeChapter.id]
                       ? "text-amber-500 fill-amber-500"
-                      : "text-slate-400"
+                      : "text-slate-400",
                   )}
                 />
               </button>
@@ -397,8 +461,10 @@ export function W3CourseStudio({
                 variant="primary"
                 size="sm"
                 onClick={handleNextChapter}
-                disabled={activeChapterIndex === currentCourse.chapters.length - 1}
-                className="bg-[#04AA6D] hover:bg-[#059862] text-white font-bold rounded-lg px-4 border-none shadow-sm"
+                disabled={
+                  activeChapterIndex === currentCourse.chapters.length - 1
+                }
+                className="bg-[#a5efae] hover:bg-[#80d995] text-white font-bold rounded-lg px-4 border-none shadow-sm"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -408,7 +474,9 @@ export function W3CourseStudio({
 
           {/* Social Share & Overview */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <p className="font-medium text-slate-700">{activeChapter.description}</p>
+            <p className="font-medium text-slate-700">
+              {activeChapter.description}
+            </p>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={handleCopyLink}
@@ -448,9 +516,13 @@ export function W3CourseStudio({
                         <TerminalIcon className="w-3.5 h-3.5" />
                         Command Line / Interactive Shell
                       </span>
-                      <span className="text-slate-500">W3 / CampusOS Terminal</span>
+                      <span className="text-slate-500">
+                        W3 / CampusOS Terminal
+                      </span>
                     </div>
-                    <div className="text-emerald-300 font-semibold">{sec.terminalCommand}</div>
+                    <div className="text-emerald-300 font-semibold">
+                      {sec.terminalCommand}
+                    </div>
                     {sec.terminalOutput && (
                       <div className="text-slate-200 pt-0.5 whitespace-pre-wrap">
                         {sec.terminalOutput}
@@ -462,7 +534,9 @@ export function W3CourseStudio({
                 {/* Code Snippet Box */}
                 {sec.codeSnippet && (
                   <div className="rounded-xl bg-slate-900 text-slate-100 p-4 font-mono text-xs sm:text-sm border border-slate-800">
-                    <pre className="overflow-x-auto whitespace-pre-wrap">{sec.codeSnippet.code}</pre>
+                    <pre className="overflow-x-auto whitespace-pre-wrap">
+                      {sec.codeSnippet.code}
+                    </pre>
                   </div>
                 )}
 
@@ -480,7 +554,7 @@ export function W3CourseStudio({
           {/* =========================================================================
               "TRY IT YOURSELF" LIVE CODE SANDBOX (Interactive Run & Terminal Output)
              ========================================================================= */}
-          <div className="rounded-2xl border-2 border-slate-300 bg-[#F1F3F5] p-5 sm:p-6 space-y-4 shadow-sm">
+          <div className="rounded-2xl border-2 border-slate-300 bg-[#0c1b13] p-5 sm:p-6 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-black uppercase tracking-wider text-slate-600 block">
@@ -522,7 +596,7 @@ export function W3CourseStudio({
                 <Button
                   onClick={handleRunCode}
                   disabled={isRunningCode}
-                  className="bg-[#04AA6D] hover:bg-[#059862] text-white font-bold rounded-xl px-5 shadow-sm border-none"
+                  className="bg-[#a5efae] hover:bg-[#80d995] text-white font-bold rounded-xl px-5 shadow-sm border-none"
                 >
                   <Play className="w-4 h-4 mr-1.5 fill-current" />
                   {isRunningCode ? "Executing..." : "Run Code »"}
@@ -549,7 +623,8 @@ export function W3CourseStudio({
 
             {activeChapter.tryItYourself.explanation && (
               <p className="text-xs text-slate-600 font-medium">
-                <strong>Concept:</strong> {activeChapter.tryItYourself.explanation}
+                <strong>Concept:</strong>{" "}
+                {activeChapter.tryItYourself.explanation}
               </p>
             )}
           </div>
@@ -557,49 +632,56 @@ export function W3CourseStudio({
           {/* =========================================================================
               "TEST YOURSELF WITH EXERCISES" (Code Challenge with Fill-in-the-Blank)
              ========================================================================= */}
-          <div className="rounded-2xl border-2 border-slate-800 bg-[#282A35] text-white p-5 sm:p-6 space-y-4 shadow-xl">
+          <div className="rounded-2xl border-2 border-slate-800 bg-[#0c2015] text-white p-5 sm:p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-700">
               <div>
                 <span className="text-xs font-black uppercase tracking-wider text-emerald-400 block">
                   Test Yourself With Exercises
                 </span>
-                <h3 className="text-lg font-black text-white">{activeChapter.exercise.title}</h3>
+                <h3 className="text-lg font-black text-white">
+                  {activeChapter.exercise.title}
+                </h3>
               </div>
               <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
                 +{activeChapter.exercise.xp} XP
               </Badge>
             </div>
 
-            <p className="text-sm text-slate-200 font-medium">{activeChapter.exercise.prompt}</p>
+            <p className="text-sm text-slate-200 font-medium">
+              {activeChapter.exercise.prompt}
+            </p>
 
             {/* Interactive Code Exercise Box */}
             <div className="rounded-xl bg-slate-900/90 border border-slate-700 p-4 space-y-3 font-mono text-xs sm:text-sm">
               <div className="text-slate-400 text-xs">Fill in the blank:</div>
               <div className="flex flex-wrap items-center gap-2 text-white">
-                {activeChapter.exercise.codeTemplate.split("___").map((chunk, idx, arr) => (
-                  <React.Fragment key={idx}>
-                    <span className="whitespace-pre">{chunk}</span>
-                    {idx < arr.length - 1 && (
-                      <input
-                        type="text"
-                        value={exerciseInput}
-                        onChange={(e) => {
-                          setExerciseInput(e.target.value);
-                          if (exerciseStatus !== "idle") setExerciseStatus("idle");
-                        }}
-                        placeholder="answer"
-                        className={cn(
-                          "px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm border-2 font-bold text-center transition-all bg-slate-950 focus:outline-none min-w-[90px]",
-                          exerciseStatus === "correct"
-                            ? "border-emerald-500 text-emerald-400 bg-emerald-950/30"
-                            : exerciseStatus === "incorrect"
-                            ? "border-red-500 text-red-400 bg-red-950/30"
-                            : "border-slate-500 text-white focus:border-[#04AA6D]"
-                        )}
-                      />
-                    )}
-                  </React.Fragment>
-                ))}
+                {activeChapter.exercise.codeTemplate
+                  .split("___")
+                  .map((chunk, idx, arr) => (
+                    <React.Fragment key={idx}>
+                      <span className="whitespace-pre">{chunk}</span>
+                      {idx < arr.length - 1 && (
+                        <input
+                          type="text"
+                          value={exerciseInput}
+                          onChange={(e) => {
+                            setExerciseInput(e.target.value);
+                            if (exerciseStatus !== "idle")
+                              setExerciseStatus("idle");
+                          }}
+                          placeholder="answer"
+                          className={cn(
+                            "px-2.5 py-1 rounded-md font-mono text-xs sm:text-sm border-2 font-bold text-center transition-all bg-slate-950 focus:outline-none min-w-[90px]",
+                            exerciseStatus === "correct"
+                              ? "border-emerald-500 text-emerald-400 bg-emerald-950/30"
+                              : exerciseStatus === "incorrect"
+                                ? "border-red-500 text-red-400 bg-red-950/30"
+                                : "border-slate-500 text-white focus:border-[#a5efae]",
+                          )}
+                        />
+                      )}
+                    </React.Fragment>
+                  ))}
               </div>
             </div>
 
@@ -607,7 +689,7 @@ export function W3CourseStudio({
             <div className="flex flex-wrap items-center gap-3">
               <Button
                 onClick={handleSubmitExercise}
-                className="bg-[#04AA6D] hover:bg-[#059862] text-white font-bold rounded-xl px-5 border-none shadow-sm"
+                className="bg-[#a5efae] hover:bg-[#80d995] text-white font-bold rounded-xl px-5 border-none shadow-sm"
               >
                 Submit Answer »
               </Button>
@@ -635,7 +717,9 @@ export function W3CourseStudio({
               <div className="p-3.5 rounded-xl bg-emerald-950/50 border border-emerald-500/50 text-emerald-300 text-xs flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>
-                  <strong>Correct!</strong> Great job! You earned +{activeChapter.exercise.xp} XP. {activeChapter.exercise.explanation}
+                  <strong>Correct!</strong> Great job! You earned +
+                  {activeChapter.exercise.xp} XP.{" "}
+                  {activeChapter.exercise.explanation}
                 </span>
               </div>
             )}
@@ -644,7 +728,8 @@ export function W3CourseStudio({
               <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/50 text-red-300 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
                 <span>
-                  <strong>Not quite right!</strong> Review the syntax and try again, or check the hint.
+                  <strong>Not quite right!</strong> Review the syntax and try
+                  again, or check the hint.
                 </span>
               </div>
             )}
@@ -681,14 +766,16 @@ export function W3CourseStudio({
               variant="primary"
               size="sm"
               onClick={handleNextChapter}
-              disabled={activeChapterIndex === currentCourse.chapters.length - 1}
-              className="bg-[#04AA6D] hover:bg-[#059862] text-white font-bold rounded-lg px-5 border-none shadow-sm"
+              disabled={
+                activeChapterIndex === currentCourse.chapters.length - 1
+              }
+              className="bg-[#a5efae] hover:bg-[#80d995] text-white font-bold rounded-lg px-5 border-none shadow-sm"
             >
               Next Lesson
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
-        </main>
+        </section>
       </div>
     </div>
   );

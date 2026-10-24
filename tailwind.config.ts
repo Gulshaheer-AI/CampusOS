@@ -10,84 +10,80 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Mobile UI Theme: Royal Periwinkle Purple & Pure White Foundation
         midnight: {
-          950: "#F5F3FE", // Soft luminous lilac-white canvas background
-          900: "#FFFFFF", // Crisp 3D Clay Card surface (pure white)
-          850: "#FAF9FF", // Elevated soft lilac card container
-          800: "#F0EDFD", // Interactive pill / tile background
-          700: "#E3DCF8", // Soft periwinkle border
-          600: "#C8BDF4", // Active specular rim & divider
-          500: "#9889F6", // Medium periwinkle
-          400: "#7A68EE", // Bright purple
-          300: "#6653E6", // Primary royal purple (from photo)
-          200: "#5542D0", // Deep purple (from photo)
-          100: "#3E2FA8", // Dark indigo
-          50: "#1E194B",  // Deepest indigo text
+          950: "#06100b",
+          900: "#0c1b13",
+          850: "#0f2017",
+          800: "#142a1e",
+          700: "#244333",
+          600: "#365c45",
+          500: "#74aa86",
+          400: "#8ddda5",
+          300: "#a5efae",
+          200: "#80d995",
+          100: "#c6f4ce",
+          50: "#f0f6f1",
         },
         brand: {
-          // Primary Vibrant Purple (from photo)
-          purple: "#6653E6",
-          violet: "#6653E6",
-          "violet-light": "#7D6DF2",
-          "violet-dark": "#5542D0",
-          enterprise: "#7D6DF2",
+          purple: "#a5efae",
+          violet: "#a5efae",
+          "violet-light": "#baf6c3",
+          "violet-dark": "#80d995",
+          enterprise: "#baf6c3",
 
-          // 4 Action Tiles from Photo: Mint, Coral Pink, Periwinkle, Aqua
-          mint: "#38D39F", // Transfer Green
-          cyan: "#38D39F",
-          "cyan-light": "#58E8AC",
-          "cyan-dark": "#25B579",
-          teal: "#38D39F",
+          mint: "#a5efae",
+          cyan: "#a5efae",
+          "cyan-light": "#c2f7c9",
+          "cyan-dark": "#80d995",
+          teal: "#a5efae",
 
-          pink: "#FF7675", // Pay Bill Coral Pink & Bar Chart
+          pink: "#FF7675",
           coral: "#FF7675",
-          lavender: "#9B88F7", // Shop Tile Purple
-          aqua: "#74B9FF", // Saving Tile Sky Blue
+          lavender: "#9B88F7",
+          aqua: "#74B9FF",
 
-          // Background & Text Neutrals
           white: "#FFFFFF",
-          canvas: "#F5F3FE",
-          surface: "#FFFFFF",
-          heading: "#1E194B",
-          body: "#47436B",
-          muted: "#7E79A2",
-          gray: "#7E79A2",
-          "gray-light": "#E8E4F8",
-          "gray-dark": "#47436B",
+          canvas: "#06100b",
+          surface: "#0c1b13",
+          heading: "#f0f6f1",
+          body: "#bdcec2",
+          muted: "#a1b8a8",
+          gray: "#a1b8a8",
+          "gray-light": "#244333",
+          "gray-dark": "#bdcec2",
 
           amber: "#FDCB6E",
-          emerald: "#38D39F",
+          emerald: "#a5efae",
           rose: "#FF7675",
         },
         clay: {
-          purple: "#6653E6",
-          mint: "#38D39F",
+          purple: "#a5efae",
+          mint: "#a5efae",
           pink: "#FF7675",
           aqua: "#74B9FF",
           lavender: "#9B88F7",
           coral: "#FF7675",
-          surface: "#FFFFFF",
-          card: "#FFFFFF",
-          canvas: "#F5F3FE",
-          light: "#FAF9FF",
+          surface: "#0c1b13",
+          card: "#0c1b13",
+          canvas: "#06100b",
+          light: "#0f2017",
         },
         odoo: {
-          purple: "#6653E6",
-          enterprise: "#7D6DF2",
-          teal: "#38D39F",
-          gray: "#7E79A2",
-          tag1: "#FF7675", // 1: Coral Red
-          tag2: "#FDCB6E", // 2: Soft Amber
-          tag3: "#FFEAA7", // 3: Pastel Yellow
-          tag4: "#74B9FF", // 4: Clay Aqua
-          tag5: "#5542D0", // 5: Deep Purple
-          tag6: "#FF8FA3", // 6: Flamingo Pink
-          tag7: "#6C5CE7", // 7: Royal Purple
-          tag8: "#38D39F", // 8: Mint Green
-          tag9: "#FD79A8", // 9: Rose Pink
-          tag10: "#00B894", // 10: Emerald Green
-          tag11: "#6653E6", // 11: Periwinkle Purple
+          purple: "#a5efae",
+          enterprise: "#baf6c3",
+          teal: "#a5efae",
+          gray: "#a1b8a8",
+          tag1: "#FF7675",
+          tag2: "#FDCB6E",
+          tag3: "#FFEAA7",
+          tag4: "#74B9FF",
+          tag5: "#80d995",
+          tag6: "#FF8FA3",
+          tag7: "#6C5CE7",
+          tag8: "#a5efae",
+          tag9: "#FD79A8",
+          tag10: "#00B894",
+          tag11: "#a5efae",
         },
       },
       fontFamily: {
@@ -100,26 +96,21 @@ const config: Config = {
           "Roboto",
           "sans-serif",
         ],
-        mono: [
-          "JetBrains Mono",
-          "Fira Code",
-          "Consolas",
-          "monospace",
-        ],
+        mono: ["JetBrains Mono", "Fira Code", "Consolas", "monospace"],
       },
       boxShadow: {
-        glow: "inset 2px 3px 6px rgba(255, 255, 255, 0.38), inset -3px -4px 8px rgba(30, 15, 80, 0.35), 0 10px 20px -3px rgba(108, 92, 231, 0.5)",
-        "glow-cyan": "inset 2px 3px 6px rgba(255, 255, 255, 0.45), inset -3px -4px 8px rgba(10, 75, 45, 0.35), 0 10px 20px -3px rgba(56, 217, 150, 0.45)",
-        "glow-purple": "inset 2px 3px 6px rgba(255, 255, 255, 0.38), inset -3px -4px 8px rgba(30, 15, 80, 0.35), 0 10px 20px -3px rgba(108, 92, 231, 0.5)",
-        "glow-teal": "inset 2px 3px 6px rgba(255, 255, 255, 0.45), inset -3px -4px 8px rgba(10, 75, 45, 0.35), 0 10px 20px -3px rgba(56, 217, 150, 0.45)",
-        clay: "inset 3px 4px 8px rgba(255, 255, 255, 0.2), inset -4px -6px 12px rgba(14, 10, 40, 0.45), 0 14px 28px -6px rgba(18, 12, 48, 0.55)",
-        "clay-sm": "inset 2px 2px 5px rgba(255, 255, 255, 0.22), inset -2px -3px 6px rgba(14, 10, 40, 0.4), 0 6px 14px -2px rgba(18, 12, 48, 0.4)",
-        "clay-pink": "inset 2px 3px 6px rgba(255, 255, 255, 0.45), inset -3px -4px 8px rgba(120, 30, 50, 0.3), 0 10px 20px -3px rgba(255, 143, 163, 0.45)",
+        glow: "0 0 24px rgba(114, 232, 149, 0.12)",
+        "glow-cyan": "0 0 24px rgba(114, 232, 149, 0.12)",
+        "glow-purple": "0 0 24px rgba(114, 232, 149, 0.12)",
+        "glow-teal": "0 0 24px rgba(114, 232, 149, 0.12)",
+        clay: "0 8px 30px -12px rgba(0, 0, 0, 0.35)",
+        "clay-sm": "0 4px 16px -6px rgba(0, 0, 0, 0.25)",
+        "clay-pink": "0 4px 16px -6px rgba(0, 0, 0, 0.25)",
       },
       borderRadius: {
-        xl: "1.15rem",
-        "2xl": "1.5rem",
-        "3xl": "2rem",
+        xl: "0.75rem",
+        "2xl": "1rem",
+        "3xl": "1.25rem",
       },
     },
   },
