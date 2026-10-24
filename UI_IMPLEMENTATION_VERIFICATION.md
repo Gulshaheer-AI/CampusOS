@@ -8,7 +8,8 @@ The visual reference is the approved CampusOS concept image in the conversation.
 
 - Dashboard: greeting, learning companion banner, four metric cards, continuing courses, opportunity panel, recommended challenge and CV toolkit. Existing private notes, roadmap tasks and revision diagnostics remain below the overview. Values and links come from the existing store; the mockup's illustrative streak, completion counts and internship were not fabricated in application data.
 - Shared shell and components: the same theme applies to student/faculty workspaces, Academy, tutor, quizzes, challenges, opportunities, settings, portfolio and public pages. Existing route handlers and stores are retained. Compatibility colors translate older module utility classes while excluding CV document paper.
-- Hero artwork: nine intersecting SVG rings rotate and drift independently on 32-, 41- and 53-second cycles. No canvas render loop or animation package is required. The graphic cannot intercept clicks, stays behind the copy on narrow screens, is decorative to assistive technology, and stops under `prefers-reduced-motion`.
+- Hero artwork: hollow, asymmetric Bézier loops with shared bright caustics, translucent reflected filaments, layered emerald bloom and sparse particles. The background remains visible between the curves: there is no filled sphere, skin or bitmap texture. Slow counter-propagating waves deform individual curves rather than rotating an ellipse cage. Canvas playback is capped at 30 FPS, limited to 1.5× pixel density, and paused outside the viewport or when the tab is hidden. Reduced motion renders a still frame and stops the animation loop. The decorative canvas cannot intercept clicks and has no runtime package dependency.
+
 - Typography: Inter is served locally from `public/fonts`, including its license. There is no runtime dependency on a font CDN.
 - Navigation: retained every workspace route and role guard; added working workspace search with Ctrl/Cmd+K, course/challenge results, Escape handling, and a mobile drawer with focus restoration, focus containment and scroll locking. Existing persona/profile controls remain available.
 - Documents: the CV preview remains white with its own regional typography and accents. PDF, DOCX and browser printing retain their existing document rendering paths.
@@ -20,10 +21,10 @@ The commands and results below are the final checks for this implementation. Bro
 
 | Check | Final result |
 | --- | --- |
-| `npm test` | **202 passed**, 13 files. |
+| `npm test` | **204 passed**, 14 files after the hollow-curve correction. |
 | `npx tsc --noEmit` | Passed. |
 | `npm run build` | Passed; 27 routes generated. Existing non-fatal `unpdf` import.meta warning remains. |
-| `npx playwright test` | **75 passed**: 25 journeys at desktop, mobile and tablet sizes. |
+| `npx playwright test` — original shared-theme baseline | **75 passed**: 25 journeys at desktop, mobile and tablet sizes, before the hollow-curve correction. |
 | `npx playwright test tests-e2e/emerald-ui.spec.ts` after final dashboard spacing/mobile-card polish | **18 passed** across the same three sizes. |
 | axe-core color-contrast scan against the production build | No detected contrast violations on the default dashboard, courses, tutor, roadmaps, quizzes, CV, opportunities, portfolio and CodePlay screens. Gradient cases were also visually reviewed. |
 | `git diff --check` | Passed. |
@@ -50,3 +51,11 @@ For an existing local checkout, pull `main` before starting the app. The existin
 ## Limits
 
 No production Gemini credential was supplied. Browser tutor tests exercise the actual local API/offline response path; live Gemini and arbitrary external recruitment sites remain subject to the limitations in `AUDIT_REMEDIATION_VERIFICATION.md`. This UI work does not change the existing browser-local persistence architecture. Automated contrast checks cover the loaded default views and are supplemented by visual review; they are not a certification of every possible user-supplied document, embedded preview, or application state.
+
+## Hollow-curve correction — 24 October 2026
+
+The original SVG ellipse cage was replaced after comparison with the user's enlarged reference. The rejected dense sphere asset is not included in this implementation. Geometry tests check finite closed strokes and non-rigid deformation. Browser tests inspect real canvas pixels for motion, predominantly open space, reduced-motion stability and playback resumption. The dashboard haze is deeper emerald. No course, document or workflow handlers changed in this correction.
+
+Correction base: `91c4b88dd77733c5d8be6eec09f73180bbe05016`.
+
+Fresh verification: **204 unit/integration tests passed** across 14 files; **18 workspace UI browser checks passed** across desktop/mobile/tablet with the canvas replacement; after final reflection/caustic tuning, all **3 focused motion/open-space/reduced-motion checks passed** again. TypeScript, production build and diff whitespace checks passed. The existing non-fatal `unpdf` build warning is unchanged. Rendered banner screenshots were inspected at all three viewport sizes. No generated bitmap asset or additional runtime package is shipped.

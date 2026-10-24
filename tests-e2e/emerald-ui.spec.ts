@@ -44,30 +44,47 @@ test("workspace routes keep their features and fit the viewport", async ({
   expect(errors).toEqual([]);
 });
 
-test("hero rings move slowly and respect reduced motion", async ({
+test("hollow energy curves flow and respect reduced motion", async ({
   page,
 }, info) => {
   await page.goto("/dashboard");
   await expect(
     page.getByRole("heading", { name: "What will you build today?" }),
   ).toBeVisible();
-  const rings = page.locator(".orb-motion");
-  expect(await rings.count()).toBeGreaterThanOrEqual(9);
-  const first = rings.first();
-  expect(
-    parseFloat(
-      await first.evaluate((el) => getComputedStyle(el).animationDuration),
-    ),
-  ).toBeGreaterThanOrEqual(30);
-  const initial = await first.evaluate((el) => getComputedStyle(el).transform);
+  const canvas = page.getByTestId("energy-ribbons");
+  await expect(canvas).toHaveAttribute("data-motion", "flowing");
+  const snapshot = () =>
+    canvas.evaluate((el) => (el as HTMLCanvasElement).toDataURL());
   await expect
-    .poll(() => first.evaluate((el) => getComputedStyle(el).transform))
-    .not.toBe(initial);
+    .poll(async () => (await snapshot()).length)
+    .toBeGreaterThan(10000);
+  const luminousFraction = await canvas.evaluate((el) => {
+    const target = el as HTMLCanvasElement;
+    const pixels = target
+      .getContext("2d")!
+      .getImageData(0, 0, target.width, target.height).data;
+    let bright = 0;
+    for (let i = 0; i < pixels.length; i += 4)
+      if (pixels[i + 1] * (pixels[i + 3] / 255) > 90) bright++;
+    return bright / (pixels.length / 4);
+  });
+  // The graphic contains bright curves and predominantly open space, never a filled ball.
+  expect(luminousFraction).toBeGreaterThan(0.001);
+  expect(luminousFraction).toBeLessThan(0.25);
+  const initial = await snapshot();
+  await expect.poll(snapshot).not.toBe(initial);
   await page.screenshot({ path: info.outputPath("dashboard-viewport.png") });
+  await page
+    .locator(".dashboard-hero")
+    .screenshot({ path: info.outputPath("banner.png") });
   await page.emulateMedia({ reducedMotion: "reduce" });
-  expect(await first.evaluate((el) => getComputedStyle(el).animationName)).toBe(
-    "none",
-  );
+  await expect(canvas).toHaveAttribute("data-motion", "still");
+  const still = await snapshot();
+  await page.waitForTimeout(150); // Verify actual pixels stay static while reduced motion is active.
+  expect(await snapshot()).toBe(still);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(canvas).toHaveAttribute("data-motion", "flowing");
+  await expect.poll(snapshot).not.toBe(still);
 });
 
 test("navigation, profile and keyboard controls work", async ({ page }) => {
