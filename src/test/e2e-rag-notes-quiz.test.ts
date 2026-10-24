@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
+// All people, assessment values and notes in these tests are synthetic anonymous fixtures.
 import {
   chunkTextContent,
   parseCsvIntoChunks,
@@ -51,28 +52,30 @@ describe("CampusOS E2E: Dynamic RAG & Monday AI Engine (Feature 1)", () => {
     // Overlap verification: first few words of chunk 2 should match end of chunk 1
     const chunk1Words = chunks[0].content.split(" ");
     const chunk2Words = chunks[1].content.split(" ");
-    expect(chunk2Words[0]).toBe(chunk1Words[150 - 25]);
+    // Oversized prose uses bounded word fallback; semantic/code blocks stay intact.
+    expect(chunk2Words[0]).toBe("word150");
+    expect(chunks.map(c => c.content).join(" ")).toBe(sampleText);
   });
 
   it("should parse RFC-compliant CSV text with headers, quoted commas, and escaped quotes", () => {
-    const rawCsv = `StudentID,StudentName,Major,"Notes, Comments",CGPA
-101,Ahmad Khan,Computer Science,"Top performer, Dean's List",3.85
-102,Hassan Ali,Data Science,"Specialist in ""Deep Learning"" & RAG",3.92
-103,Zainab Bibi,Software Eng,"Transferred from FAST, Lahore",3.68`;
+    const rawCsv = `ItemID,ItemName,Category,"Notes, Comments",Price
+101,Example Item A,Tools,"Sample item, first batch",3.85
+102,Example Item B,Parts,"Sample ""quoted"" note",3.92
+103,Example Item C,Tools,"Sample item, second batch",3.68`;
 
     const { summary, formattedText, rows } = extractTextFromCsv(rawCsv);
 
     expect(rows).toHaveLength(4); // 1 header + 3 rows
-    expect(rows[0]).toEqual(["StudentID", "StudentName", "Major", "Notes, Comments", "CGPA"]);
-    expect(rows[1][3]).toBe("Top performer, Dean's List");
-    expect(rows[2][3]).toBe('Specialist in "Deep Learning" & RAG');
+    expect(rows[0]).toEqual(["ItemID", "ItemName", "Category", "Notes, Comments", "Price"]);
+    expect(rows[1][3]).toBe("Sample item, first batch");
+    expect(rows[2][3]).toBe('Sample "quoted" note');
     expect(summary).toContain("3 records");
     expect(formattedText).toContain("[Record 1]");
-    expect(formattedText).toContain("CGPA: 3.85");
+    expect(formattedText).toContain("Price: 3.85");
 
-    const parsedChunks = parseCsvIntoChunks(rawCsv, "csv-file-1", "roster.csv");
+    const parsedChunks = parseCsvIntoChunks(rawCsv, "csv-file-1", "inventory.csv");
     expect(parsedChunks.chunks.length).toBeGreaterThanOrEqual(1);
-    expect(parsedChunks.chunks[0].content).toContain("Columns: StudentID");
+    expect(parsedChunks.chunks[0].content).toContain("Columns: ItemID");
   });
 
   it("should detect document types accurately based on file extension and MIME type", () => {
@@ -402,7 +405,7 @@ describe("CampusOS E2E: Dual-Tier Lecture Notes & Materials System (Feature 2)",
     const studentNote = {
       id: `sn-${Date.now()}`,
       userId: "user-student-1",
-      title: "My Personal Distributed Systems Notes",
+      title: "Fixture Distributed Systems Note",
       content: "CAP theorem states that a distributed data store can only provide two of Consistency, Availability, and Partition tolerance.",
       tags: ["distributed-systems", "theory", "exam-prep"],
       createdAt: "2026-10-18",
@@ -421,7 +424,7 @@ describe("CampusOS E2E: Dual-Tier Lecture Notes & Materials System (Feature 2)",
     // Filter by student
     const studentNotes = retrieved.filter((n: any) => n.userId === "user-student-1");
     expect(studentNotes.length).toBeGreaterThan(0);
-    expect(studentNotes[0].title).toBe("My Personal Distributed Systems Notes");
+    expect(studentNotes[0].title).toBe("Fixture Distributed Systems Note");
   });
 
   it("should isolate student personal notes by userId", () => {
@@ -685,7 +688,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       difficulty: "intermediate",
       durationMinutes: 45,
       creatorId: "user-teacher-1",
-      creatorName: "Dr. Sarah Jenkins",
+      creatorName: "Fixture Instructor",
       creatorRole: "teacher",
       isDraft: true,
       passingScore: 70,
@@ -780,7 +783,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       difficulty: "beginner",
       durationMinutes: 20,
       creatorId: "user-student-1",
-      creatorName: "Ahmad Khan",
+      creatorName: "Fixture Learner A",
       creatorRole: "student",
       isDraft: false,
       isPractice: true, // Marked strictly as student self-practice
@@ -814,7 +817,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       quizId: "quiz-practice-123",
       quizTitle: "Self Practice: OS Concepts",
       userId: "user-student-1",
-      studentName: "Ahmad Khan",
+      studentName: "Fixture Learner A",
       userRole: "student",
       answers: { "q-p-1": 0 },
       scorePercentage: 100,
@@ -924,7 +927,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       quizId: "quiz-midterm-official",
       quizTitle: "Midterm Exam 2026",
       userId: "user-student-2",
-      studentName: "Hassan Ali",
+      studentName: "Fixture Learner B",
       userRole: "student",
       answers: {},
       scorePercentage: 92,
@@ -941,7 +944,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       quizId: "quiz-midterm-official",
       quizTitle: "Midterm Exam 2026",
       userId: "user-student-3",
-      studentName: "Zainab Bibi",
+      studentName: "Fixture Learner C",
       userRole: "student",
       answers: {},
       scorePercentage: 88,
@@ -956,9 +959,9 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
     const studentSelfPracticeAttempt: QuizAttempt & { isPractice?: boolean } = {
       id: "practice-att-student-1",
       quizId: "quiz-practice-private",
-      quizTitle: "Ahmad's Fun Self Test",
+      quizTitle: "Fixture learner's Fun Self Test",
       userId: "user-student-1",
-      studentName: "Ahmad Khan",
+      studentName: "Fixture Learner A",
       userRole: "student",
       answers: {},
       scorePercentage: 40,
@@ -991,7 +994,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       teacherGradebookAttempts.reduce((acc, a) => acc + a.scorePercentage, 0) /
       teacherGradebookAttempts.length;
 
-    // Ahmad's 40% practice score MUST NOT depress the official cohort average (which is (92 + 88) / 2 = 90%)
+    // Fixture learner's 40% practice score MUST NOT depress the official cohort average (which is (92 + 88) / 2 = 90%)
     expect(cohortAverage).toBe(90);
   });
 
@@ -1022,7 +1025,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       difficulty: "advanced",
       durationMinutes: 30,
       creatorId: "user-teacher-1",
-      creatorName: "Dr. Sarah Jenkins",
+      creatorName: "Fixture Instructor",
       creatorRole: "teacher",
       isDraft: false,
       passingScore: 70,
@@ -1052,7 +1055,7 @@ describe("CampusOS E2E: Dynamic QuizForge with Question Selection & Role Separat
       quizId: curatedQuiz.id,
       quizTitle: curatedQuiz.title,
       userId: "user-student-1",
-      studentName: "Ahmad Khan",
+      studentName: "Fixture Learner A",
       userRole: "student",
       answers: studentAnswer,
       scorePercentage: scoreResult.scorePercentage,

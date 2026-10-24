@@ -20,10 +20,10 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
   if (!cleanText) {
     return {
       fullName: defaultCandidateName,
-      title: fallback?.title || "Software Engineer & Web Specialist",
-      email: fallback?.email || "candidate@example.com",
-      phone: fallback?.phone || "+92 300 1234567",
-      location: fallback?.location || "Remote / Hybrid",
+      title: fallback?.title || "",
+      email: fallback?.email || "",
+      phone: fallback?.phone || "",
+      location: fallback?.location || "",
       websiteUrl: fallback?.websiteUrl,
       linkedinUrl: fallback?.linkedinUrl,
       githubUrl: fallback?.githubUrl,
@@ -47,6 +47,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
       languages: fallback?.languages || [],
       projectExperienceNarrative: fallback?.projectExperienceNarrative,
       additionalInfo: fallback?.additionalInfo,
+      customSections: fallback?.customSections || [],
     };
   }
 
@@ -57,10 +58,10 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
       if (parsed.fullName || parsed.name || parsed.email || parsed.education || parsed.experience) {
         return {
           fullName: parsed.fullName || parsed.name || defaultCandidateName,
-          title: parsed.title || parsed.role || fallback?.title || "Professional Specialist",
-          email: parsed.email || fallback?.email || "candidate@example.com",
-          phone: parsed.phone || fallback?.phone || "+92 300 1234567",
-          location: parsed.location || fallback?.location || "Remote / Hybrid",
+          title: parsed.title || parsed.role || fallback?.title || "",
+          email: parsed.email || fallback?.email || "",
+          phone: parsed.phone || fallback?.phone || "",
+          location: parsed.location || fallback?.location || "",
           websiteUrl: parsed.websiteUrl || fallback?.websiteUrl,
           linkedinUrl: parsed.linkedinUrl || fallback?.linkedinUrl,
           githubUrl: parsed.githubUrl || fallback?.githubUrl,
@@ -84,6 +85,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
           languages: Array.isArray(parsed.languages) ? parsed.languages : fallback?.languages || [],
           projectExperienceNarrative: parsed.projectExperienceNarrative || fallback?.projectExperienceNarrative,
           additionalInfo: parsed.additionalInfo || fallback?.additionalInfo,
+          customSections: parsed.customSections || fallback?.customSections || [],
         };
       }
     } catch {
@@ -105,12 +107,12 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
   // 1. Extract Email
   const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
   const emailMatch = cleanText.match(emailRegex);
-  const email = emailMatch ? emailMatch[1] : fallback?.email || "candidate@example.com";
+  const email = emailMatch ? emailMatch[1] : fallback?.email || "";
 
   // 2. Extract Phone
   const phoneRegex = /(\+?\d{1,4}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9})/i;
-  const phoneMatch = cleanText.match(phoneRegex);
-  const phone = phoneMatch ? phoneMatch[1].trim() : fallback?.phone || "+92 300 1234567";
+  const phoneMatch = Array.from(cleanText.matchAll(new RegExp(phoneRegex.source, "g"))).find(match => match[0].replace(/\D/g, "").length >= 7 && match[0].replace(/\D/g, "").length <= 15);
+  const phone = phoneMatch ? phoneMatch[1].trim() : fallback?.phone || "";
 
   // 3. Extract Links
   const linkedinMatch = cleanText.match(/(?:https?:\/\/)?([a-z]{2,3}\.linkedin\.com\/in\/[a-zA-Z0-9_-]+|linkedin\.com\/in\/[a-zA-Z0-9_-]+)/i);
@@ -286,7 +288,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     }
   }
   if (!title) {
-    title = fallback?.title || "Professional Specialist";
+    title = fallback?.title || "";
   }
 
   // 8. Section Partitioning
@@ -300,6 +302,8 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     additionalInfo: [],
   };
 
+  const customSections: NonNullable<CvData["customSections"]> = [];
+  let customSection: { title: string; content: string[] } | undefined;
   let currentSection = "header";
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -340,6 +344,12 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
       const isHeaderAdditional =
         /\b(additional information|additional details|mobility|availability|interests|volunteer|awards)\b/i.test(lower);
 
+      if (/^(clinical rotations?|publications?|legal bar admissions?|bar admissions?|research(?: experience)?|professional memberships?|conferences?|presentations?|volunteering|awards|references|teaching(?: experience)?)$/i.test(lower) || (/^[A-Z][A-Z &/-]{2,}$/.test(trimmedLine) && currentSection === "header" && ![isHeaderSummary, isHeaderSkills, isHeaderExperience, isHeaderEducation, isHeaderLanguagesCerts, isHeaderProjects, isHeaderAdditional].some(Boolean))) {
+        customSection = { title: trimmedLine, content: [] };
+        customSections.push(customSection);
+        currentSection = "custom";
+        continue;
+      }
       if (isHeaderSummary) {
         currentSection = "summary";
         continue;
@@ -364,6 +374,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
       }
     }
 
+    if (currentSection === "custom" && customSection) customSection.content.push(line);
     if (currentSection !== "header" && sections[currentSection]) {
       sections[currentSection].push(line);
     }
@@ -374,18 +385,14 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     (l) =>
       l.toLowerCase() !== fullName.toLowerCase() &&
       l !== title &&
-      !l.includes(email) &&
+      (!email || !l.includes(email)) &&
       !l.includes("|") &&
       !l.includes("http") &&
       !l.toLowerCase().includes("linkedin") &&
       !l.toLowerCase().includes("phone")
   );
   const summaryText = summaryLines.join(" ").replace(/^#+\s*/g, "").trim();
-  const summary =
-    summaryText.length > 15
-      ? summaryText
-      : fallback?.summary ||
-        `Experienced ${title} with a proven track record of delivering high-quality, scalable web solutions and technical excellence.`;
+  const summary = summaryText || fallback?.summary || "";
 
   // 10. Extract Technical Skills with Multi-Line Continuation & Accurate Categories
   const structuredSkills: CvData["skills"] = [];
@@ -506,10 +513,10 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     const flushExp = () => {
       if (curRole || curComp || curBullets.length > 0) {
         experienceEntries.push({
-          company: curComp || "Self-Employed / Freelance",
-          role: curRole || title || "Specialist",
-          period: curPeriod || "2023 - Present",
-          bullets: curBullets.length > 0 ? curBullets : ["Delivered core client deliverables with excellence."],
+          company: curComp,
+          role: curRole,
+          period: curPeriod,
+          bullets: curBullets,
         });
         curRole = "";
         curComp = "";
@@ -608,24 +615,13 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
 
     const flushEdu = () => {
       if (curDeg || curInst) {
-        let finalInst = curInst;
-        if (!finalInst) {
-          if (/intermediate|matric|f\.?sc|hssc|ssc|secondary|high school/i.test(curDeg)) {
-            finalInst = "Board of Intermediate & Secondary Education (BISE)";
-          } else {
-            finalInst = "University / Academic Institution";
-          }
-        }
-
-        let finalDeg = curDeg;
-        if (!finalDeg) {
-          finalDeg = "Academic Degree";
-        }
+        const finalInst = curInst;
+        const finalDeg = curDeg;
 
         educationEntries.push({
           degree: finalDeg,
           institution: finalInst,
-          year: curYr || "2024 - 2028",
+          year: curYr,
           gpa: curGpa || undefined,
           highlights: curHigh || undefined,
         });
@@ -804,7 +800,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
         projectEntries.push({
           name: curName || "Key Professional Project",
           tools: curTools || "",
-          bullets: curBullets.length > 0 ? curBullets : ["Delivered core project objectives and key milestones."],
+          bullets: curBullets,
         });
         curName = "";
         curTools = "";
@@ -838,7 +834,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     title,
     email,
     phone,
-    location: extractedLocation || fallback?.location || "Remote / Hybrid",
+    location: extractedLocation || fallback?.location || "",
     websiteUrl,
     linkedinUrl,
     githubUrl,
@@ -862,6 +858,7 @@ export function parseRawCvTextToCvData(rawText: string, fallback?: Partial<CvDat
     languages: parsedLanguages.length > 0 ? parsedLanguages : fallback?.languages || [],
     projectExperienceNarrative: projectNarrative || fallback?.projectExperienceNarrative,
     additionalInfo: additionalInfo || fallback?.additionalInfo,
+    customSections,
   };
 }
 

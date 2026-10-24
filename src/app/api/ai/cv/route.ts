@@ -172,7 +172,8 @@ Extract the candidate's authentic details from the provided CV document into str
 CRITICAL EXTRACTION RULES:
 1. Extract the candidate's REAL name, title, contact info, summary, education, experience, projects, skills, certifications, and languages.
 2. DO NOT make up fake technical skills or default to WordPress/SEO or software engineering if they belong to a different profession (e.g. accounting, medicine, nursing, civil engineering, marketing, business, legal, teaching)!
-3. Formulate a realistic, authentic ATS evaluation:
+3. Preserve every specialized or unrecognized section in customSections, with its original heading and all lines. Never flatten or discard publications, clinical rotations, or bar admissions.
+4. Formulate a realistic, authentic ATS evaluation:
    - atsScore: number between 55 and 98 based on real CV quality and completeness
    - overallVerdict: "Exceptional" (>=90), "Competitive" (75-89), or "Needs Improvement" (<75)
    - strengths: 3-5 real strengths found directly in their CV
@@ -197,6 +198,7 @@ Return STRICT JSON:
     "skills": [{ "category": string, "items": string[] }],
     "certifications": string[],
     "languages": [{ "language": string, "proficiency": string, "cefrLevel": string }],
+    "customSections": [{ "title": string, "content": string[] }],
     "additionalInfo": string
   },
   "auditResult": {
@@ -224,10 +226,10 @@ Return STRICT JSON:
             if (aiParsed.cvData && aiParsed.cvData.fullName) {
               const cvData: CvData = {
                 fullName: aiParsed.cvData.fullName,
-                title: aiParsed.cvData.title || targetRole,
+                title: aiParsed.cvData.title || "",
                 email: aiParsed.cvData.email || "",
                 phone: aiParsed.cvData.phone || "",
-                location: aiParsed.cvData.location || "Remote / Hybrid",
+                location: aiParsed.cvData.location || "",
                 linkedinUrl: aiParsed.cvData.linkedinUrl,
                 githubUrl: aiParsed.cvData.githubUrl,
                 websiteUrl: aiParsed.cvData.websiteUrl,
@@ -239,6 +241,7 @@ Return STRICT JSON:
                 certifications: Array.isArray(aiParsed.cvData.certifications) ? aiParsed.cvData.certifications : [],
                 languages: Array.isArray(aiParsed.cvData.languages) ? aiParsed.cvData.languages : [],
                 additionalInfo: aiParsed.cvData.additionalInfo,
+                customSections: Array.isArray(aiParsed.cvData.customSections) ? aiParsed.cvData.customSections.filter((s: any) => typeof s.title === "string" && Array.isArray(s.content) && s.content.every((line: any) => typeof line === "string")) : [],
               };
 
               const auditResult: CvAuditResult = aiParsed.auditResult || computeDynamicFallbackAudit(cvData, targetRole, region);
@@ -259,14 +262,16 @@ Return STRICT JSON:
         }
       }
 
+      if (!extractedText.trim()) return NextResponse.json({ error: "No readable text could be extracted. Try a text-based PDF/DOCX or configure Gemini for scanned images." }, { status: 422 });
+
       // 2. High-Fidelity Local RAG Fallback
-      const candidateNameHint = body.candidateName || studentProfile.name || "";
+      const candidateNameHint = body.candidateName || "";
       const parsedCv = parseRawCvTextToCvData(
         extractedText || body.fileName || "",
         {
           fullName: candidateNameHint && candidateNameHint !== "Ahmad Khan" ? candidateNameHint : undefined,
-          email: studentProfile.email && !studentProfile.email.includes("ahmad.khan") ? studentProfile.email : undefined,
-          title: targetRole,
+          email: undefined,
+          title: undefined,
         },
         body.fileName
       );
@@ -284,13 +289,13 @@ Return STRICT JSON:
     }
 
     // Parse the candidate's actual CV
-    const candidateNameHint = body.candidateName || studentProfile.name || "";
+    const candidateNameHint = body.candidateName || "";
     const parsedCandidateCv = parseRawCvTextToCvData(
       cvText,
       {
         fullName: candidateNameHint && candidateNameHint !== "Ahmad Khan" ? candidateNameHint : undefined,
-        email: studentProfile.email && !studentProfile.email.includes("ahmad.khan") ? studentProfile.email : undefined,
-        title: targetRole,
+        email: undefined,
+        title: undefined,
       },
       body.fileName
     );

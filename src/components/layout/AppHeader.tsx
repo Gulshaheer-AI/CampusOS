@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { UserProfile } from "@/types";
-import { switchRole } from "@/lib/store";
+import { switchRole, getStudents } from "@/lib/store";
 import { MondayOrb } from "@/components/ui/MondayOrb";
 import {
   Menu,
@@ -36,6 +36,8 @@ export function AppHeader({
     const updated = switchRole(key);
     if (onUserChange) onUserChange(updated);
     setRoleMenuOpen(false);
+    // Route pages hold persona-specific state outside AppShell; reload it with the new identity.
+    window.location.reload();
   };
 
   return (
@@ -105,125 +107,16 @@ export function AppHeader({
 
           {roleMenuOpen && (
             <div className="absolute right-0 mt-2 w-72 rounded-3xl bg-white p-3 shadow-2xl z-50 border border-purple-100 text-slate-800">
-              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-purple-600">
-                Students (Isolated Profiles & Data)
-              </div>
-              <div className="space-y-1.5 mt-1">
-                <button
-                  type="button"
-                  onClick={() => handlePersonaSelect("ahmad")}
-                  className={cn(
-                    "w-full flex items-center justify-between p-2 rounded-2xl text-left text-xs transition-all",
-                    currentUser.id === "user-student-1"
-                      ? "bg-purple-50 border border-purple-300 text-brand-purple font-semibold"
-                      : "text-slate-700 hover:bg-purple-50/70"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-purple-100 border border-purple-300 flex items-center justify-center text-brand-purple font-bold text-xs">
-                      AK
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">Ahmad Khan (Student 1)</div>
-                      <div className="text-[11px] text-slate-500">3rd Yr CS • Algorithms & Next.js</div>
-                    </div>
-                  </div>
-                  {currentUser.id === "user-student-1" && <Check className="w-4 h-4 text-brand-purple" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handlePersonaSelect("hassan")}
-                  className={cn(
-                    "w-full flex items-center justify-between p-2 rounded-2xl text-left text-xs transition-all",
-                    currentUser.id === "user-student-2"
-                      ? "bg-purple-50 border border-purple-300 text-brand-purple font-semibold"
-                      : "text-slate-700 hover:bg-purple-50/70"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-700 font-bold text-xs">
-                      HA
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">Hassan Ali (Student 2)</div>
-                      <div className="text-[11px] text-slate-500">Final Yr AI • Python, RAG & SQL</div>
-                    </div>
-                  </div>
-                  {currentUser.id === "user-student-2" && <Check className="w-4 h-4 text-emerald-600" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handlePersonaSelect("zain")}
-                  className={cn(
-                    "w-full flex items-center justify-between p-2 rounded-2xl text-left text-xs transition-all",
-                    currentUser.id === "user-student-3"
-                      ? "bg-purple-50 border border-purple-300 text-brand-purple font-semibold"
-                      : "text-slate-700 hover:bg-purple-50/70"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-pink-100 border border-pink-300 flex items-center justify-center text-pink-700 font-bold text-xs">
-                      ZT
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">Zain Tariq (Student 3)</div>
-                      <div className="text-[11px] text-slate-500">2nd Yr SE • UI/UX &amp; Claymorphism</div>
-                    </div>
-                  </div>
-                  {currentUser.id === "user-student-3" && <Check className="w-4 h-4 text-pink-600" />}
-                </button>
-              </div>
-
-              <div className="px-2 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-purple-600 border-t border-purple-100 mt-2">
-                Faculty &amp; Administration
-              </div>
-              <div className="space-y-1.5 mt-1">
-                <button
-                  type="button"
-                  onClick={() => handlePersonaSelect("teacher")}
-                  className={cn(
-                    "w-full flex items-center justify-between p-2 rounded-2xl text-left text-xs transition-all",
-                    currentUser.role === "teacher"
-                      ? "bg-purple-50 border border-purple-300 text-brand-purple font-semibold"
-                      : "text-slate-700 hover:bg-purple-50/70"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-purple-100 border border-purple-300 flex items-center justify-center text-brand-purple font-bold text-xs">
-                      SV
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">Teacher / Faculty</div>
-                      <div className="text-[11px] text-slate-500">Prof. Sarah Vance</div>
-                    </div>
-                  </div>
-                  {currentUser.role === "teacher" && <Check className="w-4 h-4 text-brand-purple" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handlePersonaSelect("admin")}
-                  className={cn(
-                    "w-full flex items-center justify-between p-2 rounded-2xl text-left text-xs transition-all",
-                    currentUser.role === "admin"
-                      ? "bg-purple-50 border border-purple-300 text-brand-purple font-semibold"
-                      : "text-slate-700 hover:bg-purple-50/70"
-                  )}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-cyan-100 border border-cyan-300 flex items-center justify-center text-cyan-800 font-semibold text-xs">
-                      JT
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">Platform Admin</div>
-                      <div className="text-[11px] text-slate-500">Jordan Taylor</div>
-                    </div>
-                  </div>
-                  {currentUser.role === "admin" && <Check className="w-4 h-4 text-cyan-700" />}
-                </button>
-              </div>
+              <p className="px-2 py-1 text-xs font-bold text-slate-700">Student workspaces</p>
+              {getStudents().map((student, index) => <button key={student.id} type="button" onClick={() => handlePersonaSelect(student.id)} className="w-full flex items-center justify-between p-3 rounded-xl text-left text-sm text-slate-900 hover:bg-purple-50">
+                <span>Student profile {index + 1}</span>
+                {currentUser.id === student.id && <Check className="w-4 h-4 text-purple-800" />}
+              </button>)}
+              <p className="px-2 pt-3 pb-1 text-xs font-bold text-slate-700 border-t border-purple-100">Faculty &amp; administration</p>
+              {([{key: "teacher", label: "Teacher / Faculty"}, {key: "admin", label: "Platform Admin"}] as const).map(role => <button key={role.key} type="button" onClick={() => handlePersonaSelect(role.key)} className="w-full flex items-center justify-between p-3 rounded-xl text-left text-sm text-slate-900 hover:bg-purple-50">
+                <span>{role.label}</span>
+                {currentUser.role === role.key && <Check className="w-4 h-4 text-purple-800" />}
+              </button>)}
             </div>
           )}
         </div>

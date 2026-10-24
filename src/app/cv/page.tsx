@@ -50,7 +50,7 @@ import { cn } from "@/lib/utils";
 const CV_TEMPLATES: CvTemplate[] = [
   {
     id: "pk-hec-pec",
-    name: "Pakistan Corporate & Software House Standard (HEC/PEC Accredited)",
+    name: "Pakistan Professional",
     region: "pakistani",
     governingBody: "Pakistan Engineering Council (PEC) & Higher Education Commission (HEC)",
     standardsCode: "PK-HEC-PEC-CORP",
@@ -126,77 +126,21 @@ export default function CvStudioPage() {
   const [activeTab, setActiveTab] = useState<"studio" | "auditor">("studio");
   const [showQuickDetails, setShowQuickDetails] = useState<boolean>(true);
 
-  // CV Data state
+  // Start empty; only a saved document, an explicit import or user input supplies facts.
   const [cvData, setCvData] = useState<CvData>({
-    fullName: "Ahmad Khan",
-    title: "Software Engineering Scholar | Distributed Systems & Next.js Architect",
-    email: "ahmad.khan@campusos.edu",
-    phone: "+92 300 4567890",
-    location: "Lahore, Pakistan",
-    fatherName: "Muhammad Tariq Khan",
-    cnic: "35202-8419201-9",
-    domicile: "Lahore, Punjab (Pakistan)",
-    pecRegistrationNumber: "COMP/2026-48192",
-    matricDivision: "1st Division (992 / 1100 • A+ Grade)",
-    fscDivision: "1st Division (Pre-Engineering)",
-    fypTitle: "Distributed Multi-Model RAG & Vector Engine with Fault Tolerance",
-    fypSupervisor: "Prof. Sarah Vance, Ph.D. (Chair Department of CS)",
-    nationality: "Pakistani / Global Right to Work",
-    dateOfBirth: "15/09/2003",
-    drivingLicence: "Category B",
-    websiteUrl: "https://campusos.demo/portfolio",
-    linkedinUrl: "https://linkedin.com/in/ahmadkhan",
-    githubUrl: "https://github.com/ahmadkhan",
-    summary:
-      "Driven 3rd-Year Computer Science student (CGPA 3.85/4.0) with hands-on experience building distributed key-value stores with Raft consensus and high-throughput full-stack Next.js applications. Strong algorithmic problem solver.",
-    education: [
-      {
-        institution: "University of Engineering & Technology (UET Lahore / FAST)",
-        degree: "B.S. in Computer Science (3rd Year)",
-        year: "2023 - 2027",
-        gpa: "3.85 / 4.00",
-        highlights: "PEC License Registered, Dean's Honor List (4 semesters)",
-      },
-    ],
-    experience: [
-      {
-        company: "CampusOS Engineering Labs",
-        role: "Systems & Next.js Engineering Fellow",
-        period: "June 2025 - Present",
-        bullets: [
-          "Architected client-side RAG document parser processing PDF and DOCX streams under 10MB limits.",
-          "Diagnosed and resolved 15 concurrency bottlenecks in reactive state store, improving load throughput by 42%.",
-        ],
-      },
-    ],
-    projects: [
-      {
-        name: "Distributed Raft Key-Value Store",
-        tools: "Go, Raft Consensus, Docker, gRPC",
-        link: "https://github.com/ahmadkhan/raft-kv",
-        bullets: [
-          "Implemented leader election, log replication, and persistent state machines across 5 nodes.",
-          "Guaranteed linearizable reads and zero data loss under simulated network partitions.",
-        ],
-      },
-      {
-        name: "CampusOS CodePlay IDE Sandbox",
-        tools: "TypeScript, React 18, Next.js, Sandboxed Iframe",
-        link: "https://github.com/ahmadkhan/codeplay",
-        bullets: [
-          "Engineered multi-tab browser IDE supporting real-time HTML/CSS/JS compilation and Monday AI debugging.",
-        ],
-      },
-    ],
-    skills: [
-      { category: "Languages & Core", items: ["TypeScript", "JavaScript (ES6+)", "Python", "Go", "C++", "SQL"] },
-      { category: "Frameworks & Tools", items: ["Next.js App Router", "React 18", "Tailwind CSS", "Node.js", "Docker", "Git"] },
-      { category: "Systems & Databases", items: ["PostgreSQL", "Redis", "Distributed Systems", "RAG / Vector Embeddings"] },
-    ],
-    certifications: [
-      "CampusOS Certified Systems Scholar (2026)",
-      "Google Cloud Gemini AI Distinction (2026)",
-    ],
+    fullName: "",
+    title: "",
+    email: "",
+    phone: "",
+    location: "",
+    summary: "",
+    education: [],
+    experience: [],
+    projects: [],
+    skills: [],
+    certifications: [],
+    languages: [],
+    customSections: [],
   });
 
   const [cvSavedNotice, setCvSavedNotice] = useState(false);
@@ -366,12 +310,13 @@ export default function CvStudioPage() {
 
       // Fallback: in-browser extraction
       const extractedText = await extractTextFromCvFileBuffer(buffer, file.name);
+      if (!extractedText.trim()) throw new Error("No readable text found. Use a text PDF/DOCX or configure Gemini for image extraction.");
       const nameFromFile = cleanCandidateNameFromFileName(file.name);
       const parsed = parseRawCvTextToCvData(
         extractedText || file.name,
         {
           fullName: nameFromFile !== "Candidate Legal Name" ? nameFromFile : undefined,
-          email: user?.email && !user.email.includes("ahmad.khan") ? user.email : undefined,
+          email: undefined,
         },
         file.name
       );
@@ -497,7 +442,7 @@ export default function CvStudioPage() {
                     Select Authentic Market Standard (5 Proven Standards)
                   </h3>
                   <p className="text-xs text-slate-600 font-medium">
-                    Strict, 100% recruiter-accepted layouts: Pakistan Corporate &amp; HEC/PEC, Harvard 1-Page ATS, Silicon Valley Clean Sans, European Europass CEFR, and Executive Multi-Track.
+                    Strict, 100% recruiter-accepted layouts: Pakistan Professional, Harvard 1-Page ATS, Silicon Valley Clean Sans, European Europass CEFR, and Executive Multi-Track.
                   </p>
                 </div>
 
@@ -550,6 +495,12 @@ export default function CvStudioPage() {
                   return (
                     <div
                       key={tmpl.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Select ${tmpl.name}`}
+                      aria-pressed={isSelected}
+                      data-template-id={tmpl.id}
+                      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedTemplateId(tmpl.id); } }}
                       onClick={() => setSelectedTemplateId(tmpl.id)}
                       className={cn(
                         "p-4 rounded-2xl border text-left cursor-pointer transition-all space-y-2 flex flex-col justify-between",
@@ -599,7 +550,7 @@ export default function CvStudioPage() {
                     Quick Profile Details (Syncs with MS Word Live Preview below)
                   </span>
                   <span className="text-[10px] text-slate-500 font-medium">
-                    (Father&apos;s Name, City, CNIC, PEC Reg, Phone, Email)
+                    (Father&apos;s Name, City, CNIC, Phone, Email)
                   </span>
                 </div>
                 <button type="button" className="text-slate-500 hover:text-slate-900">
@@ -652,16 +603,7 @@ export default function CvStudioPage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-slate-700 font-bold mb-1">PEC Reg. Number</label>
-                    <input
-                      type="text"
-                      value={cvData.pecRegistrationNumber || ""}
-                      onChange={(e) => setCvData({ ...cvData, pecRegistrationNumber: e.target.value })}
-                      placeholder="e.g. COMP/2026-48192"
-                      className="w-full bg-slate-50 border border-purple-200 rounded-xl px-2.5 py-1.5 text-slate-950 font-medium focus:outline-none focus:border-brand-purple"
-                    />
-                  </div>
+
 
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Target Professional Role</label>
@@ -779,7 +721,7 @@ export default function CvStudioPage() {
                     }}
                     className="w-full bg-slate-50 border border-purple-200 rounded-xl px-3 py-2 text-slate-950 font-bold focus:outline-none focus:border-brand-purple"
                   >
-                    <option value="pakistani">Pakistan (HEC &amp; PEC Engineering Standards)</option>
+                    <option value="pakistani">Pakistan Professional</option>
                     <option value="european">European Union (Europass &amp; CEFR Language Standards)</option>
                     <option value="us">United States (Harvard FAS &amp; Silicon Valley ATS Standards)</option>
                   </select>

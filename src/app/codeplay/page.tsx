@@ -1,5 +1,6 @@
 "use client";
 
+import { runPython } from "@/lib/python-runner";
 import React, { useState, useEffect, useRef } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
@@ -386,26 +387,18 @@ export default function CodePlayPage() {
 </html>`;
   };
 
+  const pythonRun = useRef<ReturnType<typeof runPython> | null>(null);
+  useEffect(() => () => pythonRun.current?.cancel(), []);
+
   const handleRunCode = () => {
     setConsoleLogs([]);
+    pythonRun.current?.cancel();
     if (activeFile.language === "python") {
-      // Simulate Python print() statements cleanly in Execution Console
-      const pyLines = activeFile.content.split("\n");
-      const outputs: { type: "log" | "warn" | "error"; text: string; time: string }[] = [];
-      for (const line of pyLines) {
-        const match = line.match(/^\s*print\((.*)\)\s*$/);
-        if (match) {
-          const cleaned = match[1].replace(/['"]/g, "");
-          outputs.push({
-            type: "log",
-            text: `[Python 3.12] ${cleaned}`,
-            time: new Date().toLocaleTimeString(),
-          });
-        }
-      }
-      if (outputs.length > 0) {
-        setConsoleLogs(outputs);
-      }
+      setConsoleLogs([{ type: "log", text: "Loading Python runtime…", time: new Date().toLocaleTimeString() }]);
+      pythonRun.current = runPython(activeFile.content, (text, error) => {
+        setConsoleLogs(logs => [...logs.slice(-99), { type: error ? "error" : "log", text, time: new Date().toLocaleTimeString() }]);
+      });
+      return;
     }
     if (iframeRef.current) {
       iframeRef.current.srcdoc = compileSandboxDoc();

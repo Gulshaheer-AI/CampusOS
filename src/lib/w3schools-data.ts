@@ -1,3 +1,6 @@
+import { advancedChapters } from "./w3-advanced";
+// People, grades and contact examples below are anonymous synthetic teaching fixtures.
+// They are not identities or records loaded from a student information system.
 export interface W3Section {
   title: string;
   content: string;
@@ -242,8 +245,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Print Multiple Values",
           language: "python",
-          starterCode: `name = "Ahmad"\nrole = "Full-Stack Engineer"\nprint(f"Candidate: {name} | Position: {role}")`,
-          expectedOutput: "Candidate: Ahmad | Position: Full-Stack Engineer",
+          starterCode: `name = "DemoA"\nrole = "Full-Stack Engineer"\nprint(f"Candidate: {name} | Position: {role}")`,
+          expectedOutput: "Candidate: DemoA | Position: Full-Stack Engineer",
           explanation: "F-strings provide an elegant, readable way to interpolate variables into strings.",
         },
         exercise: {
@@ -316,8 +319,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Variables and Types",
           language: "python",
-          starterCode: `student_name = "Zain"\nage = 21\ngpa = 3.85\nprint(f"Name: {student_name}, Age: {age}, GPA: {gpa}")\nprint("Types:", type(student_name).__name__, type(age).__name__, type(gpa).__name__)`,
-          expectedOutput: "Name: Zain, Age: 21, GPA: 3.85\nTypes: str int float",
+          starterCode: `student_name = "Demo"\nage = 21\ngpa = 3.85\nprint(f"Name: {student_name}, Age: {age}, GPA: {gpa}")\nprint("Types:", type(student_name).__name__, type(age).__name__, type(gpa).__name__)`,
+          expectedOutput: "Name: Demo, Age: 21, GPA: 3.85\nTypes: str int float",
           explanation: "Variables store values dynamically and their type can be verified with type().",
         },
         exercise: {
@@ -622,8 +625,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Dictionary Manipulation",
           language: "python",
-          starterCode: `student = {\n    "name": "Ahmad",\n    "major": "Computer Science",\n    "gpa": 3.85,\n    "skills": ["Python", "FastAPI", "PostgreSQL"]\n}\n\nstudent["graduation_year"] = 2026\nfor k, v in student.items():\n    print(f"{k:16}: {v}")`,
-          expectedOutput: "name            : Ahmad\nmajor           : Computer Science\ngpa             : 3.85\nskills          : ['Python', 'FastAPI', 'PostgreSQL']\ngraduation_year : 2026",
+          starterCode: `student = {\n    "name": "DemoA",\n    "major": "Computer Science",\n    "gpa": 3.85,\n    "skills": ["Python", "FastAPI", "PostgreSQL"]\n}\n\nstudent["graduation_year"] = 2026\nfor k, v in student.items():\n    print(f"{k:16}: {v}")`,
+          expectedOutput: "name            : DemoA\nmajor           : Computer Science\ngpa             : 3.85\nskills          : ['Python', 'FastAPI', 'PostgreSQL']\ngraduation_year : 2026",
           explanation: "Dictionaries are fundamental for representing structured JSON objects in Python.",
         },
         exercise: {
@@ -746,8 +749,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Functions with Return Values and *args",
           language: "python",
-          starterCode: `def calculate_ats_score(*skills, base_gpa=3.5):\n    score = int(base_gpa * 20) + len(skills) * 5\n    return min(score, 98)\n\nprint("Score for Ahmad:", calculate_ats_score("Python", "RAG", "SQL", "Next.js"))`,
-          expectedOutput: "Score for Ahmad: 90",
+          starterCode: `def calculate_ats_score(*skills, base_gpa=3.5):\n    score = int(base_gpa * 20) + len(skills) * 5\n    return min(score, 98)\n\nprint("Score for DemoA:", calculate_ats_score("Python", "RAG", "SQL", "Next.js"))`,
+          expectedOutput: "Score for DemoA: 90",
           explanation: "Functions encapsulate business logic and enable clean code reuse.",
         },
         exercise: {
@@ -779,8 +782,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Lambda with Sorting",
           language: "python",
-          starterCode: `candidates = [\n    {"name": "Ahmad", "score": 92},\n    {"name": "Hassan", "score": 96},\n    {"name": "Zain", "score": 88}\n]\n\nsorted_candidates = sorted(candidates, key=lambda c: c["score"], reverse=True)\nfor c in sorted_candidates:\n    print(f"{c['name']:10}: {c['score']}%")`,
-          expectedOutput: "Hassan    : 96%\nAhmad     : 92%\nZain      : 88%",
+          starterCode: `candidates = [\n    {"name": "DemoA", "score": 92},\n    {"name": "Demo_B", "score": 96},\n    {"name": "Demo", "score": 88}\n]\n\nsorted_candidates = sorted(candidates, key=lambda c: c["score"], reverse=True)\nfor c in sorted_candidates:\n    print(f"{c['name']:10}: {c['score']}%")`,
+          expectedOutput: "Demo_B    : 96%\nDemoA     : 92%\nDemo      : 88%",
           explanation: "Lambdas are frequently passed as sorting key functions or mapping functions.",
         },
         exercise: {
@@ -812,8 +815,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: OOP Class & Methods",
           language: "python",
-          starterCode: `class Student:\n    def __init__(self, name, department, cgpa):\n        self.name = name\n        self.department = department\n        self.cgpa = cgpa\n\n    def get_honors(self):\n        return "Dean's List" if self.cgpa >= 3.8 else "Standard Honors"\n\ns = Student("Ahmad Khan", "Computer Science", 3.85)\nprint(f"Student: {s.name} ({s.department}) - {s.get_honors()}")`,
-          expectedOutput: "Student: Ahmad Khan (Computer Science) - Dean's List",
+          starterCode: `class Student:\n    def __init__(self, name, department, cgpa):\n        self.name = name\n        self.department = department\n        self.cgpa = cgpa\n\n    def get_honors(self):\n        return "Dean's List" if self.cgpa >= 3.8 else "Standard Honors"\n\ns = Student("DemoA User", "Computer Science", 3.85)\nprint(f"Student: {s.name} ({s.department}) - {s.get_honors()}")`,
+          expectedOutput: "Student: DemoA User (Computer Science) - Dean's List",
           explanation: "Classes encapsulate state and behavior into cohesive objects.",
         },
         exercise: {
@@ -841,8 +844,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Inheritance with super()",
           language: "python",
-          starterCode: `class User:\n    def __init__(self, username, email):\n        self.username = username\n        self.email = email\n\nclass Instructor(User):\n    def __init__(self, username, email, courses):\n        super().__init__(username, email)\n        self.courses = courses\n\nprof = Instructor("svance", "s.vance@campusos.edu", ["CS101", "AI405"])\nprint(f"Professor {prof.username} teaches: {', '.join(prof.courses)}")`,
-          expectedOutput: "Professor svance teaches: CS101, AI405",
+          starterCode: `class User:\n    def __init__(self, username, email):\n        self.username = username\n        self.email = email\n\nclass Instructor(User):\n    def __init__(self, username, email, courses):\n        super().__init__(username, email)\n        self.courses = courses\n\nprof = Instructor("example_teacher", "teacher@example.invalid", ["CS101", "AI405"])\nprint(f"Professor {prof.username} teaches: {', '.join(prof.courses)}")`,
+          expectedOutput: "Professor example_teacher teaches: CS101, AI405",
           explanation: "super() delegates constructor calls up the Method Resolution Order (MRO).",
         },
         exercise: {
@@ -1106,14 +1109,14 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: JSON Serialization and Deserialization",
           language: "python",
-          starterCode: `import json\n\n# Python dict to JSON\nuser_data = {"name": "Ahmad", "cgpa": 3.85, "active": True}\njson_str = json.dumps(user_data, indent=2)\nprint("Serialized JSON:\\n" + json_str)\n\n# JSON to Python dict\nparsed = json.loads(json_str)\nprint("Parsed GPA:", parsed["cgpa"])`,
-          expectedOutput: "Serialized JSON:\n{\n  \"name\": \"Ahmad\",\n  \"cgpa\": 3.85,\n  \"active\": true\n}\nParsed GPA: 3.85",
+          starterCode: `import json\n\n# Python dict to JSON\nuser_data = {"name": "DemoA", "cgpa": 3.85, "active": True}\njson_str = json.dumps(user_data, indent=2)\nprint("Serialized JSON:\\n" + json_str)\n\n# JSON to Python dict\nparsed = json.loads(json_str)\nprint("Parsed GPA:", parsed["cgpa"])`,
+          expectedOutput: "Serialized JSON:\n{\n  \"name\": \"DemoA\",\n  \"cgpa\": 3.85,\n  \"active\": true\n}\nParsed GPA: 3.85",
           explanation: "json.loads parses string to dict; json.dumps serializes dict to JSON string.",
         },
         exercise: {
           title: "Exercise: JSON to Python",
           prompt: "Use the json method to convert a JSON string into a Python dictionary:",
-          codeTemplate: `import json\nperson = json.___('{"name": "John", "age": 30}')`,
+          codeTemplate: `import json\nperson = json.___('{"name": "Example Person", "age": 30}')`,
           blankAnswer: "loads",
           acceptableAnswers: ["loads"],
           hint: "loads stands for load string.",
@@ -1135,8 +1138,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Pattern Matching with re",
           language: "python",
-          starterCode: `import re\n\ntext = "Contact us at support@campusos.edu or admissions@campusos.edu"\nemails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', text)\nprint("Found Email Addresses:", emails)`,
-          expectedOutput: "Found Email Addresses: ['support@campusos.edu', 'admissions@campusos.edu']",
+          starterCode: `import re\n\ntext = "Contact us at support@example.invalid or admissions@example.invalid"\nemails = re.findall(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', text)\nprint("Found Email Addresses:", emails)`,
+          expectedOutput: "Found Email Addresses: ['support@example.invalid', 'admissions@example.invalid']",
           explanation: "re.findall() returns a list containing all matches of the pattern.",
         },
         exercise: {
@@ -1195,8 +1198,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: User Input Simulation",
           language: "python",
-          starterCode: `# Simulating user input in browser environment\nsimulated_input = "Ahmad Khan"\nprint(f"Enter username: {simulated_input}")\nprint(f"Hello, {simulated_input}! Welcome to CampusOS.")`,
-          expectedOutput: "Enter username: Ahmad Khan\nHello, Ahmad Khan! Welcome to CampusOS.",
+          starterCode: `# Simulating user input in browser environment\nsimulated_input = "DemoA User"\nprint(f"Enter username: {simulated_input}")\nprint(f"Hello, {simulated_input}! Welcome to CampusOS.")`,
+          expectedOutput: "Enter username: DemoA User\nHello, DemoA User! Welcome to CampusOS.",
           explanation: "input(prompt) pauses execution and reads a line from input.",
         },
         exercise: {
@@ -1450,14 +1453,14 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: Object with Methods",
           language: "javascript",
-          starterCode: `const student = {\n  firstName: "Ahmad",\n  lastName: "Khan",\n  gpa: 3.85,\n  fullName() {\n    return this.firstName + " " + this.lastName;\n  }\n};\n\nconsole.log("Full Name:", student.fullName());\nconsole.log("GPA:", student.gpa);`,
-          expectedOutput: "Full Name: Ahmad Khan\nGPA: 3.85",
+          starterCode: `const student = {\n  firstName: "DemoA",\n  lastName: "User",\n  gpa: 3.85,\n  fullName() {\n    return this.firstName + " " + this.lastName;\n  }\n};\n\nconsole.log("Full Name:", student.fullName());\nconsole.log("GPA:", student.gpa);`,
+          expectedOutput: "Full Name: DemoA User\nGPA: 3.85",
           explanation: "In a function definition, 'this' refers to the 'owner' of the function.",
         },
         exercise: {
           title: "Exercise: Access Object Property",
           prompt: "Access the age property of the person object:",
-          codeTemplate: `const person = { name: "John", age: 50 };\nconsole.log(person.___);`,
+          codeTemplate: `const person = { name: "Example Person", age: 50 };\nconsole.log(person.___);`,
           blankAnswer: "age",
           acceptableAnswers: ["age"],
           hint: "Use dot notation.",
@@ -1639,8 +1642,8 @@ export const W3_COURSES: W3Course[] = [
         tryItYourself: {
           title: "Example: User Registration Form",
           language: "html",
-          starterCode: `<form action="/api/signup" method="POST">\n  <label for="fname">First Name:</label><br>\n  <input type="text" id="fname" name="fname" value="Ahmad"><br>\n  <label for="email">Email:</label><br>\n  <input type="email" id="email" name="email" value="ahmad@campusos.edu"><br><br>\n  <input type="submit" value="Register">\n</form>`,
-          expectedOutput: "First Name: [Ahmad]\nEmail: [ahmad@campusos.edu]\n[Register Button]",
+          starterCode: `<form action="/api/signup" method="POST">\n  <label for="fname">First Name:</label><br>\n  <input type="text" id="fname" name="fname" value="DemoA"><br>\n  <label for="email">Email:</label><br>\n  <input type="email" id="email" name="email" value="learner@example.invalid"><br><br>\n  <input type="submit" value="Register">\n</form>`,
+          expectedOutput: "First Name: [DemoA]\nEmail: [learner@example.invalid]\n[Register Button]",
           explanation: "HTML forms provide built-in client-side type validation for emails and required fields.",
         },
         exercise: {
@@ -1815,7 +1818,7 @@ export const W3_COURSES: W3Course[] = [
           title: "Example: SELECT All Students",
           language: "sql",
           starterCode: `SELECT student_id, name, department, cgpa\nFROM Students\nWHERE cgpa >= 3.5\nORDER BY cgpa DESC;`,
-          expectedOutput: `student_id | name        | department       | cgpa\n-----------+-------------+------------------+-----\n102        | Hassan Ali  | Artificial Intel | 3.92\n101        | Ahmad Khan  | Computer Science | 3.85\n103        | Zain Tariq  | Software Eng     | 3.68\n(3 rows returned in 1.2ms)`,
+          expectedOutput: `student_id | name        | department       | cgpa\n-----------+-------------+------------------+-----\n102        | DemoB User  | Artificial Intel | 3.92\n101        | DemoA User  | Computer Science | 3.85\n103        | DemoC User  | Software Eng     | 3.68\n(3 rows returned in 1.2ms)`,
           explanation: "SELECT queries extract data from database tables without modifying records.",
         },
         exercise: {
@@ -1844,7 +1847,7 @@ export const W3_COURSES: W3Course[] = [
           title: "Example: Specific Column Selection",
           language: "sql",
           starterCode: `SELECT name, email, department\nFROM Users\nWHERE role = 'teacher';`,
-          expectedOutput: `name             | email               | department\n-----------------+---------------------+-----------------\nProf. Sarah Vance| s.vance@campusos.edu| Computer Science\nDr. Tariq Mahmood| t.mahmood@campus.edu| Data Science`,
+          expectedOutput: `name             | email               | department\n-----------------+---------------------+-----------------\nExample Faculty| teacher@example.invalid| Computer Science\nExample Faculty 2| teacher2@example.invalid| Data Science`,
           explanation: "Selecting only required columns optimizes query performance and decreases memory transfer.",
         },
         exercise: {
@@ -1902,7 +1905,7 @@ export const W3_COURSES: W3Course[] = [
           title: "Example: INNER JOIN Query",
           language: "sql",
           starterCode: `SELECT s.name, e.course_code, e.grade\nFROM Students s\nINNER JOIN Enrollments e ON s.student_id = e.student_id\nWHERE e.grade = 'A'\nORDER BY s.name ASC;`,
-          expectedOutput: `name        | course_code | grade\n------------+-------------+------\nAhmad Khan  | CS101       | A\nAhmad Khan  | AI405       | A\nHassan Ali  | CS305       | A`,
+          expectedOutput: `name        | course_code | grade\n------------+-------------+------\nDemoA User  | CS101       | A\nDemoA User  | AI405       | A\nDemoB User  | CS305       | A`,
           explanation: "INNER JOIN matches foreign key e.student_id to primary key s.student_id.",
         },
         exercise: {
@@ -1948,6 +1951,8 @@ export const W3_COURSES: W3Course[] = [
     ],
   },
 ];
+
+for (const course of W3_COURSES) course.chapters.push(...advancedChapters(course.id));
 
 export function getW3CourseById(id: string): W3Course | undefined {
   return W3_COURSES.find((c) => c.id === id);

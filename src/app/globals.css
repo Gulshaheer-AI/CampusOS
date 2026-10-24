@@ -33,7 +33,7 @@ body {
 }
 
 .clay-card-purple {
-  background: linear-gradient(145deg, #9584FA 0%, #8270F5 45%, #6653E6 100%);
+  background: linear-gradient(145deg, #6653E6 0%, #5741CB 45%, #4932B8 100%);
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow:
@@ -67,7 +67,7 @@ body {
 }
 
 .clay-button-primary {
-  background: linear-gradient(145deg, #7A69EE 0%, #6653E6 60%, #5643D2 100%);
+  background: linear-gradient(145deg, #6653E6 0%, #5741CB 60%, #4932B8 100%);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow:
     inset 2px 2px 5px rgba(255, 255, 255, 0.42),
@@ -83,7 +83,7 @@ body {
     inset 2px 2px 5px rgba(255, 255, 255, 0.45),
     inset -2px -3px 6px rgba(10, 75, 40, 0.3),
     0 8px 18px -3px rgba(56, 211, 159, 0.42);
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .clay-button-pink {
@@ -93,7 +93,7 @@ body {
     inset 2px 2px 5px rgba(255, 255, 255, 0.45),
     inset -2px -3px 6px rgba(110, 25, 45, 0.3),
     0 8px 18px -3px rgba(255, 118, 117, 0.42);
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 .clay-button-aqua {
@@ -103,7 +103,7 @@ body {
     inset 2px 2px 5px rgba(255, 255, 255, 0.45),
     inset -2px -3px 6px rgba(15, 70, 85, 0.3),
     0 8px 18px -3px rgba(110, 198, 255, 0.42);
-  color: #FFFFFF;
+  color: #0F172A;
 }
 
 /* 4 Squircle Action Tiles from Photo (Transfer, Pay Bill, Shop, Saving) */
@@ -272,3 +272,17 @@ body {
   }
 }
 
+
+/* Keep document flow and candidate typography intact in browser print. */
+@media print {
+  body:has(#cv-printable-area) * { visibility: hidden; }
+  body:has(#cv-printable-area) #cv-printable-area,
+  body:has(#cv-printable-area) #cv-printable-area * { visibility: visible; }
+  body:has(#cv-printable-area) #cv-printable-area { position: absolute; top: 0; left: 0; }
+  .cv-document { overflow: visible !important; height: auto !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+  .cv-document .cv-heading { margin: 0 0 14pt !important; padding: 14pt 12pt !important; }
+  .cv-document h2 { break-after: avoid; page-break-after: avoid; }
+  .cv-document .cv-section { break-inside: auto; }
+  .cv-document .cv-line { orphans: 2; widows: 2; }
+  .cv-document thead { display: table-header-group; }
+}

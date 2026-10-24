@@ -1,5 +1,6 @@
 "use client";
 
+import { academyRoadmaps, academyChallenges } from "./academy-paths";
 import {
   UserProfile,
   UserRole,
@@ -31,6 +32,7 @@ import {
 const STORAGE_KEYS = {
   CURRENT_USER: "campusos_current_user",
   COURSES: "campusos_courses",
+  ENROLLMENTS: "campusos_enrollments",
   QUIZZES: "campusos_quizzes",
   ATTEMPTS: "campusos_attempts",
   CONVERSATIONS: "campusos_conversations",
@@ -64,11 +66,7 @@ function safeSet<T>(key: string, value: T): void {
 // User state
 export function getCurrentUser(): UserProfile {
   const stored = safeGet<UserProfile>(STORAGE_KEYS.CURRENT_USER, DEMO_USERS.student);
-  // Migrate legacy Alex Chen profile to Ahmad Khan automatically
-  if (stored && stored.name === "Alex Chen") {
-    safeSet(STORAGE_KEYS.CURRENT_USER, DEMO_USERS.student);
-    return DEMO_USERS.student;
-  }
+
   return stored;
 }
 
@@ -77,7 +75,7 @@ export function setCurrentUser(user: UserProfile): void {
 }
 
 export function switchRole(roleOrKey: UserRole | "ahmad" | "hassan" | "zain" | string): UserProfile {
-  const targetUser = DEMO_USERS[roleOrKey] || DEMO_USERS.student;
+  const targetUser = DEMO_USERS[roleOrKey] || Object.values(DEMO_USERS).find(user => user.id === roleOrKey) || DEMO_USERS.student;
   setCurrentUser(targetUser);
   return targetUser;
 }
@@ -89,7 +87,24 @@ export const getStudents = getAllStudents;
 
 // Courses
 export function getCourses(): Course[] {
-  return safeGet<Course[]>(STORAGE_KEYS.COURSES, DEMO_COURSES);
+  const user = getCurrentUser();
+  const all = safeGet<Course[]>(STORAGE_KEYS.COURSES, DEMO_COURSES);
+  const enrollments = safeGet<Record<string, string[]>>(STORAGE_KEYS.ENROLLMENTS, {});
+  const ids = enrollments[user.id] || (user.id === DEMO_USERS.student.id ? DEMO_COURSES.filter(c => c.isEnrolled).map(c => c.id) : []);
+  return all.map(c => ({ ...c, isEnrolled: ids.includes(c.id) }));
+}
+
+export function enrollWithClassCode(code: string): Course {
+  const user = getCurrentUser();
+  if (user.role !== "student") throw new Error("Only students can enroll in classes.");
+  const course = getCourses().find(c => c.classCode.trim().toUpperCase() === code.trim().toUpperCase());
+  if (!course) throw new Error("No course matches that class code.");
+  if (!course.isEnrolled) {
+    const enrollments = safeGet<Record<string, string[]>>(STORAGE_KEYS.ENROLLMENTS, {});
+    enrollments[user.id] = [...getCourses().filter(c => c.isEnrolled).map(c => c.id), course.id];
+    localStorage.setItem(STORAGE_KEYS.ENROLLMENTS, JSON.stringify(enrollments));
+  }
+  return { ...course, isEnrolled: true };
 }
 
 export function getCourseById(id: string): Course | undefined {
@@ -164,22 +179,8 @@ export function deleteQuiz(id: string): void {
 
 // Quiz Attempts (strictly isolated by userId when provided)
 export function getAttempts(userId?: string): QuizAttempt[] {
-  const all = safeGet<QuizAttempt[]>(STORAGE_KEYS.ATTEMPTS, DEMO_ATTEMPTS);
-  // Ensure seeded attempts for Ahmad, Hassan, and Zain exist
-  const hasSeededMulti = all.some((a) => a.userId === "user-student-2" || a.userId === "user-student-3");
-  let list = all;
-  if (!hasSeededMulti) {
-    const existingIds = new Set(all.map((a) => a.id));
-    list = [...all];
-    for (const da of DEMO_ATTEMPTS) {
-      if (!existingIds.has(da.id)) {
-        list.push(da);
-      }
-    }
-    safeSet(STORAGE_KEYS.ATTEMPTS, list);
-  }
-  if (!userId) return list;
-  return list.filter((a) => a.userId === userId);
+  const attempts = safeGet<QuizAttempt[]>(STORAGE_KEYS.ATTEMPTS, []);
+  return userId ? attempts.filter(attempt => attempt.userId === userId) : attempts;
 }
 
 export function saveAttempt(attempt: QuizAttempt): void {
@@ -220,9 +221,9 @@ export function deleteConversation(id: string): void {
 // Roadmaps
 export function getRoadmaps(): Roadmap[] {
   const stored = safeGet<Roadmap[]>(STORAGE_KEYS.ROADMAPS, DEMO_ROADMAPS);
-  if (!stored || stored.length === 0) return DEMO_ROADMAPS;
+  if (!stored || stored.length === 0) return [...DEMO_ROADMAPS, ...academyRoadmaps()];
 
-  return DEMO_ROADMAPS.map((demo) => {
+  return [...DEMO_ROADMAPS, ...academyRoadmaps()].map((demo) => {
     const r = stored.find((s) => s.id === demo.id);
     if (!r) return demo;
     return {
@@ -269,7 +270,7 @@ export function toggleRoadmapTask(roadmapId: string, weekNumber: number, taskId:
 // Challenges & Submissions
 export function getChallenges(): Challenge[] {
   const stored = safeGet<Challenge[]>(STORAGE_KEYS.CHALLENGES, DEMO_CHALLENGES);
-  return DEMO_CHALLENGES.map((dc) => {
+  return [...DEMO_CHALLENGES, ...academyChallenges()].map((dc) => {
     const sc = stored?.find((c) => c.id === dc.id);
     return sc ? { ...dc, ...sc, stages: dc.stages || sc.stages } : dc;
   });
@@ -293,21 +294,8 @@ export function saveSubmission(submission: ChallengeSubmission): void {
 
 // Portfolio
 export function getPortfolioProjects(userId?: string): PortfolioProject[] {
-  const all = safeGet<PortfolioProject[]>(STORAGE_KEYS.PORTFOLIO, DEMO_PORTFOLIO_PROJECTS);
-  const hasSeededMulti = all.some((p) => p.userId === "user-student-2" || p.userId === "user-student-3");
-  let list = all;
-  if (!hasSeededMulti) {
-    const existingIds = new Set(all.map((p) => p.id));
-    list = [...all];
-    for (const dp of DEMO_PORTFOLIO_PROJECTS) {
-      if (!existingIds.has(dp.id)) {
-        list.push(dp);
-      }
-    }
-    safeSet(STORAGE_KEYS.PORTFOLIO, list);
-  }
-  if (!userId) return list;
-  return list.filter((p) => p.userId === userId);
+  const projects = safeGet<PortfolioProject[]>(STORAGE_KEYS.PORTFOLIO, []);
+  return userId ? projects.filter(project => project.userId === userId) : projects;
 }
 
 export function savePortfolioProject(project: PortfolioProject): void {
@@ -332,17 +320,10 @@ export function togglePortfolioVisibility(projectId: string): void {
 
 // Opportunities
 export function getOpportunities(): Opportunity[] {
-  const stored = safeGet<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, DEMO_OPPORTUNITIES);
-  // Migrate old 2024 deadlines or outdated CERN openlab URLs to verified DEMO_OPPORTUNITIES automatically
-  if (
-    !Array.isArray(stored) ||
-    stored.length < 10 ||
-    stored.some((o) => o.deadline.startsWith("2024-") || o.applicationUrl.includes("openlab.cern"))
-  ) {
-    safeSet(STORAGE_KEYS.OPPORTUNITIES, DEMO_OPPORTUNITIES);
-    return DEMO_OPPORTUNITIES;
-  }
-  return stored;
+  const stored = safeGet<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, []);
+  if (!Array.isArray(stored)) return [];
+  // Never turn seed directories or stale checks into live opportunities.
+  return stored.filter(o => o.verified && o.verifiedAt && Date.now() - Date.parse(o.verifiedAt) < 24 * 60 * 60 * 1000 && (!/^\d{4}-\d{2}-\d{2}$/.test(o.deadline) || Date.parse(o.deadline + "T23:59:59Z") >= Date.now()));
 }
 
 export function saveOpportunities(opportunities: Opportunity[]): void {
@@ -386,30 +367,9 @@ export interface UserGamificationState {
 }
 
 export function getUserGamification(userId: string): UserGamificationState {
-  const defaultsByUser: Record<string, UserGamificationState> = {
-    "user-student-1": {
-      hearts: 5,
-      streak: 5,
-      xp: 480,
-      lastActiveDate: new Date().toISOString().slice(0, 10),
-      completedStages: { "challenge-lru-cache": [1] },
-    },
-    "user-student-2": {
-      hearts: 5,
-      streak: 9,
-      xp: 720,
-      lastActiveDate: new Date().toISOString().slice(0, 10),
-      completedStages: { "challenge-lru-cache": [1, 2] },
-    },
-    "user-student-3": {
-      hearts: 4,
-      streak: 3,
-      xp: 310,
-      lastActiveDate: new Date().toISOString().slice(0, 10),
-      completedStages: { "challenge-quiz-card": [1] },
-    },
+  const defaultState: UserGamificationState = {
+    hearts: 5, streak: 0, xp: 0, lastActiveDate: "", completedStages: {},
   };
-  const defaultState = defaultsByUser[userId] || defaultsByUser["user-student-1"];
   return safeGet<UserGamificationState>(`campusos_gamification_${userId}`, defaultState);
 }
 
@@ -487,49 +447,18 @@ export function updateCourse(updatedCourse: Course): void {
 }
 
 // Student Personal Notes Studio & Locker
-const DEMO_STUDENT_NOTES: StudentNote[] = [
-  {
-    id: "note-1",
-    userId: "user-student-1",
-    title: "CS101 Invariants & Divide-and-Conquer Summary",
-    courseId: "course-cs101",
-    courseName: "CS101: Data Structures & Algorithms",
-    content: "Loop invariants are assertions that must hold before loop initialization, during maintenance across all iterations, and upon loop termination. In binary search, mid calculation must use low + ((high - low) >> 1) to prevent 32-bit signed integer overflow. Time complexity is strictly O(log N).",
-    fileName: "Lecture_04_Algorithmic_Invariants.txt",
-    fileType: "text",
-    fileSize: "1.2 KB",
-    tags: ["Algorithms", "Binary Search", "Invariants"],
-    createdAt: "2026-10-15T10:00:00Z",
-    updatedAt: "2026-10-15T10:00:00Z",
-  },
-  {
-    id: "note-2",
-    userId: "user-student-1",
-    title: "CS210 Relational Algebra & SQL Joins",
-    courseId: "course-cs210",
-    courseName: "CS210: Database Systems",
-    content: "INNER JOIN yields only matching tuples across relations based on predicate condition. LEFT JOIN preserves all left tuples, filling missing right attributes with NULL. B-tree indexes accelerate nested loop joins from O(M*N) to O(M log N).",
-    fileName: "CS210_Relational_Joins_Review.txt",
-    fileType: "text",
-    fileSize: "1.8 KB",
-    tags: ["Databases", "SQL", "Joins"],
-    createdAt: "2026-10-16T14:30:00Z",
-    updatedAt: "2026-10-16T14:30:00Z",
-  },
-];
-
 export function getStudentNotes(userId?: string): StudentNote[] {
-  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, DEMO_STUDENT_NOTES);
+  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, []);
   if (!userId) return notes;
   return notes.filter((n) => n.userId === userId);
 }
 
 export function getStudentNoteById(id: string): StudentNote | undefined {
-  return safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, DEMO_STUDENT_NOTES).find((n) => n.id === id);
+  return safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, []).find((n) => n.id === id);
 }
 
 export function saveStudentNote(note: StudentNote): void {
-  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, DEMO_STUDENT_NOTES);
+  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, []);
   const existingIdx = notes.findIndex((n) => n.id === note.id);
   if (existingIdx >= 0) {
     notes[existingIdx] = note;
@@ -540,7 +469,7 @@ export function saveStudentNote(note: StudentNote): void {
 }
 
 export function deleteStudentNote(id: string): void {
-  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, DEMO_STUDENT_NOTES).filter(
+  const notes = safeGet<StudentNote[]>(STORAGE_KEYS.STUDENT_NOTES, []).filter(
     (n) => n.id !== id
   );
   safeSet(STORAGE_KEYS.STUDENT_NOTES, notes);

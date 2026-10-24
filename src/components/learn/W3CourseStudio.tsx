@@ -1,5 +1,6 @@
 "use client";
 
+import { runPython } from "@/lib/python-runner";
 import React, { useState, useEffect, useRef } from "react";
 import { W3Course, W3Chapter, getAllW3Courses, getW3CourseById } from "@/lib/w3schools-data";
 import { Button } from "@/components/ui/Button";
@@ -56,7 +57,7 @@ export function W3CourseStudio({
 
   // Try-It-Yourself Code Sandbox State
   const [editorCode, setEditorCode] = useState<string>(activeChapter.tryItYourself.starterCode);
-  const [sandboxOutput, setSandboxOutput] = useState<string>(activeChapter.tryItYourself.expectedOutput);
+  const [sandboxOutput, setSandboxOutput] = useState<string>("Run the example to see its output.");
   const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
 
   // Exercise Code Challenge State
@@ -74,8 +75,9 @@ export function W3CourseStudio({
   }, [initialCourseId]);
 
   useEffect(() => {
-    if (initialChapterId) {
-      const idx = currentCourse.chapters.findIndex((c) => c.id === initialChapterId);
+    const requestedChapter = initialChapterId || new URLSearchParams(window.location.search).get("chapter");
+    if (requestedChapter) {
+      const idx = currentCourse.chapters.findIndex((c) => c.id === requestedChapter);
       if (idx !== -1) setActiveChapterIndex(idx);
     } else {
       setActiveChapterIndex(0);
@@ -86,7 +88,7 @@ export function W3CourseStudio({
   useEffect(() => {
     if (activeChapter) {
       setEditorCode(activeChapter.tryItYourself.starterCode);
-      setSandboxOutput(activeChapter.tryItYourself.expectedOutput);
+      setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
       setExerciseInput("");
       setExerciseStatus("idle");
       setShowHint(false);
@@ -134,9 +136,19 @@ export function W3CourseStudio({
     }
   };
 
+  const pythonRun = useRef<ReturnType<typeof runPython> | null>(null);
+  useEffect(() => () => pythonRun.current?.cancel(), [activeCourseId, activeChapter.id]);
+
   // Execute Code in Sandbox
   const handleRunCode = () => {
+    pythonRun.current?.cancel();
     setIsRunningCode(true);
+    if (activeChapter.tryItYourself.language === "python") {
+      setSandboxOutput("");
+      pythonRun.current = runPython(editorCode, (text) => setSandboxOutput(previous => previous ? previous + "\n" + text : text));
+      pythonRun.current.done.then(() => setIsRunningCode(false));
+      return;
+    }
 
     setTimeout(() => {
       try {
@@ -145,6 +157,7 @@ export function W3CourseStudio({
           const customConsole = {
             log: (...args: any[]) => {
               logs.push(args.map((a) => (typeof a === "object" ? JSON.stringify(a) : String(a))).join(" "));
+              setSandboxOutput(logs.join("\n"));
             },
             error: (...args: any[]) => logs.push("Error: " + args.join(" ")),
             warn: (...args: any[]) => logs.push("Warning: " + args.join(" ")),
@@ -154,53 +167,9 @@ export function W3CourseStudio({
           const runFn = new Function("console", editorCode);
           runFn(customConsole);
           setSandboxOutput(logs.length > 0 ? logs.join("\n") : "Code executed successfully with no console output.");
-        } else if (activeChapter.tryItYourself.language === "python") {
-          // Client-side Python simulation
-          const lines = editorCode.split("\n");
-          const outputLines: string[] = [];
-          const vars: Record<string, any> = {};
-
-          for (const rawLine of lines) {
-            const line = rawLine.trim();
-            if (!line || line.startsWith("#")) continue;
-
-            // print() handling
-            const printMatch = line.match(/^print\((.*)\)$/);
-            if (printMatch) {
-              const argStr = printMatch[1].trim();
-              // Parse simple strings and f-strings
-              if (argStr.startsWith("f\"") || argStr.startsWith("f'")) {
-                let formatted = argStr.slice(2, -1);
-                // Replace variables
-                for (const [k, v] of Object.entries(vars)) {
-                  formatted = formatted.replace(new RegExp(`\\{${k}[^}]*\\}`, "g"), String(v));
-                }
-                outputLines.push(formatted);
-              } else if (
-                (argStr.startsWith("\"") && argStr.endsWith("\"")) ||
-                (argStr.startsWith("'") && argStr.endsWith("'"))
-              ) {
-                outputLines.push(argStr.slice(1, -1));
-              } else if (vars[argStr] !== undefined) {
-                outputLines.push(String(vars[argStr]));
-              } else {
-                // Return default expected output or sanitized args
-                outputLines.push(activeChapter.tryItYourself.expectedOutput.split("\n")[outputLines.length] || argStr);
-              }
-            } else if (line.includes("=")) {
-              const [varName, ...valParts] = line.split("=");
-              const key = varName.trim();
-              const val = valParts.join("=").trim().replace(/['"]/g, "");
-              vars[key] = val;
-            }
-          }
-
-          setSandboxOutput(
-            outputLines.length > 0 ? outputLines.join("\n") : activeChapter.tryItYourself.expectedOutput
-          );
         } else {
           // SQL, HTML, CSS: display formatted expected result
-          setSandboxOutput(activeChapter.tryItYourself.expectedOutput);
+          setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
         }
       } catch (err: any) {
         setSandboxOutput(`Runtime Exception: ${err?.message || "Execution error"}`);
@@ -213,7 +182,7 @@ export function W3CourseStudio({
   // Reset Sandbox Code
   const handleResetCode = () => {
     setEditorCode(activeChapter.tryItYourself.starterCode);
-    setSandboxOutput(activeChapter.tryItYourself.expectedOutput);
+    setSandboxOutput("Expected example result (not executed):\n" + activeChapter.tryItYourself.expectedOutput);
   };
 
   // Check Code Challenge Exercise

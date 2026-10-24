@@ -201,6 +201,27 @@ export default function DashboardPage() {
     if (editingNote?.id === id) setEditingNote(null);
   };
 
+  if (user.role !== "student") {
+    const taught = courses.filter(c => c.instructorId === user.id);
+    const courseIds = new Set(taught.map(c => c.id));
+    const quizzes = getQuizzes().filter(q => q.creatorId === user.id && !q.isPractice);
+    const quizIds = new Set(quizzes.map(q => q.id));
+    const submissions = getAttempts().filter(a => quizIds.has(a.quizId));
+    return <AppShell><div className="space-y-6">
+      <div className="clay-card-purple p-8"><h1 className="text-3xl font-bold text-white">Faculty Teaching Center</h1><p className="text-white mt-2">Welcome back, {user.name}</p></div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {[ ["Courses taught", taught.length], ["Course enrollments", taught.reduce((n,c) => n+c.enrolledStudentsCount,0)], ["Quiz submissions", submissions.length] ].map(([label,value]) => <Card key={label}><CardContent className="p-5"><p className="text-slate-700">{label}</p><strong className="text-3xl text-slate-950">{value}</strong></CardContent></Card>)}
+      </div>
+      <Link href="/teacher"><Button>Open Teacher Studio · Courses, rosters &amp; assessments</Button></Link>
+      <h2 className="text-xl font-bold">Your courses</h2>
+      {taught.length === 0 && <p>No courses assigned yet.</p>}
+      {taught.map(c => <Card key={c.id}><CardContent className="p-5"><Link href={`/courses/${c.id}`} className="font-bold text-purple-800">{c.code}: {c.title}</Link><p>{c.enrolledStudentsCount} enrollments · {quizzes.filter(q => q.classCode === c.classCode || q.assignedClass === c.classCode).length} assessments</p></CardContent></Card>)}
+      <h2 className="text-xl font-bold">Assessment review</h2>
+      <p>Quizzes are graded automatically. Review submissions and learning gaps in Teacher Studio.</p>
+      {quizzes.map(q => <Link key={q.id} href="/teacher" className="block text-purple-800 underline">{q.title} · {submissions.filter(a => a.quizId === q.id).length} submissions</Link>)}
+    </div></AppShell>;
+  }
+
   return (
     <AppShell>
       <div className="space-y-8">

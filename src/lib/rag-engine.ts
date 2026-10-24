@@ -49,36 +49,37 @@ export function chunkTextContent(
   chunkSize = 250,
   chunkOverlap = 40
 ): DocumentChunk[] {
-  const words = text.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return [];
-
-  const safeChunkSize = Math.max(1, chunkSize);
-  const safeOverlap = Math.min(Math.max(0, chunkOverlap), safeChunkSize - 1);
-  const step = Math.max(1, safeChunkSize - safeOverlap);
-
-  const chunks: DocumentChunk[] = [];
-  let startIndex = 0;
-  let chunkNumber = 1;
-
-  while (startIndex < words.length) {
-    const chunkWords = words.slice(startIndex, startIndex + safeChunkSize);
-    const content = chunkWords.join(" ");
-
-    chunks.push({
-      id: `${fileId}-chunk-${chunkNumber}`,
-      fileId,
-      fileName,
-      chunkIndex: chunkNumber,
-      content,
-      wordCount: chunkWords.length,
+  if (!text.trim()) return [];
+  const target = Number.isFinite(chunkSize) ? Math.max(1, Math.floor(chunkSize)) : 250;
+  const overlap = Number.isFinite(chunkOverlap) ? Math.min(Math.max(0, chunkOverlap), target - 1) : 0;
+  const count = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
+  // Fences, display equations and paragraphs are atomic. Newlines/indentation survive.
+  const blocks = text.match(/```[^\n]*\n[\s\S]*?(?:```|$)|~~~[^\n]*\n[\s\S]*?(?:~~~|$)|\$\$[\s\S]*?\$\$|(?:(?!```|~~~|\$\$)[^\n]+(?:\n(?!\s*\n|```|~~~|\$\$)[^\n]+)*)/g) || [];
+  const codeFile = /\.(py|js|ts|tsx|jsx|java|cpp|c|sql)$/i.test(fileName);
+  const atoms = blocks.flatMap(block => {
+    if (codeFile || /^(?:```|~~~|\$\$)/.test(block) || count(block) <= target) return [block];
+    // Prefer complete sentences; only a single oversized prose sentence uses a word fallback.
+    return (block.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g) || [block]).flatMap(sentence => {
+      const words = sentence.trim().split(/\s+/);
+      if (words.length <= target) return [sentence.trim()];
+      const pieces: string[] = [];
+      for (let i = 0; i < words.length; i += target) pieces.push(words.slice(i, i + target).join(" "));
+      return pieces;
     });
-
-    startIndex += step;
-    chunkNumber++;
-    if (startIndex >= words.length) break;
+  });
+  const contents: string[] = [];
+  let current: string[] = [];
+  for (const atom of atoms) {
+    if (current.length && count(current.join("\n\n")) + count(atom) > target) {
+      contents.push(current.join("\n\n"));
+      const tail: string[] = [];
+      for (let i = current.length - 1; i >= 0 && count([current[i], ...tail].join(" ")) <= overlap; i--) tail.unshift(current[i]);
+      current = count([...tail, atom].join(" ")) <= target ? tail : [];
+    }
+    current.push(atom);
   }
-
-  return chunks;
+  if (current.length) contents.push(current.join("\n\n"));
+  return contents.map((content, index) => ({ id: `${fileId}-chunk-${index + 1}`, fileId, fileName, chunkIndex: index + 1, content, wordCount: count(content) }));
 }
 
 /**

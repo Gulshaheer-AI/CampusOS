@@ -42,7 +42,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       secondary:
         "bg-purple-100 hover:bg-purple-200 text-slate-900 font-bold border border-purple-200 shadow-sm",
       outline:
-        "border-2 border-purple-200 text-slate-900 hover:text-brand-purple bg-white hover:bg-purple-50 font-bold shadow-sm",
+        "border-2 border-purple-200 text-slate-900 hover:text-brand-purple bg-transparent hover:bg-purple-50 font-bold shadow-sm",
       ghost:
         "text-slate-800 hover:text-brand-purple hover:bg-purple-50 font-bold border border-transparent",
       danger:
@@ -54,7 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       purple:
         "clay-button-primary hover:brightness-110 text-white font-bold",
       peach:
-        "bg-rose-500 hover:bg-rose-600 text-white font-bold",
+        "bg-rose-700 hover:bg-rose-800 text-white font-bold",
       seagreen:
         "clay-button-mint hover:brightness-105 text-slate-950 font-bold",
       white:

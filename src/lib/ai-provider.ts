@@ -118,8 +118,7 @@ ${sanitizedPrompt}`;
 
       const systemInstruction = `You are the CampusOS Academic AI Tutor, a patient, intellectually rigorous educator teaching ${subject} at a ${level} level.
 Adopt the '${style}' teaching methodology.
-Format your response with clear Markdown headings, concise code blocks with language identifiers where appropriate, and practical intuition.
-Provide 2-3 thoughtful follow-up questions at the end labeled under '### Next Steps & Inquiries'.`;
+Answer naturally and directly, adapting length and tone to the student's question. Use headings or lists only when they clarify a longer explanation. Include practical examples and fenced, language-labeled code when useful. Do not force a response template, closing section, or follow-up questions. Cite uploaded sources for claims drawn from them; say when the sources are insufficient.`;
 
       const geminiResult = await callGeminiWithAutoFallback({
         contents: [
@@ -194,13 +193,7 @@ Provide 2-3 thoughtful follow-up questions at the end labeled under '### Next St
   const citations: string[] = [];
   const suggestedFollowups: string[] = [];
 
-  const stylePrefix = {
-    beginner: "Let's break this down from first principles with simple analogies:\n\n",
-    step_by_step: "Here is a structured, step-by-step breakdown of how this works:\n\n",
-    example_based: "Let's look directly at concrete, realistic examples to build intuition:\n\n",
-    visual: "Here is a conceptual diagram and mental model of the process:\n\n",
-    exam_revision: "Key exam takeaways, critical definitions, and common pitfall traps:\n\n",
-  }[style] || "Here is a structured explanation:\n\n";
+  const stylePrefix = "";
 
   // Check if Grounded RAG chunks were retrieved
   if (ragChunks && ragChunks.length > 0) {
@@ -233,22 +226,12 @@ Provide 2-3 thoughtful follow-up questions at the end labeled under '### Next St
     // Synthesize grounded response directly from chunks
     const chunkSnippets = ragChunks
       .map((c, idx) => {
-        const cleanContent = c.content.trim().slice(0, 350);
-        return `**Key Takeaway ${idx + 1}** [Source: ${c.fileName}, Section ${c.section}]:\n> ${cleanContent}${cleanContent.length >= 350 ? "..." : ""}`;
+        const cleanContent = c.content.trim();
+        return `**${c.fileName}, section ${c.section}**\n\n${cleanContent}`;
       })
       .join("\n\n");
 
-    content = `${stylePrefix}Based directly on your uploaded course materials in **${sourceFilename}**, here is the synthesized answer regarding **${sanitizedPrompt}**:
-
-### Grounded Document Insights:
-${chunkSnippets}
-
-### Factual Synthesis:
-According to [Source: ${primaryChunk.fileName}, Section ${primaryChunk.section}], these concepts establish the foundational invariants and operational properties required for your study in ${subject}. 
-
-- **Primary Source**: ${primaryChunk.fileName} (Section ${primaryChunk.section})
-- **Evidence Verification**: Verified from indexed lecture document chunks.
-- **Academic Context**: Direct alignment with your ${subject} (${level} level) curriculum.`;
+    content = `The live tutor is unavailable. These relevant passages from your uploaded materials may help:\n\n${chunkSnippets}`;
 
     suggestedFollowups.push(
       `Can you explain the main principles from ${sourceFilename} in more detail?`,
@@ -338,14 +321,7 @@ LEFT JOIN enrollments e ON s.student_id = e.student_id;`,
       "Can you create a quiz question based on this?"
     );
 
-    content = `${stylePrefix}Let's analyze your question regarding **${sanitizedPrompt}**.
-
-### Conceptual Foundations:
-1. **Definition & Context**: In computer science and engineering, breaking problems into structured components allows us to reason about correctness and scalability.
-2. **Key Principle**: Always identify your inputs, constraints, edge cases (e.g. empty inputs, null pointers, overflow), and expected output format.
-3. **Verification**: Validate your logic against small trace cases before writing large implementations.
-
-Feel free to ask for deeper worked examples, code implementations, or exam-style checkpoints!`;
+    content = `The live tutor is unavailable right now, and the local lesson library does not contain a specific answer to “${sanitizedPrompt}”. Upload relevant notes or try again when the live model is available.`;
   }
 
   return {
@@ -359,8 +335,8 @@ Feel free to ask for deeper worked examples, code implementations, or exam-style
       suggestedFollowups,
       createdAt: new Date().toISOString(),
     },
-    isDemoMode: !apiKey,
-    modelUsed: apiKey ? "gemini-3.1-flash-lite (Auto-Cascade)" : "CampusOS Pedagogical Engine",
-    fallbackTriggered: false,
+    isDemoMode: true,
+    modelUsed: "CampusOS Local Tutor",
+    fallbackTriggered: Boolean(apiKey),
   };
 }

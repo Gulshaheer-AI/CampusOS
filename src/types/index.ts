@@ -77,6 +77,7 @@ export interface CourseMaterial {
   url?: string;
   description?: string;
   fileData?: string;
+  fileStorageKey?: string;
   fileName?: string;
 }
 
@@ -378,6 +379,7 @@ export interface CvData {
   languages?: { language: string; proficiency: string; cefrLevel?: string }[];
   projectExperienceNarrative?: string;
   additionalInfo?: string;
+  customSections?: { title: string; content: string[] }[];
 }
 
 export interface CvAuditResult {

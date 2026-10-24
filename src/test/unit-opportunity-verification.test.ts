@@ -1,103 +1,210 @@
-import { describe, it, expect } from "vitest";
+import { callGeminiWithAutoFallback } from "@/lib/gemini";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import {
   verifyOpportunityUrl,
+  resolveOpportunityUrl,
   searchAndVerifyOpportunities,
   VERIFIED_OPPORTUNITY_REGISTRY,
 } from "@/lib/opportunity-search";
-import { UserProfile } from "@/types";
-
-describe("Opportunity Search & Live Verification Pipeline", () => {
-  it("rejects dummy, example, or non-job domains immediately", async () => {
-    const res1 = await verifyOpportunityUrl("https://example.com/jobs/123");
-    expect(res1.ok).toBe(false);
-    expect(res1.status).toBe(404);
-
-    const res2 = await verifyOpportunityUrl("https://fake-internship.com");
-    expect(res2.ok).toBe(false);
-
-    const res3 = await verifyOpportunityUrl("https://en.wikipedia.org/wiki/Software_engineering");
-    expect(res3.ok).toBe(false);
-    expect(res3.status).toBe(400);
-
-    const res4 = await verifyOpportunityUrl("https://www.geeksforgeeks.org/jobs");
-    expect(res4.ok).toBe(false);
-    expect(res4.status).toBe(400);
-  });
-
-  it("handles empty or malformed URLs safely without throwing", async () => {
-    const emptyRes = await verifyOpportunityUrl("");
-    expect(emptyRes.ok).toBe(false);
-    expect(emptyRes.status).toBe(0);
-
-    const nullRes = await verifyOpportunityUrl(null as any);
-    expect(nullRes.ok).toBe(false);
-  });
-
-  it("VERIFIED_OPPORTUNITY_REGISTRY contains rich authentic corporate & student programs", () => {
-    expect(VERIFIED_OPPORTUNITY_REGISTRY.length).toBeGreaterThanOrEqual(15);
-
-    const orgs = VERIFIED_OPPORTUNITY_REGISTRY.map((o) => o.organization);
-    expect(orgs).toContain("Google");
-    expect(orgs).toContain("Systems Limited");
-    expect(orgs).toContain("Microsoft");
-    expect(orgs).toContain("Amazon");
-    expect(orgs).toContain("Apple");
-    expect(orgs).toContain("NVIDIA");
-    expect(orgs).toContain("Arbisoft");
-    expect(orgs).toContain("10Pearls");
-
-    // All registry items must have legitimate application URLs
-    for (const opp of VERIFIED_OPPORTUNITY_REGISTRY) {
-      expect(opp.applicationUrl).toMatch(/^https?:\/\//);
-      expect(opp.title.length).toBeGreaterThan(5);
-      expect(opp.requirements.length).toBeGreaterThan(0);
-      expect(opp.description.length).toBeGreaterThan(20);
-    }
-  });
-
-  it("searchAndVerifyOpportunities returns verified opportunities matching student profile", async () => {
-    const mockStudent: UserProfile = {
-      id: "student-1",
-      name: "Bilal Khan",
-      email: "bilal@fast.edu.pk",
-      role: "student",
-      department: "Computer Science",
-      degree: "B.S. in Computer Science (PEC Accredited)",
-      semester: "6th Semester",
-      cgpa: "3.88",
-      interests: ["TypeScript", "Next.js", "Python", "Cloud Systems"],
-      themePreference: "light",
-      emailNotifications: true,
-      learningPace: "intensive",
-      createdAt: "2026-01-15",
-    };
-
-    const result = await searchAndVerifyOpportunities(
-      "Systems Limited Pakistan Cloud",
-      mockStudent,
-      [{ title: "CampusOS Distributed Core" }]
+vi.mock("@/lib/gemini", () => ({ callGeminiWithAutoFallback: vi.fn() }));
+vi.mock("node:dns/promises", () => ({
+  default: { lookup: vi.fn(async () => [{ address: "8.8.8.8", family: 4 }]) },
+  lookup: vi.fn(async () => [{ address: "8.8.8.8", family: 4 }]),
+}));
+const page = (job: Record<string, unknown> = {}) =>
+  `<html><script type="application/ld+json">${JSON.stringify({ "@type": "JobPosting", title: "Python Intern", hiringOrganization: { name: "Acme" }, description: "Build Python data pipelines", ...job })}</script><a href="/application/123">Apply now</a></html>`;
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
+describe("Opportunity destination verification", () => {
+  it("rejects dummy and unsafe URLs", async () => {
+    expect(
+      (await verifyOpportunityUrl("https://example.com/jobs/123")).ok,
+    ).toBe(false);
+    expect((await verifyOpportunityUrl("http://127.0.0.1/jobs/1")).ok).toBe(
+      false,
     );
-
-    expect(result.opportunities.length).toBeGreaterThan(0);
-    expect(result.verifiedCount).toBeGreaterThan(0);
-    expect(result.totalChecked).toBeGreaterThan(0);
-
-    // Verify properties of the matched opportunities
-    for (const opp of result.opportunities) {
-      expect(opp.verified).toBe(true);
-      expect(opp.httpStatus).toBe(200);
-      expect(opp.matchScore).toBeGreaterThanOrEqual(80);
-      expect(opp.tailoredPitch).toContain("Bilal Khan");
-      expect(opp.applicationUrl).toMatch(/^https?:\/\//);
-    }
+    expect(
+      (await verifyOpportunityUrl("https://en.wikipedia.org/jobs/1")).ok,
+    ).toBe(false);
+    expect((await verifyOpportunityUrl("")).ok).toBe(false);
+    expect((await verifyOpportunityUrl(null as any)).ok).toBe(false);
   });
-
-  it("searchAndVerifyOpportunities handles empty query by returning default registry", async () => {
+  it("decodes Bing redirects to a direct posting", () => {
+    const target = "https://careers.acme.com/jobs/123";
+    expect(
+      resolveOpportunityUrl(
+        "https://www.bing.com/ck/a?u=a1" +
+          Buffer.from(target).toString("base64url"),
+      ),
+    ).toBe(target);
+    expect(() =>
+      resolveOpportunityUrl("https://www.bing.com/ck/a?x=abc"),
+    ).toThrow();
+  });
+  it("does not manufacture availability on a network failure, even during tests", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    const result = await verifyOpportunityUrl(
+      "https://careers.acme.com/jobs/1",
+    );
+    expect(result).toMatchObject({ ok: false, status: 0 });
+  });
+  it("requires a specific posting rather than HTTP 200 or a homepage", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("<h1>Careers</h1>")),
+    );
+    expect((await verifyOpportunityUrl("https://careers.acme.com/")).ok).toBe(
+      false,
+    );
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/1")).ok,
+    ).toBe(false);
+  });
+  it("reads the complete destination and detects closed text after 5000 characters", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response("x".repeat(6000) + "This position has been filled"),
+      ),
+    );
+    expect(
+      await verifyOpportunityUrl("https://careers.acme.com/jobs/1"),
+    ).toMatchObject({ ok: false, isClosed: true });
+  });
+  it("rejects expired structured postings and missing application controls", async () => {
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(page({ validThrough: "2020-01-01" })))
+      .mockResolvedValueOnce(new Response(page().replace(/<a.*<\/a>/, "")));
+    vi.stubGlobal("fetch", fetcher);
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/1")).isClosed,
+    ).toBe(true);
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/2")).ok,
+    ).toBe(false);
+  });
+  it("extracts title and employer from an active destination without inventing a deadline", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(page())),
+    );
+    const result = await verifyOpportunityUrl(
+      "https://careers.acme.com/jobs/123",
+    );
+    expect(result).toMatchObject({
+      ok: true,
+      title: "Python Intern",
+      organization: "Acme",
+    });
+    expect(result.deadline).toBeUndefined();
+  });
+  it("follows safe redirects but rejects private destinations", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce(
+          new Response(null, { status: 302, headers: { location: "/jobs/2" } }),
+        )
+        .mockResolvedValueOnce(new Response(page())),
+    );
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/1")).finalUrl,
+    ).toBe("https://careers.acme.com/jobs/2");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(null, {
+            status: 302,
+            headers: { location: "http://169.254.169.254/latest" },
+          }),
+      ),
+    );
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/1")).ok,
+    ).toBe(false);
+  });
+  it("inspects destination text with Gemini when structured job data is absent", async () => {
+    vi.stubEnv("GEMINI_API_KEY", "test-key");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            "<h1>Python Intern</h1><h2>Acme</h2><p>Applications are open for this internship.</p><button>Apply now</button>",
+          ),
+      ),
+    );
+    vi.mocked(callGeminiWithAutoFallback).mockResolvedValue({
+      text: JSON.stringify({
+        isActive: true,
+        isSpecificPosting: true,
+        title: "Python Intern",
+        organization: "Acme",
+        deadline: null,
+        evidence: "Applications are open for this internship.",
+      }),
+      modelUsed: "test",
+      fallbackTriggered: false,
+    });
+    expect(
+      await verifyOpportunityUrl("https://careers.acme.com/jobs/123"),
+    ).toMatchObject({ ok: true, title: "Python Intern", organization: "Acme" });
+    vi.mocked(callGeminiWithAutoFallback).mockResolvedValue({
+      text: JSON.stringify({
+        isActive: true,
+        isSpecificPosting: true,
+        title: "Invented Engineer",
+        organization: "Acme",
+        deadline: null,
+        evidence: "Applications are open for this internship.",
+      }),
+      modelUsed: "test",
+      fallbackTriggered: false,
+    });
+    expect(
+      (await verifyOpportunityUrl("https://careers.acme.com/jobs/123")).ok,
+    ).toBe(false);
+  });
+  it("keeps the old discovery catalog unverified, with no invented application dates", () => {
+    expect(VERIFIED_OPPORTUNITY_REGISTRY.length).toBeGreaterThan(0);
+    expect(
+      VERIFIED_OPPORTUNITY_REGISTRY.every((p) => p.deadline === "Not verified"),
+    ).toBe(true);
+  });
+  it("returns an honest empty result when no live pages can be verified", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     const result = await searchAndVerifyOpportunities("");
-    expect(result.opportunities.length).toBeGreaterThanOrEqual(4);
-    for (const opp of result.opportunities) {
-      expect(opp.verified).toBe(true);
-      expect(opp.httpStatus).toBe(200);
-    }
+    expect(result.opportunities).toEqual([]);
+    expect(result.verifiedCount).toBe(0);
+  });
+  it("builds cards using the actual posting and a matching direct URL", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url.includes("bing.com/search")
+          ? new Response(
+              '<li class="b_algo"><h2><a href="https://careers.acme.com/jobs/123">Different search title</a></h2><p>Internship in Python</p></li>',
+            )
+          : new Response(page()),
+      ),
+    );
+    const result = await searchAndVerifyOpportunities("Python");
+    expect(result.opportunities).toHaveLength(1);
+    expect(result.opportunities[0]).toMatchObject({
+      title: "Python Intern",
+      organization: "Acme",
+      applicationUrl: "https://careers.acme.com/jobs/123",
+      verified: true,
+      deadline: "Not stated by employer",
+    });
+    expect(result.totalChecked).toBe(
+      result.verifiedCount + result.rejectedCount,
+    );
   });
 });

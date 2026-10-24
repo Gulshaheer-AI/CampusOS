@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { getRoadmaps } from "@/lib/store";
+import type { W3Course } from "@/lib/w3schools-data";
 import { Roadmap } from "@/types";
 import { calculateRoadmapProgress } from "@/lib/scoring";
 import { W3CourseStudio } from "@/components/learn/W3CourseStudio";
@@ -35,6 +36,8 @@ export default function RoadmapsPage() {
 
   useEffect(() => {
     setRoadmaps(getRoadmaps());
+    const course = new URLSearchParams(window.location.search).get("course");
+    if (getAllW3Courses().some(c => c.id === course)) setSelectedW3Course(course as W3Course["id"]);
   }, []);
 
   return (

@@ -109,13 +109,11 @@ export default function OpportunitiesPage() {
       const data = await res.json();
       if (data?.opportunities && Array.isArray(data.opportunities)) {
         // Merge with existing bookmarked status
-        const bookmarkedIds = new Set(
-          opportunities.filter((o) => o.isBookmarked).map((o) => o.id)
-        );
+        const bookmarkedIds = new Set(opportunities.filter(o => o.isBookmarked).map(o => o.applicationUrl));
 
         const newOpps: Opportunity[] = data.opportunities.map((opp: Opportunity) => ({
           ...opp,
-          isBookmarked: bookmarkedIds.has(opp.id),
+          isBookmarked: bookmarkedIds.has(opp.applicationUrl),
         }));
 
         setOpportunities(newOpps);
@@ -128,7 +126,7 @@ export default function OpportunitiesPage() {
         });
 
         setMatcherSuccess(
-          `Monday AI Deep Search Verified: Found ${data.opportunities.length} live opportunities (HTTP 200 confirmed; 0 broken links).`
+          data.opportunities.length ? `Found ${data.opportunities.length} postings with evidence of active applications. Availability can change; links are checked again when you apply.` : "No active postings could be verified for this search. Try another query; unavailable or unverified pages are excluded."
         );
         setTimeout(() => setMatcherSuccess(null), 8000);
       }
@@ -177,12 +175,6 @@ export default function OpportunitiesPage() {
     const targetUrl = sanitizeWebUrl(opp.applicationUrl);
     if (!targetUrl) return;
 
-    // If already verified as active HTTP 200 in this session, open directly with zero delay
-    if (opp.verified && opp.httpStatus === 200) {
-      window.open(targetUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
-
     // Otherwise, create window handle first to prevent popup blockers during asynchronous fetch
     const newTab = window.open("about:blank", "_blank");
     setVerifyingUrlId(opp.id);
@@ -201,7 +193,7 @@ export default function OpportunitiesPage() {
       const verification = await res.json();
 
       if (verification && verification.ok) {
-        // Link is healthy and returning HTTP 200
+        // Link is healthy and returning page content
         const destination = verification.finalUrl || targetUrl;
         if (newTab) {
           newTab.location.href = destination;
@@ -217,12 +209,8 @@ export default function OpportunitiesPage() {
         });
       }
     } catch (err) {
-      // In case of network timeout, navigate to targetUrl
-      if (newTab) {
-        newTab.location.href = targetUrl;
-      } else {
-        window.open(targetUrl, "_blank", "noopener,noreferrer");
-      }
+      if (newTab) newTab.close();
+      setUrlErrorMessage({ id: opp.id, message: "Could not verify this posting. Please retry." });
     } finally {
       setVerifyingUrlId(null);
     }
@@ -254,7 +242,7 @@ export default function OpportunitiesPage() {
                 </span>
                 <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                  Live HTTP 200 Checked
+                  Live page content Checked
                 </span>
                 <span className="text-xs text-purple-100 font-semibold hidden sm:inline">Zero 404 Errors</span>
               </div>
@@ -296,7 +284,7 @@ export default function OpportunitiesPage() {
                 Search Live 2026/2027 Opportunities Across the Internet
               </h3>
               <p className="text-xs text-slate-600 font-medium max-w-2xl">
-                Type any role, technology, or region (e.g. &quot;Software Engineering Internship Pakistan&quot;, &quot;European AI Fellowship&quot;, &quot;Google Systems 2027&quot;). Monday AI inspects live links, confirms HTTP 200 response codes, and scores alignment with your verified skills.
+                Type any role, technology, or region (e.g. &quot;Software Engineering Internship Pakistan&quot;, &quot;European AI Fellowship&quot;, &quot;Google Systems 2027&quot;). Monday AI inspects live links, confirms posting details and application controls, and scores alignment with your verified skills.
               </p>
             </div>
 
@@ -338,7 +326,7 @@ export default function OpportunitiesPage() {
               className="shrink-0 px-5 font-bold shadow-md"
             >
               <Search className="w-3.5 h-3.5 mr-1.5" />
-              {isMatchingOpportunities ? "Verifying with HTTP 200..." : "Search & Verify Links"}
+              {isMatchingOpportunities ? "Verifying with page content..." : "Search & Verify Links"}
             </Button>
           </form>
 
@@ -435,7 +423,7 @@ export default function OpportunitiesPage() {
                     )}
                     <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                       <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                      HTTP 200 Verified
+                      page content Verified
                     </span>
                     <Badge
                       variant="outline"

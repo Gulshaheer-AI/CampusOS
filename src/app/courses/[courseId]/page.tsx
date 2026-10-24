@@ -1,4 +1,5 @@
 "use client";
+import { readMaterialFile } from "@/lib/material-storage";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -88,8 +89,20 @@ export default function CourseDetailPage() {
     }
   };
 
-  const handleDownloadMaterial = (mat: CourseMaterial) => {
+  const handleDownloadMaterial = async (mat: CourseMaterial) => {
     if (!course) return;
+
+    if (mat.fileStorageKey) {
+      try {
+        const blob = await readMaterialFile(mat.fileStorageKey);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url; link.download = mat.fileName || mat.title;
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (error) { window.alert(error instanceof Error ? error.message : "Could not read upload."); }
+      return;
+    }
 
     // If actual uploaded file data is present, download authentic file
     if (mat.fileData) {

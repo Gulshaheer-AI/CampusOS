@@ -17,8 +17,10 @@ import {
   deleteQuiz,
   getAttempts,
   getCurrentUser,
+  getStudents,
 } from "@/lib/store";
 import { Course, CourseModule, CourseMaterial, Quiz, Question, QuizAttempt, UserProfile } from "@/types";
+import { saveMaterialFile } from "@/lib/material-storage";
 import { parseDocumentFile } from "@/lib/rag-parser";
 import { generateQuizFromText } from "@/lib/rag-engine";
 import {
@@ -50,6 +52,7 @@ export default function TeacherStudioPage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [students, setStudents] = useState<UserProfile[]>([]);
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
 
   // Create Course Modal
@@ -66,7 +69,7 @@ export default function TeacherStudioPage() {
   const [newMaterialTitle, setNewMaterialTitle] = useState("");
   const [newMaterialType, setNewMaterialType] = useState<"pdf" | "notes" | "code" | "link">("notes");
   const [newMaterialDesc, setNewMaterialDesc] = useState("");
-  const [materialFile, setMaterialFile] = useState<{ name: string; size: string; data: string } | null>(null);
+  const [materialFile, setMaterialFile] = useState<{ name: string; size: string; storageKey: string } | null>(null);
   const materialFileInputRef = useRef<HTMLInputElement>(null);
   const [editSuccessMsg, setEditSuccessMsg] = useState<string | null>(null);
 
@@ -88,10 +91,14 @@ export default function TeacherStudioPage() {
   const notesFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setUser(getCurrentUser());
-    setCourses(getCourses());
-    setQuizzes(getQuizzes());
-    setAttempts(getAttempts());
+    const current = getCurrentUser();
+    const ownQuizzes = getQuizzes().filter(q => q.creatorId === current.id && !q.isPractice);
+    const quizIds = new Set(ownQuizzes.map(q => q.id));
+    setUser(current);
+    setCourses(getCourses().filter(c => c.instructorId === current.id));
+    setQuizzes(ownQuizzes);
+    setAttempts(getAttempts().filter(a => quizIds.has(a.quizId)));
+    setStudents(getStudents());
   }, []);
 
   const handleCreateCourse = (e: React.FormEvent) => {
@@ -141,7 +148,7 @@ export default function TeacherStudioPage() {
     };
 
     saveCourse(course);
-    setCourses(getCourses());
+    setCourses(getCourses().filter(c => c.instructorId === getCurrentUser().id));
     setShowCourseModal(false);
     setNewCourseCode("");
     setNewCourseTitle("");
@@ -153,7 +160,7 @@ export default function TeacherStudioPage() {
     if (!editingCourse) return;
 
     updateCourse(editingCourse);
-    setCourses(getCourses());
+    setCourses(getCourses().filter(c => c.instructorId === getCurrentUser().id));
     setEditSuccessMsg("Course updated successfully!");
     setTimeout(() => {
       setEditSuccessMsg(null);
@@ -187,7 +194,7 @@ export default function TeacherStudioPage() {
     setNewModuleTitle("");
   };
 
-  const handleMaterialFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMaterialFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -196,18 +203,14 @@ export default function TeacherStudioPage() {
         ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
         : `${Math.max(1, Math.round(file.size / 1024))} KB`;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setMaterialFile({
-        name: file.name,
-        size: sizeStr,
-        data: reader.result as string,
-      });
-      if (!newMaterialTitle.trim()) {
-        setNewMaterialTitle(file.name);
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const storageKey = `material-${crypto.randomUUID()}`;
+      await saveMaterialFile(storageKey, file);
+      setMaterialFile({ name: file.name, size: sizeStr, storageKey });
+      if (!newMaterialTitle.trim()) setNewMaterialTitle(file.name);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Could not save upload. Please retry.");
+    }
   };
 
   const handleAddMaterialToEditingCourse = () => {
@@ -222,7 +225,7 @@ export default function TeacherStudioPage() {
       uploadDate: new Date().toISOString().slice(0, 10),
       description: newMaterialDesc.trim() || "Uploaded lecture reading material and reference notes.",
       fileName: materialFile?.name,
-      fileData: materialFile?.data,
+      fileStorageKey: materialFile?.storageKey,
     };
 
     setEditingCourse({
@@ -241,7 +244,7 @@ export default function TeacherStudioPage() {
       ...editingCourse,
       materials: (editingCourse.materials || []).filter((m) => m.id !== materialId),
     });
-    setCourses(getCourses());
+    setCourses(getCourses().filter(c => c.instructorId === getCurrentUser().id));
   };
 
   // Notes file upload for quiz drafting (PDF, DOCX, CSV, TXT)
@@ -404,7 +407,7 @@ export default function TeacherStudioPage() {
     };
 
     saveQuiz(newQuiz);
-    setQuizzes(getQuizzes());
+    setQuizzes(getQuizzes().filter(q => q.creatorId === getCurrentUser().id && !q.isPractice));
     setShowQuizModal(false);
     setQuizTitle("");
     setQuizDesc("");
@@ -416,7 +419,7 @@ export default function TeacherStudioPage() {
 
   const handleDeleteQuizItem = (id: string) => {
     deleteQuiz(id);
-    setQuizzes(getQuizzes());
+    setQuizzes(getQuizzes().filter(q => q.creatorId === getCurrentUser().id && !q.isPractice));
   };
 
   const handleExportCSV = () => {
@@ -479,7 +482,7 @@ export default function TeacherStudioPage() {
                 Teacher Studio &amp; Course Authoring
               </h1>
               <p className="mt-2 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-                Manage courses, edit modules, upload lecture materials, generate AI quizzes from notes, and inspect cohort learning gaps for Ahmad, Hassan, and Zain.
+                Manage courses, edit modules, upload lecture materials, generate AI quizzes from notes, and inspect learning gaps for your students.
               </p>
             </div>
 
@@ -1260,7 +1263,7 @@ export default function TeacherStudioPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-brand-purple" />
-              Student Cohort Performance &amp; Learning Gaps (Ahmad, Hassan &amp; Zain)
+              Student Cohort Performance &amp; Learning Gaps
             </h2>
             <span className="text-xs text-brand-purple font-mono font-bold">
               {attempts.filter((a) => a.userRole !== "teacher" && !a.isPractice).length} Student Attempts
@@ -1269,11 +1272,7 @@ export default function TeacherStudioPage() {
 
           {/* 3-Student Roster Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { id: "user-student-1", name: "Ahmad Khan", major: "3rd Yr CS • Algorithms & Next.js" },
-              { id: "user-student-2", name: "Hassan Ali", major: "Final Yr AI • Python, RAG & SQL" },
-              { id: "user-student-3", name: "Zain Tariq", major: "2nd Yr SE • UI/UX & Claymorphism" },
-            ].map((stu) => {
+            {students.map((stu) => {
               const stuAttempts = attempts.filter(
                 (a) => a.userId === stu.id && a.userRole !== "teacher" && !a.isPractice
               );
@@ -1290,7 +1289,7 @@ export default function TeacherStudioPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-extrabold text-sm text-slate-950">{stu.name}</div>
-                      <div className="text-[11px] text-slate-600 font-medium">{stu.major}</div>
+                      <div className="text-[11px] text-slate-600 font-medium">{stu.degree || stu.department}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-extrabold text-brand-purple">{stuAvg}%</div>
@@ -1327,15 +1326,7 @@ export default function TeacherStudioPage() {
                   {attempts
                     .filter((att) => att.userRole !== "teacher" && !att.isPractice)
                     .map((att) => {
-                      const studentDisplayName =
-                        att.studentName ||
-                        (att.userId === "user-student-1"
-                          ? "Ahmad Khan"
-                          : att.userId === "user-student-2"
-                          ? "Hassan Ali"
-                          : att.userId === "user-student-3"
-                          ? "Zain Tariq"
-                          : att.userId);
+                      const studentDisplayName = att.studentName || students.find(student => student.id === att.userId)?.name || "Student";
                       return (
                         <tr key={att.id} className="hover:bg-purple-50/50 transition-colors">
                           <td className="p-3.5">

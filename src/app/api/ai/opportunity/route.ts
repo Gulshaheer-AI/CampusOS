@@ -157,7 +157,7 @@ Verified Portfolio Projects: ${projectTitles.join(", ")}`;
       rejectedCount: searchResult.rejectedCount,
       searchedQuery: searchResult.searchedQuery,
       timestamp: searchResult.timestamp,
-      modelUsed: "Monday AI Live Verified Web Engine (HTTP 200)",
+      modelUsed: "Monday AI Destination Page Verification",
     });
   } catch (err: unknown) {
     console.error("AI Opportunity API Error:", err);
