@@ -287,16 +287,7 @@ export function W3CourseStudio({
             );
           })}
 
-          {/* Additional static course badges for complete W3Schools fidelity */}
-          <span className="hidden md:inline-flex px-3 py-1.5 text-xs text-slate-400 uppercase font-semibold">
-            JAVA
-          </span>
-          <span className="hidden lg:inline-flex px-3 py-1.5 text-xs text-slate-400 uppercase font-semibold">
-            PHP
-          </span>
-          <span className="hidden xl:inline-flex px-3 py-1.5 text-xs text-slate-400 uppercase font-semibold">
-            REACT
-          </span>
+
         </div>
 
         {/* Right side course badge & mobile toggle */}

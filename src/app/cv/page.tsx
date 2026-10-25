@@ -58,6 +58,28 @@ import {
 import { cn } from "@/lib/utils";
 
 // 5 Verified, Authentic Market-Accepted CV Standards (US, Europe, Pakistan Corporate & Tech)
+const CV_TEMPLATE_SUMMARIES: Record<
+  string,
+  { name: string; description: string }
+> = {
+  "pk-hec-pec": { name: "Pakistan", description: "Education and experience" },
+  "us-harvard-ats": {
+    name: "US single-column",
+    description: "Concise, achievement-led",
+  },
+  "modern-tech-ats": {
+    name: "Modern tech",
+    description: "Skills and projects",
+  },
+  "eu-europass": {
+    name: "European",
+    description: "Qualifications and languages",
+  },
+  "executive-corporate": {
+    name: "Executive",
+    description: "Leadership and delivery",
+  },
+};
 const CV_TEMPLATES: CvTemplate[] = [
   {
     id: "pk-hec-pec",
@@ -148,7 +170,7 @@ export default function CvStudioPage() {
   const [selectedTemplateId, setSelectedTemplateId] =
     useState<string>("pk-hec-pec");
   const [activeTab, setActiveTab] = useState<"studio" | "auditor">("studio");
-  const [showQuickDetails, setShowQuickDetails] = useState<boolean>(true);
+  const [showQuickDetails, setShowQuickDetails] = useState<boolean>(false);
 
   // Start empty; only a saved document, an explicit import or user input supplies facts.
   const [cvData, setCvData] = useState<CvData>({
@@ -416,28 +438,14 @@ export default function CvStudioPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl print:hidden no-print">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading print:hidden no-print">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 bg-white/15 px-3 py-0.5 rounded-full">
-                  Campus Career &amp; Readiness
-                </span>
-                <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full">
-                  3 Accredited Regional Standards
-                </span>
-                <span className="text-xs text-purple-100 font-semibold">
-                  95%+ Verified ATS Acceptance
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Regional CV Studio &amp; AI Auditor
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+                CV Studio
               </h1>
               <p className="mt-1 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-                Build accredited resumes tailored to European, Pakistani, and US
-                hiring regulations. Edit every line directly like Microsoft
-                Word, audit with Monday AI, and export to Word (.docx) or PDF.
+                Create, review, and export your CV.
               </p>
             </div>
 
@@ -446,7 +454,7 @@ export default function CvStudioPage() {
                 type="button"
                 onClick={() => setActiveTab("studio")}
                 className={cn(
-                  "px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
+                  "px-4 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
                   activeTab === "studio"
                     ? "bg-white text-brand-mint shadow-sm ring-1 ring-brand-mint/40"
                     : "bg-white/15 text-white hover:bg-white/25 border border-white/30",
@@ -461,18 +469,18 @@ export default function CvStudioPage() {
                 <span
                   className={
                     activeTab === "studio"
-                      ? "text-brand-mint font-black"
+                      ? "text-brand-mint font-semibold"
                       : "text-white font-bold"
                   }
                 >
-                  CV Studio (MS Word Editor)
+                  Editor
                 </span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("auditor")}
                 className={cn(
-                  "px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
+                  "px-4 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 shadow-sm select-none cursor-pointer",
                   activeTab === "auditor"
                     ? "bg-white text-brand-mint shadow-sm ring-1 ring-brand-mint/40"
                     : "bg-white/15 text-white hover:bg-white/25 border border-white/30",
@@ -489,11 +497,11 @@ export default function CvStudioPage() {
                 <span
                   className={
                     activeTab === "auditor"
-                      ? "text-brand-mint font-black"
+                      ? "text-brand-mint font-semibold"
                       : "text-white font-bold"
                   }
                 >
-                  AI CV Auditor &amp; RAG Enhancer
+                  AI review
                 </span>
               </button>
             </div>
@@ -517,14 +525,12 @@ export default function CvStudioPage() {
             <div className="clay-card p-5 bg-white border border-purple-200 rounded-3xl space-y-4 print:hidden no-print">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-950 flex items-center gap-2">
                     <Award className="w-5 h-5 text-brand-purple" />
-                    Select Authentic Market Standard (5 Proven Standards)
+                    Choose a layout
                   </h3>
                   <p className="text-xs text-slate-600 font-medium">
-                    Strict, 100% recruiter-accepted layouts: Pakistan
-                    Professional, Harvard 1-Page ATS, Silicon Valley Clean Sans,
-                    European Europass CEFR, and Executive Multi-Track.
+                    Five layouts for different career needs.
                   </p>
                 </div>
 
@@ -536,7 +542,7 @@ export default function CvStudioPage() {
                     className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
                   >
                     <UploadCloud className="w-3.5 h-3.5 mr-1 text-brand-purple" />
-                    Upload Existing CV
+                    Upload CV
                   </Button>
                   <Button
                     variant="outline"
@@ -545,60 +551,14 @@ export default function CvStudioPage() {
                     className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
                   >
                     <Zap className="w-3.5 h-3.5 mr-1 text-brand-purple" />
-                    Import Portfolio Projects
+                    Import projects
                   </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={handleSaveCv}
-                    className="font-bold shadow-md"
-                  >
-                    {cvSavedNotice ? "Saved!" : "Save CV"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      downloadCvPdf(
-                        `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`,
-                        cvData,
-                        activeTemplate.id || activeTemplate.name,
-                      )
-                    }
-                    className="font-bold border-rose-300 text-rose-700 bg-rose-50/50 hover:bg-rose-100 shadow-sm"
-                  >
-                    <Download className="w-3.5 h-3.5 mr-1 text-rose-600" />
-                    Download PDF (.pdf)
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      downloadCvDocx(
-                        `${(cvData.fullName || "Candidate").replace(/\s+/g, "_")}_CV`,
-                        cvData,
-                        activeTemplate.id || activeTemplate.name,
-                      )
-                    }
-                    className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50 shadow-sm"
-                  >
-                    <Download className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-                    Download Word (.docx)
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handlePrintCv}
-                    className="font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
-                  >
-                    <Printer className="w-3.5 h-3.5 mr-1 text-slate-600" />
-                    Print / Save as PDF
-                  </Button>
+                  {cvSavedNotice && <span role="status" className="text-xs text-brand-purple">Saved</span>}
                 </div>
               </div>
 
               {/* 5 Standards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 pt-1">
                 {CV_TEMPLATES.map((tmpl) => {
                   const isSelected = selectedTemplateId === tmpl.id;
                   return (
@@ -617,37 +577,27 @@ export default function CvStudioPage() {
                       }}
                       onClick={() => setSelectedTemplateId(tmpl.id)}
                       className={cn(
-                        "p-4 rounded-2xl border text-left cursor-pointer transition-all space-y-2 flex flex-col justify-between",
+                        "cv-template-option p-3 rounded-xl border text-left cursor-pointer transition-colors flex items-start gap-3",
                         isSelected
                           ? "bg-purple-50/80 border-brand-purple shadow-md ring-2 ring-brand-purple/20"
                           : "bg-white border-purple-100 hover:border-purple-300 hover:shadow-sm",
                       )}
                     >
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-black uppercase text-brand-purple tracking-wider bg-purple-100 px-2 py-0.5 rounded">
-                            {tmpl.region.toUpperCase()} STANDARD
-                          </span>
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono">
-                            {tmpl.atsScoreRate}% ATS
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-extrabold text-slate-950 leading-snug">
-                          {tmpl.name}
+                      <FileText
+                        className="w-6 h-6 text-brand-purple"
+                        strokeWidth={1.3}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-sm font-medium">
+                          {CV_TEMPLATE_SUMMARIES[tmpl.id].name}
                         </h4>
-                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed font-medium">
-                          {tmpl.description}
+                        <p className="text-xs text-slate-500 mt-1">
+                          {CV_TEMPLATE_SUMMARIES[tmpl.id].description}
                         </p>
                       </div>
-
-                      <div className="pt-2 border-t border-purple-100/60 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                        <span>{tmpl.standardsCode}</span>
-                        {isSelected && (
-                          <span className="text-brand-purple font-bold flex items-center gap-1">
-                            Active <Check className="w-3.5 h-3.5" />
-                          </span>
-                        )}
-                      </div>
+                      {isSelected && (
+                        <Check className="w-4 h-4 text-brand-purple shrink-0" />
+                      )}
                     </div>
                   );
                 })}
@@ -663,11 +613,10 @@ export default function CvStudioPage() {
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-brand-purple" />
                   <span className="text-xs font-bold text-slate-900">
-                    Quick Profile Details (Syncs with MS Word Live Preview
-                    below)
+                    Personal details
                   </span>
                   <span className="text-[10px] text-slate-500 font-medium">
-                    (Father&apos;s Name, City, CNIC, Phone, Email)
+                    Optional regional fields
                   </span>
                 </div>
                 <button
@@ -810,17 +759,15 @@ export default function CvStudioPage() {
             <div className="clay-card p-6 bg-white border border-purple-200 rounded-3xl space-y-5 print:hidden no-print">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                     <MondayOrb
                       size="sm"
                       state={isAuditing ? "thinking" : "idle"}
                     />
-                    Monday AI CV Auditor &amp; RAG ATS Enhancer
+                    CV review
                   </h3>
                   <p className="text-xs text-slate-600 font-medium">
-                    Upload your existing resume file (PDF, DOCX, TXT, JSON).
-                    Monday AI parses candidate identity and provides ATS scoring
-                    &amp; action-verb fixes.
+                    Upload a CV to review its structure and wording.
                   </p>
                 </div>
 
@@ -921,10 +868,10 @@ export default function CvStudioPage() {
             {auditResult && (
               <div className="space-y-6 print:hidden no-print">
                 {/* Score & Verdict Card */}
-                <div className="clay-card p-6 bg-white border-2 border-purple-200 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="clay-card p-6 bg-white border-2 border-purple-200 rounded-3xl shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-5">
                     <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#6653E6] to-[#9B88F7] flex flex-col items-center justify-center text-white shadow-md shrink-0">
-                      <span className="text-2xl font-black">
+                      <span className="text-2xl font-semibold">
                         {auditResult.atsScore}
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-purple-200">
@@ -941,12 +888,11 @@ export default function CvStudioPage() {
                           Target: {auditRegion.toUpperCase()}
                         </span>
                       </div>
-                      <h3 className="text-lg font-black text-slate-950">
+                      <h3 className="text-lg font-semibold text-slate-950">
                         Monday AI Assessment Completed
                       </h3>
                       <p className="text-xs text-slate-600 font-medium">
-                        Benchmarked against enterprise ATS algorithms (Workday,
-                        Taleo, Greenhouse, Rozee).
+                        Review suggestions before applying changes.
                       </p>
                     </div>
                   </div>
@@ -959,7 +905,7 @@ export default function CvStudioPage() {
                       className="font-bold shadow-md bg-brand-purple text-white hover:bg-brand-purple/90"
                     >
                       <Check className="w-4 h-4 mr-1.5" />
-                      Apply All AI Fixes &amp; View Below
+                      Apply suggestions
                     </Button>
                     <Button
                       variant="outline"
@@ -995,11 +941,11 @@ export default function CvStudioPage() {
                 </div>
 
                 {/* Strengths & Weaknesses Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Strengths */}
-                  <Card className="border border-emerald-200 bg-white shadow-clay rounded-2xl">
+                  <Card className="border border-emerald-200 bg-white shadow-none rounded-2xl">
                     <CardHeader className="bg-emerald-50/60 pb-3 border-b border-emerald-100">
-                      <CardTitle className="text-sm font-extrabold text-emerald-950 flex items-center gap-2">
+                      <CardTitle className="text-sm font-semibold text-emerald-950 flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         Verified ATS Strengths (
                         {auditResult.strengths?.length || 0})
@@ -1019,9 +965,9 @@ export default function CvStudioPage() {
                   </Card>
 
                   {/* Action Verb Replacements */}
-                  <Card className="border border-purple-200 bg-white shadow-clay rounded-2xl">
+                  <Card className="border border-purple-200 bg-white shadow-none rounded-2xl">
                     <CardHeader className="bg-purple-50/60 pb-3 border-b border-purple-100">
-                      <CardTitle className="text-sm font-extrabold text-brand-purple flex items-center gap-2">
+                      <CardTitle className="text-sm font-semibold text-brand-purple flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-brand-purple" />
                         Action Verb Upgrades (
                         {auditResult.actionVerbSuggestions?.length || 0})
@@ -1037,7 +983,7 @@ export default function CvStudioPage() {
                             <span className="line-through text-rose-500 font-medium mr-2">
                               {item.weak}
                             </span>
-                            <span className="text-brand-purple font-extrabold">
+                            <span className="text-brand-purple font-semibold">
                               → {item.replacement}
                             </span>
                           </div>
@@ -1058,7 +1004,7 @@ export default function CvStudioPage() {
                         <Check className="w-5 h-5" />
                       </div>
                       <div>
-                        <strong className="text-sm font-black text-emerald-950 block">
+                        <strong className="text-sm font-semibold text-emerald-950 block">
                           Monday AI Fixes Successfully Applied!
                         </strong>
                         <span>
@@ -1121,13 +1067,12 @@ export default function CvStudioPage() {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden no-print">
                 <div>
-                  <h4 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
+                  <h4 className="text-base font-semibold text-slate-950 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-brand-purple" />
-                    Live CV Document &amp; Microsoft Word Editor
+                    CV preview
                   </h4>
                   <p className="text-xs text-slate-600 font-medium">
-                    Showing candidate data from uploaded file. Click anywhere on
-                    the sheet below to edit like Microsoft Word.
+                    Click the document to edit.
                   </p>
                 </div>
 

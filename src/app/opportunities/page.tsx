@@ -232,36 +232,23 @@ export default function OpportunitiesPage() {
     <AppShell>
       <div className="space-y-6">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="section-heading">
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 bg-white/15 px-3 py-0.5 rounded-full">
-                  Verified Opportunities Finder
-                </span>
-                <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                  Live page content Checked
-                </span>
-                <span className="text-xs text-purple-100 font-semibold hidden sm:inline">Zero 404 Errors</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Live Tech Opportunities &amp; Fellowships
-              </h1>
-              <p className="mt-1 text-sm text-purple-100 font-medium max-w-2xl leading-relaxed">
-                Deep web search powered by Monday AI. Every link is verified in real-time via live HTTP checks to eliminate 404 errors, dead URLs, and expired positions.
-              </p>
+
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Opportunities</h1>
+              <p className="mt-1 text-sm text-purple-100 font-medium max-w-2xl leading-relaxed">Find internships, jobs, and fellowships.</p>
             </div>
 
             {/* Link to Dedicated Regional CV Studio */}
             <div className="flex items-center gap-3 shrink-0">
               <Link
                 href="/cv"
-                className="px-4 py-2.5 rounded-2xl bg-white text-brand-purple hover:bg-purple-50 font-black text-xs shadow-lg transition-all flex items-center gap-2 border border-white"
+                className="px-4 py-2.5 rounded-2xl bg-white text-brand-purple hover:bg-purple-50 font-semibold text-xs shadow-lg transition-all flex items-center gap-2 border border-white"
               >
                 <FileText className="w-4 h-4 text-brand-purple" />
-                <span>Regional CV Studio &amp; AI Auditor</span>
+                <span>Open CV Studio</span>
                 <ArrowRight className="w-3.5 h-3.5 text-brand-purple" />
               </Link>
             </div>
@@ -269,22 +256,14 @@ export default function OpportunitiesPage() {
         </div>
 
         {/* Monday AI Live Search & Profile Evaluator Box */}
-        <div className="clay-card p-5 sm:p-6 space-y-4 bg-white border border-purple-200 shadow-clay rounded-3xl">
+        <div className="clay-card p-5 sm:p-6 space-y-4 bg-white border border-purple-200 shadow-none rounded-3xl">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Badge variant="violet" className="text-[10px] font-bold">
-                  Deep Web Search Engine
-                </Badge>
-                <span className="text-xs font-bold text-brand-purple">
-                  Candidate Profile: {user?.name || "Student"} ({user?.degree || "Computer Science"})
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-950">
-                Search Live 2026/2027 Opportunities Across the Internet
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-950">
+                Find your next role
               </h3>
               <p className="text-xs text-slate-600 font-medium max-w-2xl">
-                Type any role, technology, or region (e.g. &quot;Software Engineering Internship Pakistan&quot;, &quot;European AI Fellowship&quot;, &quot;Google Systems 2027&quot;). Monday AI inspects live links, confirms posting details and application controls, and scores alignment with your verified skills.
+                Search by role, skill, or location.
               </p>
             </div>
 
@@ -296,7 +275,7 @@ export default function OpportunitiesPage() {
               className="shrink-0 font-bold shadow-md"
             >
               <Sparkles className="w-4 h-4 mr-1.5" />
-              {isMatchingOpportunities ? "Verifying Live Links..." : "Auto-Match My Profile"}
+              {isMatchingOpportunities ? "Checking links..." : "Match my skills"}
             </Button>
           </div>
 
@@ -314,7 +293,7 @@ export default function OpportunitiesPage() {
                 type="text"
                 value={liveAiQuery}
                 onChange={(e) => setLiveAiQuery(e.target.value)}
-                placeholder="Search verified opportunities (e.g. 'Software Engineer Pakistan', 'Remote RAG Fellowship 2026', 'Systems Limited Cloud')..."
+                placeholder="Role, skill, or location"
                 className="w-full bg-slate-50 border border-purple-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-950 font-medium placeholder-slate-400 focus:outline-none focus:border-brand-purple shadow-inner"
               />
             </div>
@@ -404,11 +383,11 @@ export default function OpportunitiesPage() {
         </div>
 
         {/* Opportunities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredOpps.map((opp) => (
             <Card
               key={opp.id}
-              className="flex flex-col justify-between bg-white border border-purple-200 hover:border-brand-purple/50 shadow-clay rounded-3xl transition-all overflow-hidden"
+              className="flex flex-col justify-between bg-white border border-purple-200 hover:border-brand-purple/50 shadow-none rounded-3xl transition-all overflow-hidden"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between mb-2">
@@ -432,7 +411,7 @@ export default function OpportunitiesPage() {
                       Deadline: {opp.deadline}
                     </Badge>
                     {opp.matchScore && (
-                      <Badge variant="tag10" className="text-[10px] font-extrabold">
+                      <Badge variant="tag10" className="text-[10px] font-semibold">
                         {opp.matchScore}% Match
                       </Badge>
                     )}
@@ -452,7 +431,7 @@ export default function OpportunitiesPage() {
                   </button>
                 </div>
 
-                <CardTitle className="text-lg font-extrabold text-slate-950 leading-snug">
+                <CardTitle className="text-lg font-semibold text-slate-950 leading-snug">
                   {opp.title}
                 </CardTitle>
 
@@ -475,7 +454,7 @@ export default function OpportunitiesPage() {
                   </p>
                 )}
 
-                <CardDescription className="text-xs text-slate-700 font-medium leading-relaxed mt-2 line-clamp-3">
+                <CardDescription className="text-xs text-slate-700 font-medium leading-relaxed mt-2 line-clamp-1">
                   {opp.description}
                 </CardDescription>
 
@@ -557,7 +536,7 @@ export default function OpportunitiesPage() {
                   <Badge variant="violet" className="text-[10px] mb-1 font-bold">
                     Monday AI Candidate Readiness &amp; Proposal
                   </Badge>
-                  <h3 className="text-xl font-extrabold text-slate-950">
+                  <h3 className="text-xl font-semibold text-slate-950">
                     {activeOpportunityForApply.title}
                   </h3>
                   <p className="text-xs font-semibold text-brand-purple">
@@ -585,11 +564,11 @@ export default function OpportunitiesPage() {
                   {applyPrepData.readinessEvaluation && (
                     <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-extrabold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                        <span className="font-semibold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                           Step 1: Readiness Evaluation ({user?.name || "Student"})
                         </span>
-                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-semibold">
                           {applyPrepData.readinessEvaluation.matchPercentage}% Candidate Match
                         </span>
                       </div>
@@ -625,7 +604,7 @@ export default function OpportunitiesPage() {
                   {applyPrepData.customProposal && (
                     <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-200 space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-extrabold uppercase tracking-wider text-brand-purple flex items-center gap-1.5">
+                        <span className="font-semibold uppercase tracking-wider text-brand-purple flex items-center gap-1.5">
                           <FileText className="w-4 h-4 text-brand-purple" />
                           Step 2: Tailored Application Proposal &amp; Cover Letter
                         </span>
@@ -651,7 +630,7 @@ export default function OpportunitiesPage() {
                   {/* Step 3: Screening Answers */}
                   {applyPrepData.screeningAnswers && applyPrepData.screeningAnswers.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="font-extrabold text-slate-950 uppercase text-[11px] flex items-center gap-1.5">
+                      <h4 className="font-semibold text-slate-950 uppercase text-[11px] flex items-center gap-1.5">
                         <FileCheck className="w-3.5 h-3.5 text-brand-purple" />
                         Step 3: Recommended Screening Answers:
                       </h4>
@@ -667,7 +646,7 @@ export default function OpportunitiesPage() {
                   {/* Step 4: Technical Topics & Questions */}
                   {applyPrepData.technicalPrepTopics && applyPrepData.technicalPrepTopics.length > 0 && (
                     <div className="space-y-1.5">
-                      <h4 className="font-extrabold text-slate-950 uppercase text-[11px] flex items-center gap-1.5">
+                      <h4 className="font-semibold text-slate-950 uppercase text-[11px] flex items-center gap-1.5">
                         <TrendingUp className="w-3.5 h-3.5 text-brand-purple" />
                         Key Technical Concepts to Review:
                       </h4>

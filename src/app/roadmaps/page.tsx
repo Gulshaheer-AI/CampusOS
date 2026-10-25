@@ -42,8 +42,6 @@ export default function RoadmapsPage() {
     "python" | "javascript" | "html" | "css" | "sql"
   >("python");
 
-  const w3Courses = getAllW3Courses();
-
   useEffect(() => {
     setRoadmaps(getRoadmaps());
     const course = new URLSearchParams(window.location.search).get("course");
@@ -53,26 +51,15 @@ export default function RoadmapsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-5">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading">
           <div className="relative z-10 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="cyan" className="font-bold">
-                Campus Learn &amp; Grow
-              </Badge>
-              <span className="text-xs text-purple-100 font-semibold">
-                Official W3Schools Curricula &amp; 4-Week Career Sprints
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Interactive Skill Roadmaps &amp; W3 Code Academy
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+              Skill Roadmaps
             </h1>
             <p className="text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-              Master industry-standard programming tracks with real W3Schools
-              curriculum, live terminal command lines, Try-It-Yourself code
-              sandboxes, and interactive code challenges.
+              Learn a language or follow a career track.
             </p>
 
             {/* View Mode Switcher */}
@@ -87,7 +74,7 @@ export default function RoadmapsPage() {
                 )}
               >
                 <Code2 className="w-4 h-4 text-emerald-400" />
-                W3Schools Interactive Studio (5 Courses)
+                Learn to code
               </button>
               <button
                 onClick={() => setActiveTab("sprints")}
@@ -99,69 +86,9 @@ export default function RoadmapsPage() {
                 )}
               >
                 <Map className="w-4 h-4 text-cyan-300" />
-                4-Week Career Sprint Checklists
+                Career tracks
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* 5 W3 Core Course Track Selector Cards */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-brand-purple" />
-              W3Schools Core Foundation Tracks
-            </h2>
-            <span className="text-xs text-slate-600 font-medium hidden sm:inline">
-              Click any course to load its interactive chapters &amp; terminal
-              labs
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {w3Courses.map((c) => {
-              const isSelected = selectedW3Course === c.id;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => {
-                    setSelectedW3Course(c.id);
-                    setActiveTab("w3-studio");
-                  }}
-                  className={cn(
-                    "p-3.5 rounded-2xl border-2 text-left transition-all flex flex-col justify-between gap-2 shadow-sm hover:scale-[1.02]",
-                    isSelected
-                      ? "border-brand-purple bg-purple-50/80 ring-2 ring-brand-purple/20 shadow-md"
-                      : "border-slate-200 bg-white hover:border-purple-200",
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      style={{ backgroundColor: c.accentColor }}
-                      className="w-2.5 h-2.5 rounded-full inline-block"
-                    />
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] uppercase font-bold py-0 px-1.5"
-                    >
-                      {c.chapters.length} Ch
-                    </Badge>
-                  </div>
-                  <div>
-                    <div className="font-black text-sm text-slate-900">
-                      {c.name}
-                    </div>
-                    <div className="text-[11px] text-slate-500 font-medium truncate">
-                      {c.categoryBadge}
-                    </div>
-                  </div>
-                  <div className="text-[10px] font-bold text-brand-purple flex items-center gap-1 pt-1 border-t border-purple-100">
-                    <span>{isSelected ? "Active Studio" : "Open Track"}</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </div>
-                </button>
-              );
-            })}
           </div>
         </div>
 
@@ -170,17 +97,6 @@ export default function RoadmapsPage() {
            ========================================================================= */}
         {activeTab === "w3-studio" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-slate-600 px-1">
-              <span className="font-bold flex items-center gap-1.5 text-brand-purple">
-                <Sparkles className="w-4 h-4 text-emerald-500" />
-                Live Interactive W3 Learning Studio:{" "}
-                {selectedW3Course.toUpperCase()}
-              </span>
-              <span className="font-mono text-slate-500">
-                100% Extracted W3Schools Syllabi &amp; Sandboxes
-              </span>
-            </div>
-
             <W3CourseStudio
               initialCourseId={selectedW3Course}
               onTrackChange={(courseId: any) => setSelectedW3Course(courseId)}
@@ -194,24 +110,22 @@ export default function RoadmapsPage() {
         {activeTab === "sprints" && (
           <div className="space-y-6">
             <div className="flex items-center justify-between text-xs text-slate-600 px-1">
-              <span className="font-bold text-brand-purple">
-                Structured 4-Week Milestone Checklists
-              </span>
+              <span className="font-bold text-brand-purple">Career tracks</span>
               <span>{roadmaps.length} Tracks Available</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {roadmaps.map((rm) => {
                 const progress = calculateRoadmapProgress(rm.weeks);
 
                 return (
                   <Card
                     key={rm.id}
-                    className="border-2 border-purple-100 bg-white flex flex-col justify-between hover:border-brand-purple shadow-clay transition-all duration-200 rounded-3xl overflow-hidden"
+                    className="border-2 border-purple-100 bg-white flex flex-col justify-between hover:border-brand-purple shadow-none transition-all duration-200 rounded-3xl overflow-hidden"
                   >
                     <CardHeader className="bg-gradient-to-r from-purple-50/70 via-indigo-50/30 to-white pb-4 border-b border-purple-100/70">
                       <div className="flex items-center justify-between text-xs mb-2">
-                        <span className="font-black text-brand-purple uppercase tracking-wider text-[11px]">
+                        <span className="font-semibold text-brand-purple uppercase tracking-wider text-[11px]">
                           {rm.durationWeeks}-Week Career Track
                         </span>
                         <Badge
@@ -221,7 +135,7 @@ export default function RoadmapsPage() {
                           {rm.category.replace("_", " ")}
                         </Badge>
                       </div>
-                      <CardTitle className="text-xl font-black text-brand-purple">
+                      <CardTitle className="text-xl font-semibold text-brand-purple">
                         {rm.title}
                       </CardTitle>
                       <CardDescription className="text-xs text-slate-700 leading-relaxed font-medium">
@@ -249,7 +163,7 @@ export default function RoadmapsPage() {
 
                       {/* Skills tags */}
                       <div className="pt-1">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 block mb-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-600 block mb-2">
                           Target Competencies:
                         </span>
                         <div className="flex flex-wrap gap-1.5">

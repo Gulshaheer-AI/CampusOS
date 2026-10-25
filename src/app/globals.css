@@ -1546,3 +1546,63 @@ input[type="radio"] {
     display: none;
   }
 }
+
+/* Plain section headers establish hierarchy without another large hero card. */
+.section-heading {
+  padding: 4px 0 16px;
+  border: 0;
+  border-bottom: 1px solid #426b4b36;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--foreground);
+}
+.section-heading h1 {
+  font-size: clamp(24px, 2vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+.section-heading p {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.workspace-quick-link {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #426b4b36;
+  font-size: 14px;
+  color: #c9efd3;
+}
+.workspace-quick-link:hover {
+  color: #a5efae;
+}
+.workspace-disclosure {
+  border-top: 1px solid #426b4b36;
+  padding-top: 16px;
+}
+.workspace-disclosure > summary {
+  width: fit-content;
+  cursor: pointer;
+  color: #b7d7c1;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.cv-template-option {
+  min-height: 96px;
+}
+.cv-template-option p {
+  font-size: 11px;
+  line-height: 1.4;
+}
+@media print {
+  .workspace-disclosure > summary {
+    display: none;
+  }
+}

@@ -231,35 +231,19 @@ function PortfolioContent() {
   if (!viewedUser) return null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* Main Hero Banner - Royal Purple Clay Card */}
-      <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+      <div className="section-heading">
+
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 bg-white/15 px-3 py-0.5 rounded-full">
-                Campus Grow
-              </span>
-              {isRecruiterView ? (
-                <span className="text-xs text-amber-200 font-bold bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-400/40">
-                  Recruiter Public Portfolio View
-                </span>
-              ) : (
-                <span className="text-xs text-purple-100 font-medium">
-                  Verified Project Showcase
-                </span>
-              )}
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
               {isRecruiterView
-                ? `${viewedUser.name}'s Verified Portfolio`
-                : "Student Portfolio & Project Showcase"}
+                ? `${viewedUser.name}'s Portfolio`
+                : "Portfolio"}
             </h1>
-            <p className="mt-1 text-sm text-purple-100 font-medium">
-              Showcase verified course challenges, personal projects, and
-              downloadable source code archives to recruiters.
-            </p>
+            <p className="mt-1 text-sm text-purple-100 font-medium">Share your projects and experience.</p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
@@ -277,7 +261,7 @@ function PortfolioContent() {
             <Button
               size="sm"
               onClick={handleCopyShareLink}
-              className="clay-button-white bg-white text-brand-purple hover:bg-purple-50 font-black rounded-xl shadow-md border-none"
+              className="clay-button-white bg-white text-brand-purple hover:bg-purple-50 font-semibold rounded-xl shadow-md border-none"
             >
               <Share2 className="w-4 h-4 mr-1.5 text-brand-purple" />
               {shareCopied ? "Link Copied!" : "Share Profile"}
@@ -291,7 +275,7 @@ function PortfolioContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white border-2 border-purple-200 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 my-8 text-slate-900">
             <div className="flex items-center justify-between border-b border-purple-100 pb-3">
-              <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-brand-purple" />
                 Add Project to Portfolio
               </h3>
@@ -469,9 +453,9 @@ function PortfolioContent() {
       )}
 
       {/* Profile Card Header */}
-      <div className="rounded-2xl border border-purple-100 bg-white shadow-clay p-6 sm:p-8 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#153e25] to-[#9B88F7] flex items-center justify-center text-white text-2xl font-black shadow-md shrink-0">
+      <div className="rounded-2xl border border-purple-100 bg-white shadow-none p-6 sm:p-8 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#153e25] to-[#9B88F7] flex items-center justify-center text-white text-2xl font-semibold shadow-md shrink-0">
             {viewedUser.name
               .split(" ")
               .map((n) => n[0])
@@ -480,7 +464,7 @@ function PortfolioContent() {
 
           <div className="space-y-1 flex-1">
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-extrabold text-slate-950">
+              <h2 className="text-2xl font-semibold text-slate-950">
                 {viewedUser.name}
               </h2>
               <Badge variant="purple" className="text-[10px]">
@@ -535,7 +519,7 @@ function PortfolioContent() {
       {/* Projects Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
             <Layers className="w-4 h-4 text-brand-purple" />
             Verified Portfolio Projects ({projects.length})
           </h3>
@@ -544,12 +528,12 @@ function PortfolioContent() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((proj) => (
             <Card
               key={proj.id}
               className={cn(
-                "bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-purple-300 transition-all rounded-2xl",
+                "bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-purple-300 transition-all rounded-2xl",
                 !proj.isPublic && "opacity-75 border-dashed",
               )}
             >
@@ -594,10 +578,10 @@ function PortfolioContent() {
                   )}
                 </div>
 
-                <CardTitle className="text-lg font-extrabold text-slate-950">
+                <CardTitle className="text-lg font-semibold text-slate-950">
                   {proj.title}
                 </CardTitle>
-                <CardDescription className="text-xs text-slate-600 font-medium leading-relaxed mt-1">
+                <CardDescription className="line-clamp-1 text-xs text-slate-600 font-medium leading-relaxed mt-1">
                   {proj.description}
                 </CardDescription>
               </CardHeader>
@@ -673,7 +657,7 @@ function PortfolioContent() {
       </div>
 
       {/* Privacy Note */}
-      <div className="p-4 rounded-2xl border border-purple-100 bg-white shadow-clay flex items-start gap-3 text-xs text-slate-700 font-medium">
+      <div className="p-4 rounded-2xl border border-purple-100 bg-white shadow-none flex items-start gap-3 text-xs text-slate-700 font-medium">
         <Shield className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
         <span>
           <strong>Portfolio Privacy Guarantee:</strong> Only projects explicitly

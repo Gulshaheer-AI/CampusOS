@@ -56,7 +56,7 @@ const DEFAULT_FILES: IdeFile[] = [
       <h2 class="title">Binary Search Explorer</h2>
     </div>
     <p class="subtitle">Interactive divide-and-conquer simulation with O(log N) verification.</p>
-    
+
     <div class="metrics-grid">
       <div class="metric-pill">
         <span class="metric-label">Runtime Complexity</span>
@@ -628,24 +628,12 @@ export default function CodePlayPage() {
         )}
       >
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-5 sm:p-6 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading">
+
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <Badge variant="cyan" className="font-bold">
-                  Campus Learn
-                </Badge>
-                <span className="text-xs text-purple-100 font-mono font-bold bg-white/20 px-2.5 py-0.5 rounded-full">
-                  Monday AI Multi-Language IDE
-                </span>
-                <span className="text-xs text-purple-100 font-semibold">
-                  Isolated Browser Sandbox
-                </span>
-              </div>
-              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                CodePlay Coding Playground &amp; IDE
-              </h1>
+
+              <h1 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">CodePlay</h1>
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
@@ -659,7 +647,7 @@ export default function CodePlayPage() {
               <Button
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs font-black bg-white text-brand-purple hover:bg-purple-50 shadow-md border-none"
+                className="text-xs font-semibold bg-white text-brand-purple hover:bg-purple-50 shadow-md border-none"
               >
                 <UploadCloud className="w-4 h-4 mr-1 text-brand-purple" />
                 Upload File
@@ -682,7 +670,7 @@ export default function CodePlayPage() {
                 size="sm"
                 onClick={handleRunCode}
                 disabled={!isReady}
-                className="font-black text-xs bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-md border-none"
+                className="font-semibold text-xs bg-emerald-400 text-slate-950 hover:bg-emerald-300 shadow-md border-none"
               >
                 <Play className="w-3.5 h-3.5 mr-1 fill-slate-950" />
                 Run (Ctrl+Enter)
@@ -707,7 +695,7 @@ export default function CodePlayPage() {
         {/* Monday AI Copilot Toolbar */}
         <div className="clay-card p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs bg-white border border-purple-200 shadow-sm rounded-2xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-extrabold text-slate-950 flex items-center gap-2 mr-1">
+            <span className="font-semibold text-slate-950 flex items-center gap-2 mr-1">
               <MondayOrb
                 size="sm"
                 state={isAiGenerating ? "thinking" : "idle"}
@@ -822,7 +810,7 @@ export default function CodePlayPage() {
         {/* ======================================================== */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
-            <span className="flex items-center gap-1.5 text-brand-purple font-black">
+            <span className="flex items-center gap-1.5 text-brand-purple font-semibold">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               Row 1: Live Interactive Preview &amp; Execution Console
             </span>
@@ -857,9 +845,9 @@ export default function CodePlayPage() {
             style={{ height: previewHeight }}
           >
             {/* Live Preview Iframe (7 cols) */}
-            <div className="lg:col-span-7 bg-white border-2 border-purple-100 rounded-2xl overflow-hidden flex flex-col shadow-clay h-full">
+            <div className="lg:col-span-7 bg-white border-2 border-purple-100 rounded-2xl overflow-hidden flex flex-col shadow-none h-full">
               <div className="px-3.5 py-2 bg-purple-50/80 border-b border-purple-100 flex items-center justify-between text-xs">
-                <span className="font-black text-slate-900 flex items-center gap-1.5">
+                <span className="font-semibold text-slate-900 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   Live Preview (Sandboxed Render Canvas)
                 </span>
@@ -947,7 +935,7 @@ export default function CodePlayPage() {
         {/* ======================================================== */}
         <div className="space-y-2 pt-2">
           <div className="flex items-center justify-between text-xs font-bold text-slate-700 px-1">
-            <span className="flex items-center gap-1.5 text-brand-purple font-black">
+            <span className="flex items-center gap-1.5 text-brand-purple font-semibold">
               <Code2 className="w-4 h-4 text-brand-purple" />
               Row 2: Workspace Files Explorer &amp; Full-Size Code Editor
             </span>
@@ -982,8 +970,8 @@ export default function CodePlayPage() {
             style={{ height: editorHeight }}
           >
             {/* File Explorer Sidebar (2 cols) */}
-            <div className="lg:col-span-2 flex flex-col bg-white border-2 border-purple-100 rounded-2xl p-3 space-y-2 overflow-y-auto shadow-clay text-slate-900 h-full">
-              <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-brand-purple pb-2 border-b border-purple-100">
+            <div className="lg:col-span-2 flex flex-col bg-white border-2 border-purple-100 rounded-2xl p-3 space-y-2 overflow-y-auto shadow-none text-slate-900 h-full">
+              <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-brand-purple pb-2 border-b border-purple-100">
                 <span className="flex items-center gap-1.5">
                   <FolderOpen className="w-4 h-4 text-brand-purple" />
                   Workspace Files
@@ -1067,7 +1055,7 @@ export default function CodePlayPage() {
             </div>
 
             {/* Code Editor Panel (10 cols - Full Size Width) */}
-            <div className="lg:col-span-10 flex flex-col bg-slate-900 border-2 border-purple-200 rounded-2xl overflow-hidden shadow-xl h-full">
+            <div className="lg:col-span-10 flex flex-col bg-slate-900 border-2 border-purple-200 rounded-2xl overflow-hidden shadow-none h-full">
               {/* Tab Bar */}
               <div className="flex items-center bg-slate-950 border-b border-slate-800 overflow-x-auto px-2 pt-1 gap-1">
                 {files.map((f) => (

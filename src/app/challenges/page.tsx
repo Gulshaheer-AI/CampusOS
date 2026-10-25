@@ -65,25 +65,17 @@ export default function ChallengesPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-5">
         {/* Header & Gamification Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <Badge variant="purple">Campus Grow</Badge>
-              <Badge variant="cyan" className="font-bold">W3Schools Academy Challenges</Badge>
-              <span className="text-xs text-slate-500 font-medium">Duolingo-Calibrated AI Training Ladder</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
-              Skill Challenges &amp; Stage Ladders
-            </h1>
-            <p className="mt-1 text-sm text-slate-600 font-medium">
-              Train stage-by-stage from W3Schools concept warmups to code construction, terminal labs, and boss edge-case challenges with Gemini AI coaching.
-            </p>
+
+            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">Challenges</h1>
+            <p className="mt-1 text-sm text-slate-600 font-medium">Build your skills through short coding challenges.</p>
           </div>
 
           {/* Gamified HUD */}
-          <div className="flex items-center gap-3 bg-white border border-purple-200 rounded-2xl p-2.5 sm:px-4 sm:py-2.5 shadow-clay shrink-0">
+          <div className="flex items-center gap-3 bg-white border border-purple-200 rounded-2xl p-2.5 sm:px-4 sm:py-2.5 shadow-none shrink-0">
             {/* Hearts / Lives */}
             <div className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 rounded-xl border border-rose-200">
               <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-pulse" />
@@ -134,7 +126,7 @@ export default function ChallengesPage() {
         </div>
 
         {/* Challenges Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((challenge) => {
             const completed = gamification.completedStages[challenge.id] || [];
             const stagesCount = 4;
@@ -149,7 +141,7 @@ export default function ChallengesPage() {
             return (
               <Card
                 key={challenge.id}
-                className="bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-purple-300 transition-all hover:-translate-y-0.5 rounded-2xl"
+                className="bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-purple-300 transition-all hover:-translate-y-0.5 rounded-2xl"
               >
                 <CardHeader>
                   <div className="flex items-center justify-between text-xs mb-2">
@@ -165,21 +157,21 @@ export default function ChallengesPage() {
                     </div>
                   </div>
 
-                  <CardTitle className="text-lg font-extrabold text-slate-950">{challenge.title}</CardTitle>
-                  <CardDescription className="text-xs text-slate-600 font-medium line-clamp-2 leading-relaxed">
+                  <CardTitle className="text-lg font-semibold text-slate-950">{challenge.title}</CardTitle>
+                  <CardDescription className="text-xs text-slate-600 font-medium line-clamp-1 leading-relaxed">
                     {challenge.summary}
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent className="pt-0 space-y-4">
-                  {/* Duolingo Stage Ladder Progress */}
+                  {/* Duolingo Progress */}
                   <div className="space-y-1.5 p-3 rounded-xl bg-purple-50/60 border border-purple-200">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-slate-600 font-bold flex items-center gap-1.5">
                         <Layers className="w-3.5 h-3.5 text-brand-purple" />
-                        Stage Ladder Progress
+                        Progress
                       </span>
-                      <span className="text-slate-950 font-extrabold">
+                      <span className="text-slate-950 font-semibold">
                         {completed.length} / {stagesCount} Stages
                       </span>
                     </div>

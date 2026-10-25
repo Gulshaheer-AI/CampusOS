@@ -526,20 +526,9 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 Active
               </Badge>
             </div>
-            <p className="text-[10px] text-slate-600 font-medium leading-tight">
-              Primary:{" "}
-              <strong className="text-brand-purple font-bold">
-                3.1 Flash Lite
-              </strong>
-              <br />
-              RPM Fallback:{" "}
-              <strong className="text-pink-600 font-bold">
-                3.5 Flash Lite
-              </strong>
-            </p>
             {fallbackTriggered && (
               <div className="text-[10px] text-emerald-700 font-bold pt-1">
-                Auto-switched to fallback model ✓
+                Backup model active
               </div>
             )}
           </div>
@@ -580,12 +569,12 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 onChange={(e) => setStyle(e.target.value as any)}
                 className="bg-white border border-purple-200 text-brand-purple font-bold rounded-xl px-2.5 py-1 text-xs focus:outline-none focus:border-brand-purple shadow-sm"
               >
-                <option value="step_by_step">Step-by-Step Breakdown</option>
-                <option value="beginner">First Principles &amp; Analogy</option>
-                <option value="example_based">Concrete Worked Examples</option>
-                <option value="visual">Visual / Diagram Model</option>
+                <option value="step_by_step">Step by step</option>
+                <option value="beginner">Simple explanation</option>
+                <option value="example_based">Worked examples</option>
+                <option value="visual">Diagrams</option>
                 <option value="exam_revision">
-                  Exam Revision &amp; Pitfalls
+                  Exam revision
                 </option>
               </select>
             </div>
@@ -598,7 +587,7 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
               className="text-xs font-bold border-purple-200 text-slate-800 hover:bg-purple-50"
             >
               <Layers className="w-3.5 h-3.5 mr-1.5 text-brand-purple" />
-              RAG Files ({uploadedFiles.length})
+              Sources ({uploadedFiles.length})
               {isRagDrawerOpen ? (
                 <ChevronUp className="w-3.5 h-3.5 ml-1" />
               ) : (
@@ -614,11 +603,10 @@ Time complexity: Logarithmic O(log N) as the search space bisects at every step.
                 <div>
                   <h3 className="font-extrabold text-slate-950 text-xs flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-brand-purple" />
-                    RAG Knowledge Base &amp; Notes Locker Grounding
+                    Study sources
                   </h3>
                   <p className="text-[11px] text-slate-600 font-medium mt-0.5">
-                    Active Grounded Files: {uploadedFiles.length} • Monday AI
-                    grounds answers strictly in these materials.
+                    {uploadedFiles.length} sources selected.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -137,7 +137,7 @@ test.describe("CampusOS Production Platform Verification", () => {
   }) => {
     await page.goto("/quizzes");
     await expect(
-      page.getByText(/QuizForge Student Assessment Studio/i),
+      page.getByRole("heading", { name: "Quizzes", exact: true }),
     ).toBeVisible();
 
     // Start Binary Search Quiz
@@ -206,9 +206,9 @@ test.describe("CampusOS Production Platform Verification", () => {
   }) => {
     await page.goto("/opportunities");
     await expect(
-      page.getByPlaceholder(/Search verified opportunities/),
+      page.getByPlaceholder("Role, skill, or location"),
     ).toBeVisible();
-    await page.getByRole("link", { name: /Regional CV Studio/ }).click();
+    await page.getByRole("link", { name: /Open CV Studio/ }).click();
     await expect(page).toHaveURL(/\/cv$/);
     await expect(
       page
@@ -216,7 +216,7 @@ test.describe("CampusOS Production Platform Verification", () => {
         .getByRole("button", { name: "Download PDF", exact: true }),
     ).toBeVisible();
     await page
-      .getByRole("button", { name: /AI CV Auditor & RAG Enhancer/ })
+      .getByRole("button", { name: /^AI review$/ })
       .click();
     await expect(
       page.getByRole("button", { name: "Audit with Monday AI", exact: true }),

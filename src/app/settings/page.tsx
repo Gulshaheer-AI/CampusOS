@@ -109,21 +109,14 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-5">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading">
+
           <div className="relative z-10">
-            <span className="inline-block text-xs font-bold uppercase tracking-wider text-emerald-200 bg-white/15 px-3 py-0.5 rounded-full mb-2">
-              User Profile
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Account &amp; Preferences
-            </h1>
-            <p className="mt-1 text-sm text-purple-100 font-medium">
-              Manage your personal academic identity, notification channels, and
-              privacy settings.
-            </p>
+
+            <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Settings</h1>
+            <p className="mt-1 text-sm text-purple-100 font-medium">Manage your profile and preferences.</p>
           </div>
         </div>
 
@@ -143,9 +136,9 @@ export default function SettingsPage() {
 
         <form onSubmit={handleSave} className="space-y-6">
           {/* Profile Card */}
-          <Card className="border-2 border-purple-100 bg-white shadow-clay rounded-3xl text-slate-900">
+          <Card className="border-2 border-purple-100 bg-white shadow-none rounded-3xl text-slate-900">
             <CardHeader className="border-b border-purple-50 pb-4">
-              <CardTitle className="text-lg font-black text-brand-purple flex items-center gap-2">
+              <CardTitle className="text-lg font-semibold text-brand-purple flex items-center gap-2">
                 <User className="w-5 h-5 text-brand-purple" />
                 Academic Identity
               </CardTitle>
@@ -262,9 +255,9 @@ export default function SettingsPage() {
           </Card>
 
           {/* Learning Preferences */}
-          <Card className="border-2 border-purple-100 bg-white shadow-clay rounded-3xl text-slate-900">
+          <Card className="border-2 border-purple-100 bg-white shadow-none rounded-3xl text-slate-900">
             <CardHeader className="border-b border-purple-50 pb-4">
-              <CardTitle className="text-lg font-black text-brand-purple flex items-center gap-2">
+              <CardTitle className="text-lg font-semibold text-brand-purple flex items-center gap-2">
                 <Bell className="w-5 h-5 text-brand-purple" />
                 Learning &amp; Notification Settings
               </CardTitle>
@@ -315,7 +308,7 @@ export default function SettingsPage() {
             <Button
               type="submit"
               size="md"
-              className="clay-button-primary bg-[#153e25] text-white font-black px-6 py-2.5 rounded-xl shadow-md border-none"
+              className="clay-button-primary bg-[#153e25] text-white font-semibold px-6 py-2.5 rounded-xl shadow-md border-none"
             >
               <Save className="w-4 h-4 mr-2" />
               Save Changes
@@ -326,7 +319,7 @@ export default function SettingsPage() {
         {/* Danger Zone: Account Deletion */}
         <Card className="border-2 border-rose-200 bg-rose-50/40 rounded-3xl shadow-sm">
           <CardHeader>
-            <CardTitle className="text-lg font-black text-rose-700 flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold text-rose-700 flex items-center gap-2">
               <Shield className="w-5 h-5 text-rose-600" />
               Data Reset &amp; Account Deletion
             </CardTitle>
@@ -360,7 +353,7 @@ export default function SettingsPage() {
               <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-black text-slate-950 text-center">
+              <h3 className="text-lg font-semibold text-slate-950 text-center">
                 Are you absolutely sure?
               </h3>
               <p className="text-xs text-slate-600 text-center leading-relaxed font-medium">

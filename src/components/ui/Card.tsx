@@ -53,7 +53,7 @@ export function CardTitle({
   return (
     <h3
       className={cn(
-        "text-lg font-black leading-tight",
+        "text-lg font-semibold leading-tight",
         variant === "purple" ? "text-white" : "text-slate-900",
         className,
       )}

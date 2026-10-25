@@ -234,28 +234,21 @@ export default function QuizzesPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-5">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading">
+
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="cyan" className="font-bold">Campus Learn</Badge>
-                <span className="text-xs text-purple-100 font-semibold">QuizForge Active Recall Engine</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                QuizForge Student Assessment Studio
-              </h1>
-              <p className="mt-2 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-                Practice course topics with timed quizzes, review mistake explanations, and generate mock tests from lecture notes.
-              </p>
+
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Quizzes</h1>
+              <p className="mt-2 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">Practice topics and review your results.</p>
             </div>
 
             <Button
               size="sm"
               onClick={() => setIsGenerating(true)}
-              className="bg-white text-brand-purple hover:bg-purple-50 font-black shadow-md border-none shrink-0"
+              className="bg-white text-brand-purple hover:bg-purple-50 font-semibold shadow-md border-none shrink-0"
             >
               <Sparkles className="w-4 h-4 mr-2 text-brand-purple" />
               Generate Custom Quiz
@@ -273,7 +266,7 @@ export default function QuizzesPage() {
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-extrabold text-slate-950">Generate Instant Quiz</h3>
+                    <h3 className="text-lg font-semibold text-slate-950">Generate Instant Quiz</h3>
                     <p className="text-xs text-slate-500 font-medium">From topic keywords or pasted study notes</p>
                   </div>
                 </div>
@@ -420,7 +413,7 @@ export default function QuizzesPage() {
                     <span className="text-xs font-mono font-bold text-brand-purple uppercase">
                       {activeQuiz.subject} • {activeQuiz.difficulty}
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-extrabold text-slate-950 mt-0.5">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-slate-950 mt-0.5">
                       {activeQuiz.title}
                     </h2>
                   </div>
@@ -551,7 +544,7 @@ export default function QuizzesPage() {
                 <div className="text-center max-w-lg mx-auto space-y-2 py-4">
                   <div
                     className={cn(
-                      "w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-xl",
+                      "w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold shadow-none",
                       lastAttemptResult?.passed
                         ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
                         : "bg-rose-100 text-rose-700 border border-rose-300"
@@ -559,7 +552,7 @@ export default function QuizzesPage() {
                   >
                     {lastAttemptResult?.scorePercentage}%
                   </div>
-                  <h3 className="text-2xl font-extrabold text-slate-950">
+                  <h3 className="text-2xl font-semibold text-slate-950">
                     {lastAttemptResult?.passed
                       ? "Assessment Passed! Excellent Mastery"
                       : "Needs Practice — Review Recommended"}
@@ -610,7 +603,7 @@ export default function QuizzesPage() {
                           <span className="text-slate-900">Question {i + 1}: {qObj?.text}</span>
                           <span
                             className={cn(
-                              "text-xs font-black uppercase px-2 py-0.5 rounded-full",
+                              "text-xs font-semibold uppercase px-2 py-0.5 rounded-full",
                               qRes.isCorrect
                                 ? "bg-emerald-200 text-emerald-900"
                                 : "bg-rose-200 text-rose-900"
@@ -665,11 +658,11 @@ export default function QuizzesPage() {
 
         {/* Pre-existing Quiz Catalog */}
         {!activeQuiz && (
-          <div className="space-y-8">
+          <div className="space-y-5">
             {/* Official Teacher-Assigned Assessments */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                   <FileQuestion className="w-5 h-5 text-brand-purple" />
                   Available Practice Quizzes & Assessments
                 </h2>
@@ -678,7 +671,7 @@ export default function QuizzesPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quizzes
                   .filter(
                     (q) =>
@@ -692,7 +685,7 @@ export default function QuizzesPage() {
                     return (
                       <Card
                         key={quiz.id}
-                        className="bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-purple-300 transition-all"
+                        className="bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-purple-300 transition-all"
                       >
                         <CardHeader>
                           <div className="flex items-center justify-between text-xs mb-2">
@@ -706,8 +699,8 @@ export default function QuizzesPage() {
                               </Badge>
                             </div>
                           </div>
-                          <CardTitle className="text-lg font-extrabold text-slate-950">{quiz.title}</CardTitle>
-                          <CardDescription className="text-xs text-slate-600 font-medium leading-relaxed">
+                          <CardTitle className="text-lg font-semibold text-slate-950">{quiz.title}</CardTitle>
+                          <CardDescription className="line-clamp-1 text-xs text-slate-600 font-medium leading-relaxed">
                             {quiz.description}
                           </CardDescription>
                           <div className="text-[11px] text-slate-600 pt-1">
@@ -744,15 +737,15 @@ export default function QuizzesPage() {
             {/* Personal Practice Quizzes (isolated to the logged-in student) */}
             {quizzes.some((q) => q.creatorRole === "student" && q.creatorId === user?.id) && (
               <div className="space-y-4 pt-2 border-t border-purple-100">
-                <h3 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-slate-950 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-brand-purple" />
                   My Personal Practice Quizzes ({user?.name})
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {quizzes
                     .filter((q) => q.creatorRole === "student" && q.creatorId === user?.id)
                     .map((quiz) => (
-                      <Card key={quiz.id} className="bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-purple-300">
+                      <Card key={quiz.id} className="bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-purple-300">
                         <CardHeader>
                           <div className="flex items-center justify-between text-xs mb-2">
                             <span className="font-bold text-brand-purple">{quiz.subject}</span>
@@ -760,7 +753,7 @@ export default function QuizzesPage() {
                               Personal AI Practice
                             </Badge>
                           </div>
-                          <CardTitle className="text-base font-extrabold text-slate-950">{quiz.title}</CardTitle>
+                          <CardTitle className="text-base font-semibold text-slate-950">{quiz.title}</CardTitle>
                           <CardDescription className="text-xs text-slate-600 font-medium">
                             {quiz.description}
                           </CardDescription>
@@ -785,7 +778,7 @@ export default function QuizzesPage() {
             {/* Historical Attempts Table (Strictly isolated to current student) */}
             <div className="pt-4 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-950">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-950">
                   Your Past Assessment Attempts ({user?.name})
                 </h3>
                 <span className="text-xs text-brand-purple font-mono font-bold">
@@ -810,7 +803,7 @@ export default function QuizzesPage() {
                           <td className="p-3.5 text-brand-purple font-bold">
                             {att.studentName || user?.name}
                           </td>
-                          <td className="p-3.5 font-extrabold text-slate-950">{att.quizTitle}</td>
+                          <td className="p-3.5 font-semibold text-slate-950">{att.quizTitle}</td>
                           <td className="p-3.5 font-bold text-slate-900">
                             {att.scorePercentage}% ({att.correctCount}/{att.totalQuestions})
                           </td>

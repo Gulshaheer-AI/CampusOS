@@ -450,7 +450,7 @@ export default function TeacherStudioPage() {
           <div className="inline-flex p-3 rounded-full bg-rose-50 border border-rose-200 text-rose-600 mb-2">
             <AlertCircle className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900">Access Restricted</h2>
+          <h2 className="text-2xl font-semibold text-slate-900">Access Restricted</h2>
           <p className="text-sm text-slate-600 leading-relaxed font-medium">
             Faculty and Administrator privileges are required to access Teacher Studio. You are currently logged in as a student (<strong className="text-slate-900 font-bold">{user.name}</strong>).
           </p>
@@ -468,22 +468,15 @@ export default function TeacherStudioPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-5">
         {/* Main Hero Banner - Royal Purple Clay Card */}
-        <div className="clay-card-purple p-6 sm:p-8 relative overflow-hidden text-white shadow-xl rounded-3xl">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
+        <div className="section-heading">
+
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="cyan" className="font-bold">Faculty Studio</Badge>
-                <span className="text-xs text-purple-100 font-semibold">Instructor Portal &amp; Assessment Engine</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Teacher Studio &amp; Course Authoring
-              </h1>
-              <p className="mt-2 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">
-                Manage courses, edit modules, upload lecture materials, generate AI quizzes from notes, and inspect learning gaps for your students.
-              </p>
+
+              <h1 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Teacher Studio</h1>
+              <p className="mt-2 text-sm text-purple-100 max-w-2xl font-medium leading-relaxed">Manage courses, materials, and assessments.</p>
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
@@ -491,11 +484,11 @@ export default function TeacherStudioPage() {
                 <Download className="w-4 h-4 mr-1.5 text-white" />
                 Export CSV
               </Button>
-              <Button size="sm" onClick={() => setShowCourseModal(true)} className="bg-white text-brand-purple hover:bg-purple-50 font-black shadow-md border-none">
+              <Button size="sm" onClick={() => setShowCourseModal(true)} className="bg-white text-brand-purple hover:bg-purple-50 font-semibold shadow-md border-none">
                 <Plus className="w-4 h-4 mr-1.5 text-brand-purple" />
                 New Course
               </Button>
-              <Button size="sm" onClick={() => setShowQuizModal(true)} className="bg-emerald-400 text-slate-950 hover:bg-emerald-300 font-black shadow-md border-none">
+              <Button size="sm" onClick={() => setShowQuizModal(true)} className="bg-emerald-400 text-slate-950 hover:bg-emerald-300 font-semibold shadow-md border-none">
                 <FileQuestion className="w-4 h-4 mr-1.5 text-slate-950" />
                 Create Quiz
               </Button>
@@ -510,7 +503,7 @@ export default function TeacherStudioPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
             <div className="bg-white border-2 border-purple-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 my-8 text-slate-900">
               <div className="flex items-center justify-between border-b border-purple-100 pb-3">
-                <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                   <BookOpen className="w-5 h-5 text-brand-purple" />
                   Create New University Course
                 </h3>
@@ -613,7 +606,7 @@ export default function TeacherStudioPage() {
               <div className="flex items-center justify-between border-b border-purple-100 pb-3">
                 <div>
                   <Badge variant="violet" className="text-[10px] mb-1 font-mono font-bold">{editingCourse.code}</Badge>
-                  <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                     <Edit3 className="w-4 h-4 text-brand-purple" />
                     Edit Course Syllabus &amp; Materials
                   </h3>
@@ -666,7 +659,7 @@ export default function TeacherStudioPage() {
                 {/* Modules Editor Section */}
                 <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5 text-xs">
+                    <span className="font-semibold uppercase tracking-wider text-slate-900 flex items-center gap-1.5 text-xs">
                       <Layers className="w-3.5 h-3.5 text-brand-purple" />
                       Modules ({editingCourse.modules?.length || 0})
                     </span>
@@ -706,7 +699,7 @@ export default function TeacherStudioPage() {
 
                 {/* Lecture Materials Upload Section */}
                 <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-3">
-                  <span className="font-extrabold uppercase tracking-wider text-slate-900 flex items-center gap-1.5 text-xs">
+                  <span className="font-semibold uppercase tracking-wider text-slate-900 flex items-center gap-1.5 text-xs">
                     <FileText className="w-3.5 h-3.5 text-brand-purple" />
                     Lecture Notes &amp; Student Materials ({editingCourse.materials?.length || 0})
                   </span>
@@ -823,7 +816,7 @@ export default function TeacherStudioPage() {
               <div className="flex items-center justify-between pb-3 border-b border-purple-100">
                 <div>
                   <Badge variant="violet" className="text-[10px] mb-1 font-bold">Gemini Multi-Model Assessment</Badge>
-                  <h3 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
                     <FileQuestion className="w-5 h-5 text-brand-purple" />
                     Create Assessment from Lecture Notes
                   </h3>
@@ -906,7 +899,7 @@ export default function TeacherStudioPage() {
                 {/* Auto-Draft from Lecture Notes & File Upload */}
                 <div className="p-4 rounded-2xl border border-purple-200 bg-purple-50/70 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-extrabold uppercase tracking-wider text-slate-950 flex items-center gap-1.5 text-[11px]">
+                    <span className="font-semibold uppercase tracking-wider text-slate-950 flex items-center gap-1.5 text-[11px]">
                       <Sparkles className="w-4 h-4 text-brand-purple" />
                       Auto-Generate Questions from Lecture Notes &amp; Documents
                     </span>
@@ -975,7 +968,7 @@ export default function TeacherStudioPage() {
                 <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
                   <div className="flex items-center justify-between border-b border-purple-200 pb-1.5">
                     <div>
-                      <span className="font-extrabold uppercase text-slate-800 text-[11px]">
+                      <span className="font-semibold uppercase text-slate-800 text-[11px]">
                         Drafted Assessment Questions ({quizDraftQuestions.length})
                       </span>
                       <span className="ml-2 text-xs font-bold text-brand-purple">
@@ -1028,7 +1021,7 @@ export default function TeacherStudioPage() {
                               className="w-4 h-4 rounded text-brand-purple border-purple-300 focus:ring-brand-purple cursor-pointer"
                               title="Include in assessment"
                             />
-                            <span className="font-extrabold text-slate-900 text-xs shrink-0">
+                            <span className="font-semibold text-slate-900 text-xs shrink-0">
                               Q{idx + 1}:
                             </span>
                             <input
@@ -1139,16 +1132,16 @@ export default function TeacherStudioPage() {
         {/* Section 1: Active Courses & Class Enrollment Codes */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-brand-purple" />
               Your Managed Courses &amp; Syllabi
             </h2>
             <span className="text-xs font-bold text-brand-purple">{courses.length} Active Courses</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map((c) => (
-              <Card key={c.id} className="bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-brand-purple/40 transition-colors">
+              <Card key={c.id} className="bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-brand-purple/40 transition-colors">
                 <CardHeader>
                   <div className="flex items-center justify-between text-xs mb-2">
                     <span className="font-mono font-bold text-brand-purple px-2 py-0.5 rounded bg-purple-100">
@@ -1158,8 +1151,8 @@ export default function TeacherStudioPage() {
                       Enroll Code: {c.classCode}
                     </Badge>
                   </div>
-                  <CardTitle className="text-base font-extrabold text-slate-950">{c.title}</CardTitle>
-                  <CardDescription className="text-xs text-slate-600 font-medium line-clamp-2">
+                  <CardTitle className="text-base font-semibold text-slate-950">{c.title}</CardTitle>
+                  <CardDescription className="text-xs text-slate-600 font-medium line-clamp-1">
                     {c.description}
                   </CardDescription>
                 </CardHeader>
@@ -1196,7 +1189,7 @@ export default function TeacherStudioPage() {
         {/* Section 2: Published Quizzes & Question Banks */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
               <FileQuestion className="w-5 h-5 text-brand-purple" />
               Published Quizzes &amp; Question Banks (Synced to Student Portal)
             </h2>
@@ -1205,11 +1198,11 @@ export default function TeacherStudioPage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quizzes
               .filter((q) => !q.isPractice && q.creatorRole !== "student")
               .map((quiz) => (
-                <Card key={quiz.id} className="bg-white border border-purple-100 shadow-clay flex flex-col justify-between hover:border-brand-purple/40 transition-colors">
+                <Card key={quiz.id} className="bg-white border border-purple-100 shadow-none flex flex-col justify-between hover:border-brand-purple/40 transition-colors">
                   <CardHeader>
                     <div className="flex items-center justify-between text-xs mb-2">
                       <span className="font-bold text-brand-purple">{quiz.subject}</span>
@@ -1226,8 +1219,8 @@ export default function TeacherStudioPage() {
                         {quiz.difficulty}
                       </Badge>
                     </div>
-                    <CardTitle className="text-base font-extrabold text-slate-950">{quiz.title}</CardTitle>
-                    <CardDescription className="text-xs text-slate-600 font-medium line-clamp-2">
+                    <CardTitle className="text-base font-semibold text-slate-950">{quiz.title}</CardTitle>
+                    <CardDescription className="text-xs text-slate-600 font-medium line-clamp-1">
                       {quiz.description}
                     </CardDescription>
                   </CardHeader>
@@ -1261,7 +1254,7 @@ export default function TeacherStudioPage() {
         {/* Section 3: Cohort Learning Analytics & Gaps */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-extrabold text-slate-950 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-950 flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-brand-purple" />
               Student Cohort Performance &amp; Learning Gaps
             </h2>
@@ -1285,14 +1278,14 @@ export default function TeacherStudioPage() {
               const stuGaps = Array.from(new Set(stuAttempts.flatMap((a) => a.weakTopics || [])));
 
               return (
-                <Card key={stu.id} className="p-4 space-y-2.5 bg-white border border-purple-100 shadow-clay rounded-2xl">
+                <Card key={stu.id} className="p-4 space-y-2.5 bg-white border border-purple-100 shadow-none rounded-2xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-extrabold text-sm text-slate-950">{stu.name}</div>
+                      <div className="font-semibold text-sm text-slate-950">{stu.name}</div>
                       <div className="text-[11px] text-slate-600 font-medium">{stu.degree || stu.department}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-extrabold text-brand-purple">{stuAvg}%</div>
+                      <div className="text-lg font-semibold text-brand-purple">{stuAvg}%</div>
                       <div className="text-[10px] text-slate-500 font-medium">{stuAttempts.length} Attempts</div>
                     </div>
                   </div>
@@ -1309,7 +1302,7 @@ export default function TeacherStudioPage() {
             })}
           </div>
 
-          <Card className="overflow-hidden bg-white border border-purple-100 shadow-clay rounded-2xl">
+          <Card className="overflow-hidden bg-white border border-purple-100 shadow-none rounded-2xl">
             <CardContent className="p-0 overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
