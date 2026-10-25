@@ -120,7 +120,7 @@ export function AppHeader({
   return (
     <header
       ref={header}
-      className="workspace-header sticky top-0 z-30 min-h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 print:hidden no-print"
+      className="workspace-header sticky top-0 z-30 min-h-14 px-4 sm:px-5 lg:px-6 flex items-center justify-between gap-4 print:hidden no-print"
     >
       <div className="flex gap-3 items-center shrink-0">
         <button
@@ -138,7 +138,7 @@ export function AppHeader({
         </div>
       </div>
       <div className="relative flex-1 max-w-xl hidden sm:block">
-        <Search size={16} className="absolute left-4 top-3 text-[#a1b8a8]" />
+        <Search size={16} className="absolute left-4 top-2.5 text-[#a1b8a8]" />
         <input
           ref={input}
           aria-label="Search workspace"
@@ -146,9 +146,9 @@ export function AppHeader({
           onChange={(e) => search(e.target.value)}
           onFocus={() => search(query)}
           placeholder="Search courses, skills, opportunities..."
-          className="w-full h-10 bg-[#0b1b12] border border-[#2a4734] rounded-xl pl-10 pr-14 text-xs text-[#e1efe5] focus:outline-none focus:border-[#77b88b]"
+          className="w-full h-9 bg-[#0b1b12] border border-[#2a4734] rounded-lg pl-10 pr-14 text-xs text-[#e1efe5] focus:outline-none focus:border-[#77b88b]"
         />
-        <kbd className="absolute right-3 top-2.5 text-[10px] text-[#9ab3a2] bg-[#1b3022] rounded px-1.5 py-0.5">
+        <kbd className="absolute right-3 top-2 text-[10px] text-[#9ab3a2] bg-[#1b3022] rounded px-1.5 py-0.5">
           Ctrl K
         </kbd>
         {searchOpen && (

@@ -64,7 +64,7 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
 
         <main
           key={currentUser.id}
-          className="workspace-main flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto print:p-0 print:m-0 print:max-w-none"
+          className="workspace-main flex-1 p-4 sm:p-5 lg:p-6 w-full mx-auto print:p-0 print:m-0 print:max-w-none"
         >
           {isUnauthorized ? (
             <div className="clay-card p-8 text-center max-w-lg mx-auto my-12 border-2 border-rose-300 bg-white">

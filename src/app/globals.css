@@ -67,10 +67,17 @@ input[type="radio"] {
 .clay-card-purple,
 .clay-card-pink,
 .ui-card {
-  background: linear-gradient(130deg, #0e2016, #09160f);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 8px 28px -16px #0008;
+  background:
+    radial-gradient(ellipse at 95% 0%, #35974b26, transparent 55%),
+    linear-gradient(135deg, #133e2580, #05150cbd 50%, #0b281a80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #65956e55;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 1px 0 #b7f8c019,
+    inset 0 -1px 0 #5aab6a0a,
+    0 8px 24px -18px #0009;
   color: var(--foreground);
 }
 .clay-card-purple {
@@ -126,22 +133,47 @@ input[type="radio"] {
 }
 .workspace-shell {
   background:
-    radial-gradient(ellipse at 90% 0%, #14382125, transparent 45%), #06100b;
+    radial-gradient(ellipse at 0% 75%, #17462a38, transparent 35%),
+    radial-gradient(ellipse at 85% 0%, #1945282b, transparent 50%), #06100b;
 }
 .workspace-main {
   max-width: 1600px;
   min-width: 0;
 }
 .workspace-header {
-  background: #06100be8;
+  background: #06100b9c;
   backdrop-filter: blur(18px);
   border-bottom: 1px solid #1b3224;
 }
 .workspace-sidebar {
-  width: 250px;
+  width: 220px;
   background:
-    radial-gradient(ellipse at 0% 85%, #0e301c65, transparent 50%), #07120c;
+    radial-gradient(ellipse at 0% 3%, #8fefaa24, transparent 28%),
+    radial-gradient(ellipse at 0% 84%, #24b35738, transparent 38%),
+    linear-gradient(145deg, #133a2580, #041009b3 45%, #103c2080);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  box-shadow: inset -1px 0 0 #b3f9c005;
   border-right: 1px solid #1b3224;
+}
+.workspace-nav-link[aria-current="page"] {
+  background:
+    radial-gradient(ellipse at 100% 20%, #72fa8b66, transparent 60%),
+    linear-gradient(105deg, #173d2570 15%, #23804b99 100%);
+  border-color: #7be39366;
+  box-shadow:
+    inset 0 1px 0 #c9ffd52b,
+    inset 0 0 14px #75f9950c,
+    0 4px 18px #00000015;
+}
+.workspace-nav-link {
+  min-height: 36px;
+}
+.workspace-nav-link svg {
+  flex-shrink: 0;
+}
+.workspace-profile {
+  background: #06150d30;
 }
 .workspace-footer {
   border-top: 1px solid #1b3224;
@@ -202,12 +234,13 @@ input[type="radio"] {
   letter-spacing: 0.01em;
 }
 .dashboard-hero {
-  min-height: 230px;
-  padding: 32px 40px;
+  min-height: 190px;
+  padding: 24px 30px;
   overflow: hidden;
   position: relative;
-  border: 1px solid #315c3e;
-  border-radius: 16px;
+  border: 1px solid #50845c55;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 #b7f8c008;
   background:
     radial-gradient(ellipse at 83% 50%, #006b281f, transparent 50%),
     linear-gradient(115deg, #06190c, #020e06);
@@ -218,11 +251,11 @@ input[type="radio"] {
   width: 65%;
 }
 .dashboard-hero h2 {
-  font-size: clamp(26px, 2.5vw, 40px);
+  font-size: clamp(25px, 2.1vw, 34px);
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 1.15;
-  margin: 12px 0;
+  margin: 9px 0;
 }
 .dashboard-hero p {
   color: #b5c8bb;
@@ -236,17 +269,17 @@ input[type="radio"] {
   font-weight: 600;
 }
 .dashboard-stat {
-  padding: 18px;
+  padding: 12px 14px;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 .dashboard-icon {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -256,7 +289,7 @@ input[type="radio"] {
   box-shadow: inset 0 1px 0 #a5efae09;
 }
 .dashboard-panel {
-  padding: 22px;
+  padding: 16px;
   min-width: 0;
 }
 .dashboard-panel-title {
@@ -264,18 +297,18 @@ input[type="radio"] {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 .dashboard-panel-title h2 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.025em;
 }
 .dashboard-course {
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 16px 0;
+  gap: 14px;
+  padding: 12px 0;
   border-top: 1px solid #1e3827;
 }
 .dashboard-course:last-child {
@@ -298,7 +331,7 @@ input[type="radio"] {
   right: 0;
   top: 50%;
   width: 52%;
-  height: 340px;
+  height: 270px;
   transform: translateY(-50%);
   pointer-events: none;
   contain: layout style;
@@ -311,7 +344,7 @@ input[type="radio"] {
 .orb-caption {
   position: absolute;
   right: 24px;
-  bottom: 65px;
+  bottom: 40px;
   padding: 8px 18px;
   border-radius: 30px;
   border: 1px solid #30593b;
@@ -320,8 +353,19 @@ input[type="radio"] {
   color: #cef9d5;
 }
 @media (min-width: 1024px) {
+  .workspace-sidebar-desktop {
+    padding: 10px 0 10px 12px;
+  }
+  .workspace-sidebar-desktop .workspace-sidebar {
+    border: 1px solid #7ecf9255;
+    border-radius: 16px;
+    box-shadow:
+      inset 0 1px 0 #c6fbd130,
+      inset 1px 0 0 #a3f1b012,
+      0 10px 40px #0003;
+  }
   .workspace-content {
-    padding-left: 250px;
+    padding-left: 244px;
   }
 }
 @media (max-width: 767px) {
@@ -1437,7 +1481,7 @@ input[type="radio"] {
 .orb-playback {
   position: absolute;
   right: 28px;
-  bottom: 104px;
+  bottom: 78px;
   pointer-events: auto;
   width: 26px;
   height: 26px;

@@ -315,13 +315,13 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-5">
+      <div className="dashboard-overview space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               Welcome back, {user.name.split(" ")[0]}
             </h1>
-            <p className="text-sm text-[#a1b8a8] mt-2">
+            <p className="text-xs text-[#a1b8a8] mt-1.5">
               A little progress today. A bigger future tomorrow.
             </p>
           </div>
@@ -338,10 +338,10 @@ export default function DashboardPage() {
             <span className="dashboard-kicker">YOUR AI LEARNING COMPANION</span>
             <h2>What will you build today?</h2>
             <p>Learn a concept, solve a challenge, or plan your next step.</p>
-            <div className="flex flex-wrap gap-3 mt-6">
+            <div className="flex flex-wrap gap-3 mt-4">
               <Link
                 href="/tutor"
-                className="ui-button inline-flex gap-2.5 items-center px-5 py-3 text-xs"
+                className="ui-button inline-flex gap-2.5 items-center px-4 py-2.5 text-xs"
                 data-tone="primary"
               >
                 <Sparkles size={17} />
@@ -349,7 +349,7 @@ export default function DashboardPage() {
               </Link>
               <Link
                 href="/roadmaps"
-                className="ui-button inline-flex gap-2.5 items-center px-5 py-3 text-xs"
+                className="ui-button inline-flex gap-2.5 items-center px-4 py-2.5 text-xs"
                 data-tone="outline"
               >
                 <Map size={17} />
@@ -360,7 +360,7 @@ export default function DashboardPage() {
           <LearningOrbit />
         </section>
 
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
           {[
             {
               label: "Enrolled courses",
@@ -397,7 +397,7 @@ export default function DashboardPage() {
               </span>
               <div className="min-w-0">
                 <p className="text-[11px] sm:text-xs text-[#b1c5b8]">{label}</p>
-                <p className="text-2xl sm:text-3xl font-semibold tracking-tight mt-1">
+                <p className="text-2xl font-semibold tracking-tight mt-1">
                   {value}
                 </p>
               </div>
@@ -405,7 +405,7 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-3">
           <section className="ui-card dashboard-panel">
             <div className="dashboard-panel-title">
               <h2>Continue learning</h2>
@@ -530,7 +530,7 @@ export default function DashboardPage() {
           </section>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-[1.65fr_1fr] gap-3">
           <section className="ui-card dashboard-panel dashboard-recommendation">
             <h2 className="text-xs text-[#d2e5d8] mb-4">
               Recommended challenge

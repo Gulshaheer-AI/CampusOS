@@ -104,8 +104,8 @@ export function AppSidebar({
   }, [isMobileOpen, onCloseMobile]);
   const content = (mobile = false) => (
     <div className="workspace-sidebar flex flex-col h-full select-none">
-      <div className="h-[84px] px-7 flex items-center justify-between shrink-0">
-        <Logo href="/dashboard" size="md" />
+      <div className="h-16 px-5 flex items-center justify-between shrink-0">
+        <Logo href="/dashboard" size="sm" />
         {mobile && (
           <button
             aria-label="Close sidebar"
@@ -118,9 +118,9 @@ export function AppSidebar({
       </div>
       <nav
         aria-label="Workspace navigation"
-        className="flex-1 overflow-y-auto px-5 pb-5"
+        className="flex-1 overflow-y-auto px-4 pb-4"
       >
-        <p className="text-[10px] uppercase tracking-[.16em] text-[#829d8c] px-2 mt-3 mb-5">
+        <p className="text-[10px] uppercase tracking-[.16em] text-[#829d8c] px-2 mt-2 mb-3">
           {userRole} workspace
         </p>
         {["learn", "grow"].map((group) => (
@@ -128,7 +128,7 @@ export function AppSidebar({
             key={group}
             className={cn(
               "space-y-1",
-              group === "grow" && "border-t border-[#1b3224] mt-6 pt-6",
+              group === "grow" && "border-t border-[#1b3224] mt-3 pt-3",
             )}
           >
             {navigation
@@ -147,14 +147,14 @@ export function AppSidebar({
                     onClick={onCloseMobile}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-4 rounded-xl px-4 py-3 text-[13px] transition-colors border",
+                      "workspace-nav-link flex items-center gap-3 rounded-lg px-3 py-2 text-xs transition-colors border",
                       active
-                        ? "bg-gradient-to-r from-[#10351f] to-[#205a32] border-[#356e47] text-[#f1fff4] font-semibold"
+                        ? "text-[#f1fff4] font-medium"
                         : "border-transparent text-[#bacbbf] hover:bg-[#10271a] hover:text-white",
                     )}
                   >
                     <Icon
-                      size={19}
+                      size={17}
                       strokeWidth={1.5}
                       className={active ? "text-[#a5efae]" : "text-[#9fb7a7]"}
                     />
@@ -165,8 +165,8 @@ export function AppSidebar({
           </div>
         ))}
       </nav>
-      <div className="px-6 py-5 border-t border-[#1b3224] flex gap-3 items-center">
-        <span className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-[#265e37] to-[#0d2718] border border-[#31583d] flex items-center justify-center text-sm text-[#d8f6df]">
+      <div className="workspace-profile px-4 py-3 border-t border-[#1b3224] flex gap-3 items-center">
+        <span className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-[#265e37] to-[#0d2718] border border-[#31583d] flex items-center justify-center text-sm text-[#d8f6df]">
           {currentUser?.name
             .split(" ")
             .map((n) => n[0])
@@ -194,7 +194,7 @@ export function AppSidebar({
   );
   return (
     <>
-      <aside className="hidden lg:block fixed inset-y-0 left-0 z-40 print:hidden">
+      <aside className="workspace-sidebar-desktop hidden lg:block fixed inset-y-0 left-0 z-40 print:hidden">
         {content()}
       </aside>
       {isMobileOpen && (
@@ -208,7 +208,7 @@ export function AppSidebar({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="relative h-full w-[250px]"
+            className="relative h-full w-[220px]"
           >
             {content(true)}
           </div>
