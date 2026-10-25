@@ -140,6 +140,27 @@ input[type="radio"] {
   max-width: 1600px;
   min-width: 0;
 }
+/* Apply the same compact desktop density to every section's content.
+   An auto-width inner block fills the main column at its adjusted scale. */
+@media screen and (min-width: 1024px) {
+  .workspace-page {
+    --workspace-page-scale: 0.8;
+    zoom: var(--workspace-page-scale);
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .workspace-page {
+    --workspace-page-scale: 0.92;
+    zoom: var(--workspace-page-scale);
+  }
+}
+@media screen and (min-width: 768px) {
+  /* Keep viewport overlays and full-screen tools at native viewport size. */
+  .workspace-page .fixed {
+    zoom: calc(1 / var(--workspace-page-scale));
+    margin: 0 !important;
+  }
+}
 .workspace-header {
   background: #06100b9c;
   backdrop-filter: blur(18px);

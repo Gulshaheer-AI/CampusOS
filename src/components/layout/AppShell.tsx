@@ -66,42 +66,45 @@ export function AppShell({ children, requiredRole }: AppShellProps) {
           key={currentUser.id}
           className="workspace-main flex-1 p-4 sm:p-5 lg:p-6 w-full mx-auto print:p-0 print:m-0 print:max-w-none"
         >
-          {isUnauthorized ? (
-            <div className="clay-card p-8 text-center max-w-lg mx-auto my-12 border-2 border-rose-300 bg-white">
-              <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 border border-rose-300 flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Lock className="w-6 h-6" />
+          <div className="workspace-page">
+            {isUnauthorized ? (
+              <div className="clay-card p-8 text-center max-w-lg mx-auto my-12 border-2 border-rose-300 bg-white">
+                <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 border border-rose-300 flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-extrabold text-slate-950">
+                  Access Restricted
+                </h3>
+                <p className="text-sm text-slate-700 font-medium mt-2">
+                  This area requires{" "}
+                  <strong>{requiredRole.join(" or ")}</strong> privileges. You
+                  are currently logged in as{" "}
+                  <strong className="text-brand-purple font-bold">
+                    {currentUser.role}
+                  </strong>{" "}
+                  ({currentUser.name}).
+                </p>
+                <div className="mt-6 flex justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/dashboard")}
+                  >
+                    Return to Dashboard
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      handleUserChange(getCurrentUser());
+                    }}
+                  >
+                    Switch Role in Header
+                  </Button>
+                </div>
               </div>
-              <h3 className="text-xl font-extrabold text-slate-950">
-                Access Restricted
-              </h3>
-              <p className="text-sm text-slate-700 font-medium mt-2">
-                This area requires <strong>{requiredRole.join(" or ")}</strong>{" "}
-                privileges. You are currently logged in as{" "}
-                <strong className="text-brand-purple font-bold">
-                  {currentUser.role}
-                </strong>{" "}
-                ({currentUser.name}).
-              </p>
-              <div className="mt-6 flex justify-center gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/dashboard")}
-                >
-                  Return to Dashboard
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    handleUserChange(getCurrentUser());
-                  }}
-                >
-                  Switch Role in Header
-                </Button>
-              </div>
-            </div>
-          ) : (
-            children
-          )}
+            ) : (
+              children
+            )}
+          </div>
         </main>
 
         <footer className="workspace-footer print:hidden">
