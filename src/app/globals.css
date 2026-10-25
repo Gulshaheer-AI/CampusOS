@@ -238,12 +238,35 @@ input[type="radio"] {
   padding: 24px 30px;
   overflow: hidden;
   position: relative;
-  border: 1px solid #50845c55;
+  border: 1px solid #4bdc8070;
   border-radius: 12px;
-  box-shadow: inset 0 1px 0 #b7f8c008;
+  box-shadow:
+    inset 0 1px 0 #a5ffc53b,
+    inset 0 0 32px #20d46712,
+    0 0 18px #08b94c0a;
+  /* Static light through smoked emerald glass; the canvas stays untouched. */
   background:
-    radial-gradient(ellipse at 83% 50%, #006b281f, transparent 50%),
-    linear-gradient(115deg, #06190c, #020e06);
+    linear-gradient(
+      122deg,
+      transparent 55%,
+      #0adc5b06 58%,
+      #25f87824 60%,
+      #72ffa64a 60.4%,
+      #13c75e26 61.2%,
+      transparent 64%
+    ),
+    linear-gradient(
+      126deg,
+      transparent 87%,
+      #12dd5b0d 90%,
+      #39ff8652 92%,
+      #18be5a28 93%,
+      transparent 97%
+    ),
+    radial-gradient(ellipse at 73% 0%, #26eb7252, transparent 37%),
+    radial-gradient(ellipse at 98% 95%, #0abb5850, transparent 35%),
+    radial-gradient(ellipse at 48% 110%, #11a04b26, transparent 48%),
+    linear-gradient(115deg, #071e12, #03160d 52%, #062b18);
 }
 .dashboard-hero-copy {
   position: relative;
