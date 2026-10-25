@@ -20,6 +20,7 @@ export function RegionalCvPreview({
   editable = true,
 }: RegionalCvPreviewProps) {
   const [saved, setSaved] = React.useState(false);
+  const editor = React.useRef<HTMLDetailsElement>(null);
   const kind = getTemplateKind(template.id);
   const style = CV_STYLES[kind];
   const update = (path: (string | number)[], value: unknown) => {
@@ -56,6 +57,18 @@ export function RegionalCvPreview({
   };
   const name = cvData.fullName.replace(/[^a-zA-Z0-9_-]+/g, "_") || "CV";
   const sections = cvSections(cvData, kind);
+  const hasContent =
+    sections.length > 0 ||
+    [
+      cvData.fullName,
+      cvData.title,
+      cvData.email,
+      cvData.phone,
+      cvData.location,
+      cvData.websiteUrl,
+      cvData.linkedinUrl,
+      cvData.githubUrl,
+    ].some((value) => value?.trim());
   const addSection = () =>
     onChange?.({
       ...cvData,
@@ -104,7 +117,10 @@ export function RegionalCvPreview({
         )}
       </div>
       {editable && (
-        <details className="no-print bg-white border border-slate-300 rounded-xl p-3 text-sm">
+        <details
+          ref={editor}
+          className="no-print bg-white border border-slate-300 rounded-xl p-3 text-sm"
+        >
           <summary className="cursor-pointer font-bold text-slate-900">
             Edit all CV details
           </summary>
@@ -261,108 +277,138 @@ export function RegionalCvPreview({
           </label>
         </details>
       )}
-      <article
-        id="cv-printable-area"
-        data-cv-template={kind}
-        className="cv-document bg-white border border-slate-300 shadow-lg mx-auto text-slate-900"
-        style={{
-          maxWidth: "595.28pt",
-          padding: "40pt",
-          fontFamily: style.font,
-          fontSize: "9pt",
-          lineHeight: 1.45,
-          overflowWrap: "anywhere",
-        }}
-      >
+      {!hasContent && (
         <div
-          className="cv-heading"
-          style={{
-            textAlign: style.centered ? "center" : "left",
-            ...(style.banner
-              ? {
-                  background: style.accent,
-                  color: "white",
-                  margin: "-40pt -40pt 14pt",
-                  padding: "26pt 40pt 18pt",
+          className="no-print rounded-xl border border-dashed border-[#365c45] bg-[#0c2116]/60 px-5 py-6 flex flex-wrap items-center justify-between gap-4"
+          role="status"
+        >
+          <div>
+            <p className="text-sm font-medium text-[#d8f2df]">Create your CV</p>
+            <p className="text-xs text-[#a1b8a8] mt-1">
+              Add your details to see a preview.
+            </p>
+          </div>
+          {editable && (
+            <Button
+              size="sm"
+              onClick={() => {
+                if (editor.current) {
+                  editor.current.open = true;
+                  editor.current
+                    .querySelector<HTMLInputElement>("input")
+                    ?.focus();
                 }
-              : {}),
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "22pt",
-              lineHeight: 1.4,
-              fontWeight: 700,
-              color: style.banner ? "white" : style.accent,
-              textTransform: style.banner ? "uppercase" : undefined,
-            }}
-          >
-            {field(cvData.fullName, ["fullName"], "Candidate name")}
-          </h1>
-          <p style={{ fontSize: "11pt", lineHeight: 1.4 }}>
-            {field(cvData.title, ["title"], "Professional title")}
-          </p>
-        </div>
-        <div
-          style={{
-            textAlign: style.centered ? "center" : "left",
-            fontSize: "8.5pt",
-          }}
-        >
-          {[cvData.email, cvData.phone, cvData.location]
-            .filter(Boolean)
-            .join(" | ")}
-        </div>
-        <div
-          style={{
-            textAlign: style.centered ? "center" : "left",
-            fontSize: "8pt",
-          }}
-        >
-          {[cvData.websiteUrl, cvData.linkedinUrl, cvData.githubUrl]
-            .filter(Boolean)
-            .join(" | ")}
-        </div>
-        {sections.map((section, i) => (
-          <section
-            key={`${i}-${section.title}`}
-            className="cv-section"
-            style={{ marginTop: "18pt" }}
-          >
-            <h2
-              style={{
-                fontSize: "10pt",
-                fontWeight: 700,
-                color: style.accent,
-                borderBottom: `0.6pt solid ${style.accent}`,
-                paddingBottom: "4pt",
-                marginBottom: "6pt",
-                textTransform: "uppercase",
               }}
             >
-              {section.title}
-            </h2>
-            {section.lines.map((line, j) => (
-              <div
-                key={j}
-                className="cv-line"
+              Start writing
+            </Button>
+          )}
+        </div>
+      )}
+      {hasContent && (
+        <article
+          id="cv-printable-area"
+          data-cv-template={kind}
+          className="cv-document bg-white border border-slate-300 shadow-lg mx-auto text-slate-900"
+          style={{
+            maxWidth: "595.28pt",
+            padding: "40pt",
+            fontFamily: style.font,
+            fontSize: "9pt",
+            lineHeight: 1.45,
+            overflowWrap: "anywhere",
+          }}
+        >
+          <div
+            className="cv-heading"
+            style={{
+              textAlign: style.centered ? "center" : "left",
+              ...(style.banner
+                ? {
+                    background: style.accent,
+                    color: "white",
+                    margin: "-40pt -40pt 14pt",
+                    padding: "26pt 40pt 18pt",
+                  }
+                : {}),
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "22pt",
+                lineHeight: 1.4,
+                fontWeight: 700,
+                color: style.banner ? "white" : style.accent,
+                textTransform: style.banner ? "uppercase" : undefined,
+              }}
+            >
+              {field(cvData.fullName, ["fullName"], "Candidate name")}
+            </h1>
+            <p style={{ fontSize: "11pt", lineHeight: 1.4 }}>
+              {field(cvData.title, ["title"], "Professional title")}
+            </p>
+          </div>
+          <div
+            style={{
+              textAlign: style.centered ? "center" : "left",
+              fontSize: "8.5pt",
+            }}
+          >
+            {[cvData.email, cvData.phone, cvData.location]
+              .filter(Boolean)
+              .join(" | ")}
+          </div>
+          <div
+            style={{
+              textAlign: style.centered ? "center" : "left",
+              fontSize: "8pt",
+            }}
+          >
+            {[cvData.websiteUrl, cvData.linkedinUrl, cvData.githubUrl]
+              .filter(Boolean)
+              .join(" | ")}
+          </div>
+          {sections.map((section, i) => (
+            <section
+              key={`${i}-${section.title}`}
+              className="cv-section"
+              style={{ marginTop: "18pt" }}
+            >
+              <h2
                 style={{
-                  marginBottom: "3pt",
-                  fontWeight: line.kind === "title" ? 700 : 400,
-                  fontSize: line.kind === "title" ? "10pt" : "9pt",
-                  color: line.kind === "detail" ? style.accent : undefined,
-                  paddingLeft: line.kind === "bullet" ? "10pt" : undefined,
+                  fontSize: "10pt",
+                  fontWeight: 700,
+                  color: style.accent,
+                  borderBottom: `0.6pt solid ${style.accent}`,
+                  paddingBottom: "4pt",
+                  marginBottom: "6pt",
+                  textTransform: "uppercase",
                 }}
               >
-                {line.kind === "bullet" && "• "}
-                {line.path
-                  ? field(line.text, line.path, `${section.title} ${j + 1}`)
-                  : line.text}
-              </div>
-            ))}
-          </section>
-        ))}
-      </article>
+                {section.title}
+              </h2>
+              {section.lines.map((line, j) => (
+                <div
+                  key={j}
+                  className="cv-line"
+                  style={{
+                    marginBottom: "3pt",
+                    fontWeight: line.kind === "title" ? 700 : 400,
+                    fontSize: line.kind === "title" ? "10pt" : "9pt",
+                    color: line.kind === "detail" ? style.accent : undefined,
+                    paddingLeft: line.kind === "bullet" ? "10pt" : undefined,
+                  }}
+                >
+                  {line.kind === "bullet" && "• "}
+                  {line.path
+                    ? field(line.text, line.path, `${section.title} ${j + 1}`)
+                    : line.text}
+                </div>
+              ))}
+            </section>
+          ))}
+        </article>
+      )}
     </div>
   );
 }

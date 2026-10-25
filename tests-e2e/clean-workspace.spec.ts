@@ -17,7 +17,7 @@ test("simplified controls retain CV layouts, roadmap tracks, quizzes and study i
     page.getByRole("heading", { name: "CV review", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Editor", exact: true }).click();
-  await expect(page.locator("#cv-printable-area")).toBeVisible();
+  await expect(page.getByText("Create your CV", {exact:true})).toBeVisible();
   await page.screenshot({ path: info.outputPath("cv-layouts.png") });
   await page.goto("/roadmaps");
   await page
